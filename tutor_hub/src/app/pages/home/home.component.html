@@ -1,6 +1,11 @@
 <nav class="navbar">
   <div class="nav-container">
     <h1 class="logo">TutorHub</h1>
+    <div class="nav-menu">
+      <button class="nav-link" (click)="scrollToSection('features')">Services</button>
+      <button class="nav-link" (click)="scrollToSection('about')">About</button>
+      <button class="nav-link" (click)="scrollToSection('contact')">Contact</button>
+    </div>
     <div class="nav-links">
         @if (!isAuthenticated) {
         <button (click)="goToLogin()" class="btn-login">Login</button>
@@ -11,6 +16,16 @@
         <button (click)="logout()" class="btn-logout">Logout</button>
       }
     </div>
+    <div class="hamburger" (click)="toggleMobileMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+  <div class="mobile-menu" *ngIf="mobileMenuOpen">
+    <button class="mobile-nav-link" (click)="scrollToSection('features')">Services</button>
+    <button class="mobile-nav-link" (click)="scrollToSection('about')">About</button>
+    <button class="mobile-nav-link" (click)="scrollToSection('contact')">Contact</button>
   </div>
 </nav>
 
@@ -47,7 +62,82 @@
     </div>
   </div>
 </section>
+<section class="about-section" id="about">
+  <div class="about-container">
+    <h2>About TutorHub</h2>
+    <div class="about-content">
+      <div class="about-text">
+        <p>
+          TutorHub is a comprehensive online learning platform that connects passionate educators with eager learners.
+          Our mission is to make quality education accessible to everyone, anywhere, anytime.
+        </p>
+        <p>
+          With a user-friendly interface and powerful features, TutorHub simplifies the process of creating and sharing courses,
+          while students can easily find and enroll in courses that match their interests and goals.
+        </p>
+        <div class="about-features">
+          <div class="about-item">
+            <span class="icon">🎓</span>
+            <h4>Expert Teachers</h4>
+            <p>Learn from qualified and experienced educators</p>
+          </div>
+          <div class="about-item">
+            <span class="icon">🌍</span>
+            <h4>Global Community</h4>
+            <p>Connect with learners and teachers worldwide</p>
+          </div>
+          <div class="about-item">
+            <span class="icon">💡</span>
+            <h4>Innovation</h4>
+            <p>Cutting-edge technology for better learning</p>
+          </div>
+          <div class="about-item">
+            <span class="icon">⚡</span>
+            <h4>Flexible Learning</h4>
+            <p>Learn at your own pace and schedule</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
+<section class="contact-section" id="contact">
+  <div class="contact-container">
+    <h2>Get In Touch</h2>
+    <div class="contact-content">
+      <div class="contact-info">
+        <div class="contact-card">
+          <span class="contact-icon">📧</span>
+          <h4>Email</h4>
+          <p>support&#64;tutorhub.local</p>
+        </div>
+        <div class="contact-card">
+          <span class="contact-icon">📞</span>
+          <h4>Phone</h4>
+          <p>+1 (555) 123-4567</p>
+        </div>
+        <div class="contact-card">
+          <span class="contact-icon">📍</span>
+          <h4>Location</h4>
+          <p>123 Education Street, Learning City, LC 12345</p>
+        </div>
+      </div>
+      <form class="contact-form">
+        <div class="form-group">
+          <input type="text" placeholder="Your Name" required />
+        </div>
+        <div class="form-group">
+          <input type="email" placeholder="Your Email" required />
+        </div>
+        <div class="form-group">
+          <textarea placeholder="Your Message" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="btn-submit">Send Message</button>
+      </form>
+    </div>
+  </div>
+</section>
 <footer class="site-footer">
   <div class="footer-container">
     <div class="footer-left">

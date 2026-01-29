@@ -8,7 +8,6 @@ async function getAllCourses() {
        FROM courses c
        JOIN users u ON c.teacher_id = u.id
        LEFT JOIN teacher_profiles tp ON u.id = tp.user_id
-       WHERE c.start_date > CURDATE()
        ORDER BY c.created_at DESC`
     );
 

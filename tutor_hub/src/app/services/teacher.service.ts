@@ -166,4 +166,8 @@ export class TeacherService {
       }
     });
   }
+
+  handleEnrollmentRequest(requestId: string, action: 'approve' | 'reject'): void {
+    this.handleRequest(requestId, action);
+  }
 }

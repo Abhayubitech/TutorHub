@@ -59,6 +59,7 @@
             class="search-input"
           />
           <button (click)="search()" class="search-btn">Search</button>
+          <button (click)="refreshCourses()" class="refresh-btn" title="Refresh courses list">🔄 Refresh</button>
         </div>
 
         @if (loading) {

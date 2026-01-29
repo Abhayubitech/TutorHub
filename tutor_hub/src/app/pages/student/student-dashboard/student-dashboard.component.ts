@@ -44,6 +44,10 @@ export class StudentDashboardComponent implements OnInit {
     }
   }
 
+  refreshCourses(): void {
+    this.studentService.refreshCourses();
+  }
+
   requestEnrollment(courseId: string): void {
     this.studentService.requestEnrollment(courseId);
   }

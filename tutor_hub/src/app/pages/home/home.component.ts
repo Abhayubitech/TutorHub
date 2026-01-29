@@ -11,6 +11,8 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
+  mobileMenuOpen = false;
+
   constructor(
     private authService: AuthService,
     private router: Router
@@ -47,5 +49,16 @@ export class HomeComponent {
 
   goToHome(): void {
     this.router.navigate(['/home']);
+  }
+
+  scrollToSection(sectionId: string): void {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
   }
 }

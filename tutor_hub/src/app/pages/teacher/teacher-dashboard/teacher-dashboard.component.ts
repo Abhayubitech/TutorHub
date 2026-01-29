@@ -88,4 +88,24 @@ export class TeacherDashboardComponent implements OnInit {
   get pendingRequests() {
     return this.teacherService.pendingRequests();
   }
+
+  approveRequest(requestId: string): void {
+    this.teacherService.handleRequest(requestId, 'approve');
+  }
+
+  rejectRequest(requestId: string): void {
+    this.teacherService.handleRequest(requestId, 'reject');
+  }
+
+  editCourse(courseId: string | number): void {
+    console.log('Edit course:', courseId);
+    // Navigate to edit course page or open modal
+    // this.router.navigate(['/teacher/edit-course', courseId]);
+  }
+
+  manageCourse(courseId: string | number): void {
+    console.log('Manage course:', courseId);
+    // Open course management page
+    // this.router.navigate(['/teacher/manage-course', courseId]);
+  }
 }

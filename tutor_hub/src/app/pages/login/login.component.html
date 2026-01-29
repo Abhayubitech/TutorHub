@@ -1,17 +1,6 @@
 <div class="login-container">
   <div class="login-card">
-    <a (click)="goHome()" class="logo">TutorHub</a>
     <h2>Student Login</h2>
-
-    <div class="demo-select">
-      <label>Quick demo: </label>
-      <select (change)="onDemoChange($event)">
-        <option value="">-- choose --</option>
-        <option value="admin">Admin</option>
-        <option value="teacher">Teacher</option>
-        <option value="student">Student</option>
-      </select>
-    </div>
 
     @if (error) {
       <div class="error-message">{{ error }}</div>

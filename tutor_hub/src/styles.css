@@ -13,7 +13,8 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
   color: #333;
-  background: #f8f9fa;
+  background: linear-gradient(135deg, #f8f9fa 0%, #f0f4f8 100%);
+  min-height: 100vh;
 }
 
 /* Color Variables */
@@ -31,6 +32,7 @@ body {
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Typography */
@@ -57,14 +59,54 @@ p {
 button {
   font-family: inherit;
   border-radius: 8px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: var(--transition-smooth);
   cursor: pointer;
   font-weight: 600;
   letter-spacing: 0.5px;
+  border: none;
 }
 
 button:active {
   transform: scale(0.98);
+}
+
+button:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  padding: 12px 24px;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+  background: var(--accent-color);
+  color: white;
+  padding: 12px 24px;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+}
+
+.btn-success {
+  background: var(--success-color);
+  color: white;
+  padding: 12px 24px;
+}
+
+.btn-danger {
+  background: var(--danger-color);
+  color: white;
+  padding: 12px 24px;
 }
 
 /* Input Styles */
@@ -74,18 +116,29 @@ input, textarea, select {
   border: 1px solid var(--border-color);
   padding: 12px 16px;
   font-size: 14px;
-  transition: all 0.3s;
+  transition: var(--transition-smooth);
+  background: white;
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 0 0 1px rgba(102, 126, 234, 0.3);
   background: #fff;
 }
 
 textarea {
   resize: vertical;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 /* Link Styles */

@@ -49,9 +49,24 @@
         <div class="courses-list">
           @for (course of courses; track course.id) {
             <div class="course-item">
-              <h3>{{ course.subject }}</h3>
-              <p>{{ course.description }}</p>
-              <span class="fee">₹{{ course.fee }}</span>
+              <div class="course-header">
+                <h3>{{ course.subject }}</h3>
+                <span class="fee">₹{{ course.fee }}</span>
+              </div>
+              <p class="description">{{ course.description }}</p>
+              <div class="course-details">
+                <span class="mode-badge" [class]="'mode-' + course.mode">{{ course.mode | uppercase }}</span>
+                @if (course.startDate) {
+                  <span class="date-info">Start: {{ course.startDate | date: 'shortDate' }}</span>
+                }
+                @if (course.endDate) {
+                  <span class="date-info">End: {{ course.endDate | date: 'shortDate' }}</span>
+                }
+              </div>
+              <div class="course-actions">
+                <button class="btn-edit" (click)="editCourse(course.id)">Edit Course</button>
+                <button class="btn-manage" (click)="manageCourse(course.id)">Manage</button>
+              </div>
             </div>
           }
         </div>
@@ -72,8 +87,8 @@
                 <p>Email: {{ request.email }}</p>
               </div>
               <div class="actions">
-                <button class="btn-approve">Approve</button>
-                <button class="btn-reject">Reject</button>
+                <button (click)="approveRequest(request.id)" class="btn-approve">Approve</button>
+                <button (click)="rejectRequest(request.id)" class="btn-reject">Reject</button>
               </div>
             </div>
           }

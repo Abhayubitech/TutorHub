@@ -134,6 +134,10 @@ export class StudentService {
     });
   }
 
+  refreshCourses(): void {
+    this.loadAllCourses();
+  }
+
   searchCourses(query: string): void {
     if (query.trim().length < 2) {
       this.searchResultsSignal.set([]);
