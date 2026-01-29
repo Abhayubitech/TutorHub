@@ -1,10 +1,10 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "- Node.js\r - Express.js\r - MySQL\r - mysql2\r - dotenv\r - nodemon (development)",
   "main": "index.js",
   "scripts": {
-    "start":"nodemon src/server.js",
+    "start": "nodemon src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -15,7 +15,10 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "mysql2": "^3.16.2",
+    "mysql2": "^3.16.2"
+  },
+  "type": "commonjs",
+  "devDependencies": {
     "nodemon": "^3.1.11"
   }
 }
