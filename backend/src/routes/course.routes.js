@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-<<<<<<< HEAD
 const courseController = require("../controllers/course.controller");
 const verifyToken = require("../middleware/auth.middleware");
 
@@ -9,10 +8,3 @@ router.get("/", courseController.getAllCourses); // Public reading allowed, or p
 router.get("/my-courses", verifyToken, courseController.getMyCourses);
 
 module.exports = router;
-=======
-
-router.get('/pending-requests', teacherController.getPendingRequests);
-
-
-module.exports = router;
->>>>>>> eb339c897f2663591bebe8c550821a93838d661a

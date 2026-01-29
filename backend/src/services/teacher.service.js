@@ -1,70 +1,54 @@
-let db = require('../config/db');
+const db = require("../config/db");
 
-exports.createTeacherProfile = async ({
-  user_id,
-  qualification,
-  experience_years,
-  bio
-}) => {
+async function createTeacherProfile(profileData) {
+  const { user_id, qualification, experience_years, bio } = profileData;
+
+  // Check if profile exists
+  const [existing] = await db.query("SELECT * FROM teacher_profiles WHERE user_id = ?", [user_id]);
+  if (existing.length > 0) {
+    throw new Error("Profile already exists");
+  }
 
   const [result] = await db.query(
-    `INSERT INTO teacher_profiles 
-     (user_id, qualification, experience_years, bio)
-     VALUES (?, ?, ?, ?)`,
+    "INSERT INTO teacher_profiles (user_id, qualification, experience_years, bio, status) VALUES (?, ?, ?, ?, 'pending')",
     [user_id, qualification, experience_years, bio]
   );
-
-  return {
-    id: result.insertId,
-    user_id,
-    qualification,
-    experience_years,
-    bio
-  };
-};
-
-exports.getAllTeachers = async()=>{
-    const [rows]= await db.query(
-        `    SELECT 
-      tp.id,
-      tp.qualification,
-      tp.experience_years,
-      tp.bio,
-      u.name,
-      u.email,
-      u.phone
-    FROM teacher_profiles tp
-    JOIN users u ON tp.user_id = u.id`
-    ) 
-    return rows
-
+  return { id: result.insertId, ...profileData, status: 'pending' };
 }
-exports.getTeacherById =async(id)=>{
-const [rows] = await db.query(`
-        SELECT 
-      tp.id,
-      tp.qualification,
-      tp.experience_years,
-      tp.bio,
-      u.name,
-      u.email,
-      u.phone
-    FROM teacher_profiles tp
-    JOIN users u ON tp.user_id = u.id
-    WHERE tp.id = ?`,[id])
-    return rows[0]
-}
-exports.updateTeacherProfile = async (data) => {
-  const { user_id, qualification, experience_years, bio } = data;
 
-  const [result] = await db.query(
-    `UPDATE teacher_profiles 
-     SET qualification = ?, experience_years = ?, bio = ?
-     WHERE user_id = ?`,
-    [qualification, experience_years, bio, user_id]
+async function getAllTeachers() {
+  const [rows] = await db.query(`
+        SELECT u.id, u.name, u.email, tp.qualification, tp.experience_years, tp.bio, tp.status 
+        FROM users u 
+        JOIN teacher_profiles tp ON u.id = tp.user_id 
+        WHERE u.role = 'teacher'
+    `);
+  return rows;
+}
+
+async function getTeacherById(id) {
+  const [rows] = await db.query(`
+         SELECT u.id, u.name, u.email, tp.qualification, tp.experience_years, tp.bio, tp.status 
+        FROM users u 
+        JOIN teacher_profiles tp ON u.id = tp.user_id 
+        WHERE u.id = ?
+    `, [id]);
+  return rows[0];
+}
+
+async function updateTeacherProfile(userId, data) {
+  // Implementation for update
+  // ...
+}
+
+async function getPendingRequests() {
+  const [rows] = await db.query(
+    `SELECT tp.id, tp.user_id, u.name, u.email, tp.qualification, tp.experience_years, tp.bio, tp.status
+     FROM teacher_profiles tp
+     JOIN users u ON tp.user_id = u.id
+     WHERE tp.status = 'pending'`
   );
+  return rows;
+}
 
-  return result;
-};
-
-
+module.exports = { createTeacherProfile, getAllTeachers, getTeacherById, updateTeacherProfile, getPendingRequests };

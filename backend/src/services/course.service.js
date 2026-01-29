@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const db = require("../config/db");
 
 async function createCourse(courseData) {
@@ -33,15 +32,3 @@ async function getCoursesByTeacher(teacherId) {
 }
 
 module.exports = { createCourse, getAllCourses, getCourseById, getCoursesByTeacher };
-=======
-exports.getPendingRequests = async () => {
-
-  const [rows] = await db.query(
-    `SELECT id, user_id, qualification, experience_years, bio
-     FROM teacher_profiles
-     WHERE status = 'pending'`
-  );
-
-  return rows;
-};
->>>>>>> eb339c897f2663591bebe8c550821a93838d661a
