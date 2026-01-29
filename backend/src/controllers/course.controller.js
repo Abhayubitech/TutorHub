@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const courseService = require("../services/course.service");
 
 async function createCourse(req, res) {
@@ -38,3 +39,17 @@ async function getMyCourses(req, res) {
 }
 
 module.exports = { createCourse, getAllCourses, getMyCourses };
+=======
+exports.getPendingRequests = async (req, res) => {
+  try {
+    const data = await teacherService.getPendingRequests();
+
+    res.status(200).json({
+      pendingRequests: data
+    });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+>>>>>>> eb339c897f2663591bebe8c550821a93838d661a
