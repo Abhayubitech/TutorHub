@@ -1,18 +1,19 @@
-const express = require("express");
-const userRoutes = require("./routes/user.routes");
-// const auth = require("./middleware/auth.middleware");
+const express = require('express');
+const dotenv = require('dotenv');
 
-const app = express();
+dotenv.config(); 
 
-app.use(express.json());
+const app = express(); 
 
-app.use("/api/user", userRoutes);
-// app.use("/api/student", userRoutes);
-// app.use("/api/teacher", userRoutes);
-// app.use("/api/course", userRoutes);
+app.use(express.json()); 
+const userRoutes = require('./routes/user.routes');
+const teacherRoutes = require('./routes/teacher.routes');
+const studentRoutes = require('./routes/student.routes');
+const scheduleRoutes = require('./routes/schedule.routes');
 
-app.get("/", (req, res) => {
-  res.send("API is running");
-});
+app.use('/api/users', userRoutes);
+app.use('/api/teacher', teacherRoutes);
+app.use('/api/student', studentRoutes);
+app.use('/api/schedules', scheduleRoutes);
 
 module.exports = app;
