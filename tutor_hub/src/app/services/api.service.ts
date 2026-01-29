@@ -36,6 +36,10 @@ export class ApiService {
     return this.http.put(`${this.apiUrl}/auth/${id}`, userData, { headers: this.getHeaders() });
   }
 
+  updateUserProfile(id: string, profileData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/auth/${id}`, profileData, { headers: this.getHeaders() });
+  }
+
   // Teacher endpoints
   getTeacherProfile(): Observable<any> {
     return this.http.get(`${this.apiUrl}/teacher/profile`, { headers: this.getHeaders() });
@@ -117,5 +121,30 @@ export class ApiService {
   // Course endpoints
   listAllCourses(): Observable<any> {
     return this.http.get(`${this.apiUrl}/courses`);
+  }
+
+  // Admin endpoints
+  getAllUsers(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/admin/users`, { headers: this.getHeaders() });
+  }
+
+  getUsersByRole(role: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/admin/users?role=${role}`, { headers: this.getHeaders() });
+  }
+
+  deleteUserAdmin(userId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/admin/users/${userId}`, { headers: this.getHeaders() });
+  }
+
+  updateUserAdmin(userId: string, userData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/admin/users/${userId}`, userData, { headers: this.getHeaders() });
+  }
+
+  getRecentUsers(limit: number = 10): Observable<any> {
+    return this.http.get(`${this.apiUrl}/admin/recent-users?limit=${limit}`, { headers: this.getHeaders() });
+  }
+
+  getAllCoursesAdmin(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/admin/courses`, { headers: this.getHeaders() });
   }
 }

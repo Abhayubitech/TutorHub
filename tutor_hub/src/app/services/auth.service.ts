@@ -80,6 +80,34 @@ export class AuthService {
     this.isAuthenticatedSignal.set(false);
   }
 
+  updateUserProfile(profileData: any): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+
+    const userId = this.userSignal()?.id;
+    if (!userId) {
+      this.errorSignal.set('User not found');
+      this.loadingSignal.set(false);
+      return;
+    }
+
+    this.apiService.updateUserProfile(userId, profileData).subscribe({
+      next: (response) => {
+        if (response.success && response.user) {
+          localStorage.setItem('user', JSON.stringify(response.user));
+          this.userSignal.set(response.user);
+          alert('Profile updated successfully');
+        }
+        this.loadingSignal.set(false);
+      },
+      error: (error) => {
+        this.errorSignal.set(error.error?.message || 'Failed to update profile');
+        alert('Error: ' + (error.error?.message || 'Failed to update profile'));
+        this.loadingSignal.set(false);
+      }
+    });
+  }
+
   getRole(): string | null {
     const user = this.userSignal();
     return user?.role || null;

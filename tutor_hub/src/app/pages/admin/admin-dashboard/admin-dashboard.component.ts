@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { AdminService } from '../../../services/admin.service';
 
 interface User {
   id: number;
@@ -14,52 +16,22 @@ interface User {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css'
 })
 export class AdminDashboardComponent implements OnInit {
-  totalUsers = 0;
-  studentCount = 0;
-  teacherCount = 0;
-  courseCount = 0;
   userFilter: 'all' | 'student' | 'teacher' = 'all';
-  
-  users: User[] = [
-    {
-      id: 1,
-      name: 'John Student',
-      email: 'john@example.com',
-      role: 'student',
-      phone: '+1 (555) 111-1111'
-    },
-    {
-      id: 2,
-      name: 'Jane Teacher',
-      email: 'jane@example.com',
-      role: 'teacher',
-      phone: '+1 (555) 222-2222'
-    },
-    {
-      id: 3,
-      name: 'Mike Student',
-      email: 'mike@example.com',
-      role: 'student',
-      phone: '+1 (555) 333-3333'
-    },
-    {
-      id: 4,
-      name: 'Sarah Teacher',
-      email: 'sarah@example.com',
-      role: 'teacher',
-      phone: '+1 (555) 444-4444'
-    },
-  ];
-
   filteredUsers: User[] = [];
+  isEditingProfile = false;
+  editingUserId: string | null = null;
+  editingName = '';
+  editingEmail = '';
+  editingPhone = '';
 
   constructor(
     private authService: AuthService,
+    private adminService: AdminService,
     private router: Router
   ) {
     if (!this.authService.isAuthenticated() || this.authService.user()?.role !== 'admin') {
@@ -68,43 +40,78 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadStats();
+    this.adminService.loadAllUsers();
+    this.adminService.loadCourses();
+    this.adminService.loadRecentUsers(10);
     this.filterUsers('all');
-  }
-
-  loadStats(): void {
-    this.totalUsers = this.users.length;
-    this.studentCount = this.users.filter(u => u.role === 'student').length;
-    this.teacherCount = this.users.filter(u => u.role === 'teacher').length;
-    this.courseCount = 12; // This would come from an API in a real app
   }
 
   filterUsers(filter: 'all' | 'student' | 'teacher'): void {
     this.userFilter = filter;
     if (filter === 'all') {
-      this.filteredUsers = [...this.users];
+      this.filteredUsers = [...this.adminService.users()];
     } else {
-      this.filteredUsers = this.users.filter(u => u.role === filter);
+      this.filteredUsers = this.adminService.users().filter(u => u.role === filter);
     }
   }
 
-  editUser(userId: number): void {
-    console.log('Edit user:', userId);
-    // Implement user edit functionality
+  editUser(userId: string | number): void {
+    const user = this.adminService.users().find(u => u.id === userId);
+    if (user) {
+      this.editingUserId = String(userId);
+      this.editingName = user.name;
+      this.editingEmail = user.email;
+      this.editingPhone = user.phone || '';
+      this.isEditingProfile = true;
+    }
   }
 
-  deleteUser(userId: number): void {
+  updateUser(): void {
+    // Validate name
+    const nameRegex = /^[a-zA-Z\s'-]*$/;
+    if (!nameRegex.test(this.editingName)) {
+      alert('Name can only contain letters, spaces, hyphens, and apostrophes');
+      return;
+    }
+
+    if (this.editingName.length > 33) {
+      alert('Name must be maximum 33 characters');
+      return;
+    }
+
+    if (this.editingUserId) {
+      const userData = {
+        name: this.editingName,
+        phone: this.editingPhone || null
+      };
+      this.adminService.updateUser(this.editingUserId, userData);
+      this.cancelEditUser();
+    }
+  }
+
+  cancelEditUser(): void {
+    this.isEditingProfile = false;
+    this.editingUserId = null;
+    this.editingName = '';
+    this.editingEmail = '';
+    this.editingPhone = '';
+  }
+
+  deleteUser(userId: string | number): void {
     if (confirm('Are you sure you want to delete this user account?')) {
-      this.users = this.users.filter(u => u.id !== userId);
-      this.loadStats();
-      this.filterUsers(this.userFilter);
-      console.log('User deleted:', userId);
+      this.adminService.deleteUser(String(userId));
     }
   }
 
   editAdminProfile(): void {
-    console.log('Edit admin profile');
-    // Implement admin profile edit functionality
+    const user = this.authService.user();
+    if (user) {
+      this.editingUserId = 'self';
+      this.editingName = user.name;
+      this.editingEmail = user.email;
+      this.editingPhone = user.phone || '';
+      this.isEditingProfile = true;
+    }
   }
 
   deleteMyProfile(): void {
@@ -120,5 +127,37 @@ export class AdminDashboardComponent implements OnInit {
 
   get user() {
     return this.authService.user();
+  }
+
+  get totalUsers() {
+    return this.adminService.totalUsers();
+  }
+
+  get studentCount() {
+    return this.adminService.studentCount();
+  }
+
+  get teacherCount() {
+    return this.adminService.teacherCount();
+  }
+
+  get courseCount() {
+    return this.adminService.courseCount();
+  }
+
+  get recentUsers() {
+    return this.adminService.recentUsers();
+  }
+
+  get allUsers() {
+    return this.adminService.users();
+  }
+
+  get loading() {
+    return this.adminService.loading();
+  }
+
+  get error() {
+    return this.adminService.error();
   }
 }

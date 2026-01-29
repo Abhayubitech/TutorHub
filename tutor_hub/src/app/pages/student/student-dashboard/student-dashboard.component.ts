@@ -15,6 +15,10 @@ import { AuthService } from '../../../services/auth.service';
 export class StudentDashboardComponent implements OnInit {
   currentTab = signal<string>('courses');
   searchQuery = signal<string>('');
+  isEditingProfile = signal<boolean>(false);
+  editingName = '';
+  editingEmail = '';
+  editingPhone = '';
 
   constructor(
     private studentService: StudentService,
@@ -56,6 +60,45 @@ export class StudentDashboardComponent implements OnInit {
     if (confirm('Are you sure you want to cancel this request?')) {
       this.studentService.cancelRequest(requestId);
     }
+  }
+
+  editProfile(): void {
+    const user = this.authService.user();
+    if (user) {
+      this.editingName = user.name;
+      this.editingEmail = user.email;
+      this.editingPhone = user.phone || '';
+      this.isEditingProfile.set(true);
+    }
+  }
+
+  updateProfile(): void {
+    // Validate name
+    const nameRegex = /^[a-zA-Z\s'-]*$/;
+    if (!nameRegex.test(this.editingName)) {
+      alert('Name can only contain letters, spaces, hyphens, and apostrophes');
+      return;
+    }
+
+    if (this.editingName.length > 33) {
+      alert('Name must be maximum 33 characters');
+      return;
+    }
+
+    const profileData = {
+      name: this.editingName,
+      phone: this.editingPhone || null
+    };
+
+    this.authService.updateUserProfile(profileData);
+    this.cancelEditProfile();
+  }
+
+  cancelEditProfile(): void {
+    this.isEditingProfile.set(false);
+    this.editingName = '';
+    this.editingEmail = '';
+    this.editingPhone = '';
   }
 
   logout(): void {

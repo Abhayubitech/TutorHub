@@ -20,6 +20,12 @@ export class TeacherDashboardComponent implements OnInit {
   mode: string = 'online';
   startDate: string | null = null;
   endDate: string | null = null;
+  editingCourseId: string | null = null;
+  showEditModal = false;
+  isEditingProfile = false;
+  editingName = '';
+  editingEmail = '';
+  editingPhone = '';
 
   constructor(
     private teacherService: TeacherService,
@@ -49,15 +55,68 @@ export class TeacherDashboardComponent implements OnInit {
       end_date: this.endDate || null
     };
 
-    this.teacherService.createCourse(courseData);
+    if (this.editingCourseId) {
+      this.teacherService.updateCourse(this.editingCourseId, courseData);
+    } else {
+      this.teacherService.createCourse(courseData);
+    }
 
     // clear form
+    this.clearForm();
+  }
+
+  clearForm(): void {
     this.subject = '';
     this.description = '';
     this.fee = null;
     this.mode = 'online';
     this.startDate = null;
     this.endDate = null;
+    this.editingCourseId = null;
+    this.showEditModal = false;
+  }
+
+  editProfile(): void {
+    const user = this.authService.user();
+    if (user) {
+      this.editingName = user.name;
+      this.editingEmail = user.email;
+      this.editingPhone = user.phone || '';
+      this.isEditingProfile = true;
+    }
+  }
+
+  updateProfile(): void {
+    // Validate name
+    const nameRegex = /^[a-zA-Z\s'-]*$/;
+    if (!nameRegex.test(this.editingName)) {
+      alert('Name can only contain letters, spaces, hyphens, and apostrophes');
+      return;
+    }
+
+    if (this.editingName.length > 33) {
+      alert('Name must be maximum 33 characters');
+      return;
+    }
+
+    const profileData = {
+      name: this.editingName,
+      phone: this.editingPhone || null
+    };
+
+    this.authService.updateUserProfile(profileData);
+    this.cancelEditProfile();
+  }
+
+  cancelEditProfile(): void {
+    this.isEditingProfile = false;
+    this.editingName = '';
+    this.editingEmail = '';
+    this.editingPhone = '';
+  }
+
+  isEditingProfile(): boolean {
+    return this.isEditingProfile;
   }
 
   logout(): void {
@@ -97,15 +156,38 @@ export class TeacherDashboardComponent implements OnInit {
     this.teacherService.handleRequest(requestId, 'reject');
   }
 
-  editCourse(courseId: string | number): void {
-    console.log('Edit course:', courseId);
-    // Navigate to edit course page or open modal
-    // this.router.navigate(['/teacher/edit-course', courseId]);
+  editCourse(course: any): void {
+    this.editingCourseId = course.id;
+    this.subject = course.subject;
+    this.description = course.description || '';
+    this.fee = course.fee;
+    this.mode = course.mode;
+    this.startDate = course.start_date || null;
+    this.endDate = course.end_date || null;
+    this.showEditModal = true;
+    
+    // Scroll to form
+    setTimeout(() => {
+      const element = document.querySelector('.create-course-form');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  }
+
+  deleteCourse(courseId: string | number): void {
+    if (confirm('Are you sure you want to delete this course?')) {
+      this.teacherService.deleteCourse(String(courseId));
+    }
   }
 
   manageCourse(courseId: string | number): void {
     console.log('Manage course:', courseId);
     // Open course management page
     // this.router.navigate(['/teacher/manage-course', courseId]);
+  }
+
+  cancelEdit(): void {
+    this.clearForm();
   }
 }
