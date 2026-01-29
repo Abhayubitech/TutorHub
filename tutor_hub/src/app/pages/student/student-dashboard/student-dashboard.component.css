@@ -1,0 +1,448 @@
+.student-dashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f0f1f5 100%);
+}
+
+.dashboard-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  color: white;
+  padding: 25px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-lg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.header-right {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.user-info {
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.3px;
+}
+
+.btn-logout {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 14px;
+  letter-spacing: 0.3px;
+}
+
+.btn-logout:hover {
+  background: white;
+  color: #667eea;
+  border-color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.tabs-nav {
+  background: white;
+  display: flex;
+  gap: 0;
+  padding: 0;
+  border-bottom: 2px solid #e0e6ed;
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 16px 24px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 700;
+  color: #666;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  position: relative;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+}
+
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s;
+}
+
+.tab-btn:hover {
+  color: #667eea;
+}
+
+.tab-btn.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+}
+
+.tab-btn.active::after {
+  transform: scaleX(1);
+}
+
+.dashboard-content {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.tab-content h2 {
+  color: var(--dark-text);
+  margin-bottom: 35px;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.search-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 35px;
+  align-items: stretch;
+}
+
+.search-input {
+  flex: 1;
+  padding: 13px 18px;
+  border: 1.5px solid #e0e6ed;
+  border-radius: 10px;
+  font-size: 14px;
+  background: white;
+  transition: all 0.3s;
+}
+
+.search-input:hover {
+  border-color: #667eea;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background: #f8f9fa;
+}
+
+.search-btn {
+  padding: 13px 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.5px;
+}
+
+.search-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.search-btn:active {
+  transform: translateY(0);
+}
+
+.courses-grid,
+.teachers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 28px;
+}
+
+.course-card,
+.teacher-card {
+  background: white;
+  padding: 28px;
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.course-card::before,
+.teacher-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+}
+
+.course-card:hover,
+.teacher-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+  border-color: #667eea;
+}
+
+.course-card h3,
+.teacher-card h3 {
+  margin: 0 0 12px 0;
+  color: var(--dark-text);
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.course-card p,
+.teacher-card p {
+  color: #666;
+  margin: 12px 0;
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+.course-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 18px 0;
+  font-size: 13px;
+  color: #888;
+  font-weight: 500;
+}
+
+.teacher-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  color: #666;
+  margin: 12px 0;
+}
+
+.qualification {
+  color: #667eea;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+}
+
+.verified-badge {
+  background: linear-gradient(135deg, #26de81 0%, #20c997 100%);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  display: inline-block;
+  margin-top: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 12px rgba(38, 222, 129, 0.2);
+}
+
+.btn-enroll,
+.btn-cancel {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: 18px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.btn-enroll {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-enroll:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-cancel {
+  background: linear-gradient(135deg, #fc5c65 0%, #ee5a52 100%);
+  color: white;
+}
+
+.btn-cancel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(252, 92, 101, 0.3);
+}
+
+.enrollments-list,
+.requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.enrollment-item,
+.request-item {
+  background: white;
+  padding: 24px;
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s;
+}
+
+.enrollment-item:hover,
+.request-item:hover {
+  box-shadow: var(--shadow-md);
+  border-color: #667eea;
+}
+
+.enrollment-details,
+.request-details {
+  flex: 1;
+}
+
+.enrollment-item h3,
+.request-item h3 {
+  margin: 0 0 12px 0;
+  color: var(--dark-text);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.enrollment-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  color: #888;
+  font-weight: 500;
+}
+
+.enrollment-date,
+.request-status {
+  text-align: right;
+  color: #999;
+  font-size: 14px;
+}
+
+.status-badge {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  display: inline-block;
+}
+
+.status-badge.pending {
+  background: linear-gradient(135deg, #fed330 0%, #ffc107 100%);
+  color: #1a1a1a;
+  box-shadow: 0 4px 12px rgba(254, 211, 48, 0.2);
+}
+
+.status-badge.approved {
+  background: linear-gradient(135deg, #26de81 0%, #20c997 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(38, 222, 129, 0.2);
+}
+
+.status-badge.rejected {
+  background: linear-gradient(135deg, #fc5c65 0%, #ee5a52 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(252, 92, 101, 0.2);
+}
+
+.loading,
+.no-results {
+  text-align: center;
+  color: #999;
+  padding: 50px 20px;
+  font-size: 16px;
+  background: white;
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+}
+
+.error-message {
+  background: linear-gradient(135deg, #fc5c65 0%, #ee5a52 100%);
+  color: white;
+  padding: 16px 18px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(252, 92, 101, 0.2);
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(252, 92, 101, 0.2);
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .tabs-nav {
+    overflow-x: auto;
+  }
+
+  .courses-grid,
+  .teachers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .enrollment-item,
+  .request-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .enrollment-date,
+  .request-status {
+    text-align: left;
+    margin-top: 10px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 26px;
+  }
+
+  .tab-btn {
+    padding: 14px 16px;
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,71 @@
+<div class="login-container">
+  <div class="login-card">
+    <a (click)="goHome()" class="logo">TutorHub</a>
+    <h2>Student Login</h2>
+
+    <div class="demo-select">
+      <label>Quick demo: </label>
+      <select (change)="onDemoChange($event)">
+        <option value="">-- choose --</option>
+        <option value="admin">Admin</option>
+        <option value="teacher">Teacher</option>
+        <option value="student">Student</option>
+      </select>
+    </div>
+
+    @if (error) {
+      <div class="error-message">{{ error }}</div>
+    }
+
+    <form (ngSubmit)="login()">
+      <div class="form-group">
+        <label>Email</label>
+        <input
+          type="email"
+          placeholder="Enter your email"
+          [(ngModel)]="email"
+          [ngModelOptions]="{ updateOn: 'blur' }"
+          name="email"
+          maxlength="100"
+          pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+          required
+          title="Please enter a valid email address"
+        />
+        <small>Example: user&#64;example.com</small>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <div class="password-input">
+          <input
+            [type]="showPassword() ? 'text' : 'password'"
+            placeholder="Enter your password"
+            [(ngModel)]="password"
+            [ngModelOptions]="{ updateOn: 'blur' }"
+            name="password"
+            minlength="6"
+            maxlength="100"
+            required
+            title="Password must be at least 6 characters long"
+          />
+          <button type="button" (click)="togglePasswordVisibility()" class="toggle-btn">
+            {{ showPassword() ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+        <small>Minimum 6 characters</small>
+      </div>
+
+      <button
+        type="submit"
+        class="login-btn"
+        [disabled]="isLoading || !email() || !password()"
+      >
+        {{ isLoading ? 'Logging in...' : 'Login' }}
+      </button>
+    </form>
+
+    <p class="signup-link">
+      Don't have an account? <a (click)="goToSignup()">Sign up here</a>
+    </p>
+  </div>
+</div>

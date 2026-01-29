@@ -1,0 +1,25 @@
+<div class="admin-dashboard">
+  <header class="dashboard-header">
+    <h1>Admin Dashboard</h1>
+    <div class="header-right">
+      <span class="user-info">{{ user?.name }}</span>
+      <button (click)="logout()" class="btn-logout">Logout</button>
+    </div>
+  </header>
+
+  <div class="dashboard-content">
+    <section class="section">
+      <h2>Welcome to Admin Panel</h2>
+      <p>
+        Here you can manage all teachers, students, and courses on the platform.
+        Features include:
+      </p>
+      <ul>
+        <li>View all users (students and teachers)</li>
+        <li>Delete user accounts</li>
+        <li>Monitor all courses</li>
+        <li>Generate reports</li>
+      </ul>
+    </section>
+  </div>
+</div>

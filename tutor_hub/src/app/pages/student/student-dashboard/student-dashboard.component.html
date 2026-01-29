@@ -1,0 +1,205 @@
+<div class="student-dashboard">
+  <!-- Header -->
+    <header class="dashboard-header">
+    <h1>Student Dashboard</h1>
+    <div class="header-right">
+      <span class="user-info">{{ user?.name }}</span>
+      <button (click)="logout()" class="btn-logout">Logout</button>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="tabs-nav">
+    <button
+      [class.active]="currentTab() === 'courses'"
+      (click)="setTab('courses')"
+      class="tab-btn"
+    >
+      Browse Courses
+    </button>
+    <button
+      [class.active]="currentTab() === 'teachers'"
+      (click)="setTab('teachers')"
+      class="tab-btn"
+    >
+      Teachers
+    </button>
+    <button
+      [class.active]="currentTab() === 'enrollments'"
+      (click)="setTab('enrollments')"
+      class="tab-btn"
+    >
+      My Enrollments ({{ enrollmentCount }})
+    </button>
+    <button
+      [class.active]="currentTab() === 'requests'"
+      (click)="setTab('requests')"
+      class="tab-btn"
+    >
+      My Requests
+    </button>
+  </nav>
+
+  <div class="dashboard-content">
+    @if (error) {
+      <div class="error-message">{{ error }}</div>
+    }
+
+    <!-- Browse Courses Tab -->
+    @if (currentTab() === 'courses') {
+      <div class="tab-content">
+        <h2>Browse Courses</h2>
+
+        <div class="search-bar">
+          <input
+            type="text"
+            placeholder="Search courses..."
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="search()"
+            class="search-input"
+          />
+          <button (click)="search()" class="search-btn">Search</button>
+        </div>
+
+        @if (loading) {
+          <p class="loading">Loading courses...</p>
+        } @else if (searchResults.length > 0) {
+          <div class="courses-grid">
+            @for (course of searchResults; track course.id) {
+              <div class="course-card">
+                <h3>{{ course.subject }}</h3>
+                <p>{{ course.description }}</p>
+                <div class="course-meta">
+                  <span>💰 ₹{{ course.fee }}</span>
+                  <span>👨‍🏫 {{ course.teacher_name }}</span>
+                  <span>📍 {{ course.mode }}</span>
+                </div>
+                <button
+                  (click)="requestEnrollment(course.id)"
+                  class="btn-enroll"
+                >
+                  Request Enrollment
+                </button>
+              </div>
+            }
+          </div>
+        } @else if (searchQuery()) {
+          <p class="no-results">No courses found matching your search.</p>
+        } @else {
+          <div class="courses-grid">
+            @for (course of allCourses; track course.id) {
+              <div class="course-card">
+                <h3>{{ course.subject }}</h3>
+                <p>{{ course.description }}</p>
+                <div class="course-meta">
+                  <span>💰 ₹{{ course.fee }}</span>
+                  <span>👨‍🏫 {{ course.teacher_name }}</span>
+                  <span>📍 {{ course.mode }}</span>
+                </div>
+                <button
+                  (click)="requestEnrollment(course.id)"
+                  class="btn-enroll"
+                >
+                  Request Enrollment
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Teachers Tab -->
+    @if (currentTab() === 'teachers') {
+      <div class="tab-content">
+        <h2>Our Teachers</h2>
+        @if (loading) {
+          <p class="loading">Loading teachers...</p>
+        } @else {
+          <div class="teachers-grid">
+            @for (teacher of allTeachers; track teacher.id) {
+              <div class="teacher-card">
+                <h3>{{ teacher.name }}</h3>
+                <p class="qualification">{{ teacher.qualification || 'Qualification not specified' }}</p>
+                <p class="bio">{{ teacher.bio }}</p>
+                <div class="teacher-meta">
+                  <span>📧 {{ teacher.email }}</span>
+                  @if (teacher.hourly_rate) {
+                    <span>💵 ₹{{ teacher.hourly_rate }}/hour</span>
+                  }
+                </div>
+                @if (teacher.is_verified) {
+                  <div class="verified-badge">✓ Verified</div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- My Enrollments Tab -->
+    @if (currentTab() === 'enrollments') {
+      <div class="tab-content">
+        <h2>My Enrollments</h2>
+        @if (loading) {
+          <p class="loading">Loading enrollments...</p>
+        } @else if (myEnrollments.length > 0) {
+          <div class="enrollments-list">
+            @for (enrollment of myEnrollments; track enrollment.id) {
+              <div class="enrollment-item">
+                <div class="enrollment-details">
+                  <h3>{{ enrollment.subject }}</h3>
+                  <p>{{ enrollment.description }}</p>
+                  <div class="enrollment-meta">
+                    <span>👨‍🏫 {{ enrollment.teacher_name }}</span>
+                    <span>💰 ₹{{ enrollment.fee }}</span>
+                    <span>📍 {{ enrollment.mode }}</span>
+                  </div>
+                </div>
+                <div class="enrollment-date">
+                  Enrolled: {{ enrollment.enrolled_at | date: 'medium' }}
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="no-results">You are not enrolled in any courses yet.</p>
+        }
+      </div>
+    }
+
+    <!-- My Requests Tab -->
+    @if (currentTab() === 'requests') {
+      <div class="tab-content">
+        <h2>My Enrollment Requests</h2>
+        @if (loading) {
+          <p class="loading">Loading requests...</p>
+        } @else if (myRequests.length > 0) {
+          <div class="requests-list">
+            @for (request of myRequests; track request.id) {
+              <div class="request-item" [class.pending]="request.status === 'pending'">
+                <div class="request-details">
+                  <h3>{{ request.subject }}</h3>
+                  <p>Teacher: {{ request.teacher_name }}</p>
+                </div>
+                <div class="request-status">
+                  <span class="status-badge" [class]="request.status">
+                    {{ request.status | uppercase }}
+                  </span>
+                </div>
+                @if (request.status === 'pending') {
+                  <button (click)="cancelRequest(request.id)" class="btn-cancel">
+                    Cancel Request
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="no-results">You have no enrollment requests.</p>
+        }
+      </div>
+    }
+  </div>
+</div>

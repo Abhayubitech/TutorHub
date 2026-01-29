@@ -1,52 +1,181 @@
-# TutorHub
+# TutorHub Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.19.
+A modern Angular 19 web application for the TutorHub tutoring platform, built with standalone components and Angular signals.
 
-## Development server
+## 🚀 Tech Stack
 
-To start a local development server, run:
+- **Angular 19** - Modern web framework
+- **TypeScript** - Type-safe language
+- **Angular Signals** - Reactive state management
+- **Standalone Components** - Modern Angular architecture
+- **Responsive Design** - Mobile-friendly UI
 
+## 📦 Prerequisites
+
+- Node.js (v16+)
+- npm (v8+)
+- Angular CLI (v19+)
+
+## 🎯 Getting Started
+
+### Installation
+
+1. Navigate to the frontend directory:
 ```bash
-ng serve
+cd tutor_hub
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+2. Install dependencies:
 ```bash
-ng generate component component-name
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
+3. Start the development server:
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+The application will be available at `http://localhost:4200`
 
-To build the project run:
+## 📁 Project Structure
 
-```bash
-ng build
+```
+tutor_hub/
+├── src/
+│ ├── index.html
+│ ├── main.ts                 # Entry point
+│ ├── styles.css              # Global styles
+│ └── app/
+│ ├── app.component.*         # Root component
+│ ├── app.config.ts           # App configuration
+│ ├── app.routes.ts           # Route definitions
+│ ├── services/
+│ │ ├── api.service.ts        # HTTP API service
+│ │ ├── auth.service.ts       # Authentication service
+│ │ ├── teacher.service.ts    # Teacher service
+│ │ └── student.service.ts    # Student service
+│ └── pages/
+│ ├── login/
+│ ├── signup/
+│ ├── home/
+│ ├── teacher/
+│ │ └── teacher-dashboard/
+│ ├── student/
+│ │ └── student-dashboard/
+│ └── admin/
+│ └── admin-dashboard/
+├── angular.json              # Angular CLI configuration
+├── package.json
+├── tsconfig.json
+└── README.md
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## 🎨 Features
 
-## Running unit tests
+### User Roles
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+#### Student
+- ✅ Browse all available courses
+- ✅ View teacher profiles
+- ✅ Search courses by subject
+- ✅ Send enrollment requests
+- ✅ Track enrollment status
+- ✅ View enrolled courses
 
-```bash
-ng test
+#### Teacher
+- ✅ Create and manage courses
+- ✅ Update teacher profile
+- ✅ View enrollment requests
+- ✅ Approve/reject students
+- ✅ See enrolled students per course
+- ✅ Manage course schedules
+
+#### Admin
+- ✅ Manage all users (view, delete)
+- ✅ Monitor platform activity
+- ✅ Oversee all courses
+
+### Authentication
+- ✅ Login/Signup with role selection
+- ✅ JWT token-based authentication
+- ✅ Protected routes
+- ✅ Auto-logout on token expiration
+
+## 🔧 Services
+
+### API Service
+Handles all HTTP requests to the backend API.
+
+### Auth Service
+Manages authentication state using Angular signals.
+
+### Student Service
+Manages student data with signals.
+
+### Teacher Service
+Manages teacher data with signals.
+
+## 📱 Pages
+
+### Public Pages
+- **Login** - User authentication
+- **Signup** - New account registration
+- **Home** - Landing page with feature overview
+
+### Protected Pages
+- **Student Dashboard** - Browse courses, manage enrollments
+- **Teacher Dashboard** - Manage courses and students
+- **Admin Dashboard** - Platform management
+
+## 🎯 Angular Signals Usage
+
+All services use Angular 19 signals for reactive state management.
+
+## 🔄 Routing
+
+```
+/login          - Login page
+/signup         - Signup page
+/home           - Home page
+/student        - Student dashboard
+/teacher        - Teacher dashboard
+/admin          - Admin dashboard
 ```
 
-## Running end-to-end tests
+## 🔐 Authentication Flow
 
-For end-to-end (e2e) testing, run:
+1. User logs in with email and password
+2. Backend validates credentials and returns JWT token
+3. Token is stored in localStorage
+4. Token is included in every request header
+5. Protected routes check authentication before access
+
+## 💻 Development Commands
+
+```bash
+# Start dev server
+npm start
+
+# Build for production
+npm build
+
+# Run tests
+npm test
+```
+
+## 🚀 Building for Production
+
+```bash
+npm run build
+```
+
+## 🤝 Contributing
+
+Feel free to submit issues and enhancement requests!
+
+## 📝 License
+
+ISC
 
 ```bash
 ng e2e
