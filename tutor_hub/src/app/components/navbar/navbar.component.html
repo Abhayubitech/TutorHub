@@ -1,0 +1,26 @@
+<nav class="navbar">
+  <div class="nav-container">
+    <h1 class="logo" (click)="goToHome()">TutorHub</h1>
+
+    <div class="nav-links" [class.open]="mobileMenuOpen()">
+      <a class="nav-link" routerLink="/about" (click)="closeMobileMenu()">About</a>
+      <a class="nav-link" routerLink="/services" (click)="closeMobileMenu()">Services</a>
+      <a class="nav-link" routerLink="/contact" (click)="closeMobileMenu()">Contact</a>
+
+      @if (!isAuthenticated) {
+        <button (click)="goToLogin()" class="btn-login">Login</button>
+        <button (click)="goToSignup()" class="btn-signup">Sign Up</button>
+      } @else {
+        <span class="user-name">Welcome, {{ user?.name }}</span>
+        <button (click)="navigateToDashboard()" class="btn-dashboard">Dashboard</button>
+        <button (click)="logout()" class="btn-logout">Logout</button>
+      }
+    </div>
+
+    <button class="hamburger" type="button" (click)="toggleMobileMenu()" aria-label="Toggle navigation menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>

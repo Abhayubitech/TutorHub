@@ -61,7 +61,25 @@ async function getUserById(req, res) {
 async function updateUser(req, res) {
   try {
     const { id } = req.params;
-    const result = await userService.updateUser(id, req.body);
+    const targetUserId = id === 'self' ? String(req.user?.id) : String(id);
+
+    if (!req.user?.id) {
+      return res.status(401).json({
+        success: false,
+        message: 'Unauthorized - Invalid token',
+      });
+    }
+
+    const isAdmin = req.user.role === 'admin';
+    const isSelf = String(req.user.id) === targetUserId;
+    if (!isAdmin && !isSelf) {
+      return res.status(403).json({
+        success: false,
+        message: 'Forbidden - You can only update your own profile',
+      });
+    }
+
+    const result = await userService.updateUser(targetUserId, req.body);
     res.json(result);
   } catch (err) {
     res.status(400).json({
@@ -74,7 +92,25 @@ async function updateUser(req, res) {
 async function deleteUser(req, res) {
   try {
     const { id } = req.params;
-    const result = await userService.deleteUser(id);
+    const targetUserId = id === 'self' ? String(req.user?.id) : String(id);
+
+    if (!req.user?.id) {
+      return res.status(401).json({
+        success: false,
+        message: 'Unauthorized - Invalid token',
+      });
+    }
+
+    const isAdmin = req.user.role === 'admin';
+    const isSelf = String(req.user.id) === targetUserId;
+    if (!isAdmin && !isSelf) {
+      return res.status(403).json({
+        success: false,
+        message: 'Forbidden - You can only delete your own profile',
+      });
+    }
+
+    const result = await userService.deleteUser(targetUserId);
     res.json(result);
   } catch (err) {
     res.status(400).json({

@@ -124,12 +124,14 @@ export class ApiService {
   }
 
   // Admin endpoints
-  getAllUsers(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/admin/users`, { headers: this.getHeaders() });
+  getAllUsers(includeDummy: boolean = false): Observable<any> {
+    const qs = includeDummy ? '?includeDummy=true' : '';
+    return this.http.get(`${this.apiUrl}/admin/users${qs}`, { headers: this.getHeaders() });
   }
 
-  getUsersByRole(role: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/admin/users?role=${role}`, { headers: this.getHeaders() });
+  getUsersByRole(role: string, includeDummy: boolean = false): Observable<any> {
+    const qs = includeDummy ? `?role=${role}&includeDummy=true` : `?role=${role}`;
+    return this.http.get(`${this.apiUrl}/admin/users${qs}`, { headers: this.getHeaders() });
   }
 
   deleteUserAdmin(userId: string): Observable<any> {
@@ -140,11 +142,18 @@ export class ApiService {
     return this.http.put(`${this.apiUrl}/admin/users/${userId}`, userData, { headers: this.getHeaders() });
   }
 
-  getRecentUsers(limit: number = 10): Observable<any> {
-    return this.http.get(`${this.apiUrl}/admin/recent-users?limit=${limit}`, { headers: this.getHeaders() });
+  getRecentUsers(limit: number = 10, includeDummy: boolean = false): Observable<any> {
+    const qs = includeDummy ? `?limit=${limit}&includeDummy=true` : `?limit=${limit}`;
+    return this.http.get(`${this.apiUrl}/admin/recent-users${qs}`, { headers: this.getHeaders() });
   }
 
-  getAllCoursesAdmin(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/admin/courses`, { headers: this.getHeaders() });
+  getAllCoursesAdmin(includeDummy: boolean = false): Observable<any> {
+    const qs = includeDummy ? '?includeDummy=true' : '';
+    return this.http.get(`${this.apiUrl}/admin/courses${qs}`, { headers: this.getHeaders() });
+  }
+
+  getAdminManageOverview(includeDummy: boolean = false): Observable<any> {
+    const qs = includeDummy ? '?includeDummy=true' : '';
+    return this.http.get(`${this.apiUrl}/admin/manage${qs}`, { headers: this.getHeaders() });
   }
 }

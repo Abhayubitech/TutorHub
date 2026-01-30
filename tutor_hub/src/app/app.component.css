@@ -1,0 +1,4 @@
+/* Hide footer on login/signup pages */
+body.hide-footer app-footer {
+  display: none;
+}

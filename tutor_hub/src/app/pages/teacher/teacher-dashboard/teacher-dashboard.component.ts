@@ -115,10 +115,6 @@ export class TeacherDashboardComponent implements OnInit {
     this.editingPhone = '';
   }
 
-  isEditingProfile(): boolean {
-    return this.isEditingProfile;
-  }
-
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/home']);

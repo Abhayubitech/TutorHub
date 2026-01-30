@@ -183,14 +183,40 @@ async function updateUser(userId, userData) {
   try {
     const { name, phone, profile_pic } = userData;
 
+    const [existingUsers] = await db.query(
+      'SELECT id, name, email, role, phone, profile_pic FROM users WHERE id = ?',
+      [userId]
+    );
+    if (existingUsers.length === 0) {
+      throw new Error('User not found');
+    }
+
+    const existing = existingUsers[0];
+
+    const nextName = name !== undefined ? name : existing.name;
+    const nextPhone = phone !== undefined ? phone : existing.phone;
+    const nextProfilePic = profile_pic !== undefined ? profile_pic : existing.profile_pic;
+
+    if (name !== undefined) validateName(nextName);
+    if (phone !== undefined) validatePhone(nextPhone);
+    if (profile_pic !== undefined && nextProfilePic && String(nextProfilePic).length > 255) {
+      throw new Error('Profile picture URL must not exceed 255 characters');
+    }
+
     await db.query(
-      "UPDATE users SET name = ?, phone = ?, profile_pic = ? WHERE id = ?",
-      [name, phone, profile_pic, userId]
+      'UPDATE users SET name = ?, phone = ?, profile_pic = ? WHERE id = ?',
+      [nextName, nextPhone, nextProfilePic, userId]
+    );
+
+    const [updatedUsers] = await db.query(
+      'SELECT id, name, email, role, phone, profile_pic, created_at FROM users WHERE id = ?',
+      [userId]
     );
 
     return {
       success: true,
-      message: "User updated successfully",
+      message: 'User updated successfully',
+      user: updatedUsers[0],
     };
   } catch (err) {
     throw new Error(err.message);

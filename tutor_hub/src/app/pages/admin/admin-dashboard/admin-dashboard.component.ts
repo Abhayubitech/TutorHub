@@ -22,7 +22,6 @@ interface User {
 })
 export class AdminDashboardComponent implements OnInit {
   userFilter: 'all' | 'student' | 'teacher' = 'all';
-  filteredUsers: User[] = [];
   isEditingProfile = false;
   editingUserId: string | null = null;
   editingName = '';
@@ -43,16 +42,20 @@ export class AdminDashboardComponent implements OnInit {
     this.adminService.loadAllUsers();
     this.adminService.loadCourses();
     this.adminService.loadRecentUsers(10);
+    this.adminService.loadManageOverview();
     this.filterUsers('all');
   }
 
   filterUsers(filter: 'all' | 'student' | 'teacher'): void {
     this.userFilter = filter;
-    if (filter === 'all') {
-      this.filteredUsers = [...this.adminService.users()];
-    } else {
-      this.filteredUsers = this.adminService.users().filter(u => u.role === filter);
+  }
+
+  get filteredUsers(): User[] {
+    const users = this.adminService.users() as User[];
+    if (this.userFilter === 'all') {
+      return users;
     }
+    return users.filter(u => u.role === this.userFilter);
   }
 
   editUser(userId: string | number): void {
@@ -151,6 +154,14 @@ export class AdminDashboardComponent implements OnInit {
 
   get allUsers() {
     return this.adminService.users();
+  }
+
+  get manageTeacherCourses() {
+    return this.adminService.manageTeacherCourses();
+  }
+
+  get manageStudentEnrollments() {
+    return this.adminService.manageStudentEnrollments();
   }
 
   get loading() {

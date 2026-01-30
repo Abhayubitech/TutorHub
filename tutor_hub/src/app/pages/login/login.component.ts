@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -11,7 +11,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit, OnDestroy {
   email = signal<string>('');
   password = signal<string>('');
   showPassword = signal<boolean>(false);
@@ -20,6 +20,14 @@ export class LoginComponent {
     private authService: AuthService,
     private router: Router
   ) {}
+
+  ngOnInit(): void {
+    document.body.classList.add('hide-footer');
+  }
+
+  ngOnDestroy(): void {
+    document.body.classList.remove('hide-footer');
+  }
 
   login(): void {
     if (this.email() && this.password()) {
