@@ -1,11 +1,12 @@
 const db = require("../config/db");
 
-async function authenticateUser (username,password) {
-    
+async function authenticateUser (email,password) {
+  
      const [result] = await db.query(
-    "SELECT * FROM users WHERE password = ? AND (email = ? OR phone = ?)",
-    [password,username,username]
+    "SELECT * FROM users WHERE email = ? AND password = ?",
+    [email,password]
   );
+  // console.log(email,password);
    return result
 };
 async function createUser (user) {
