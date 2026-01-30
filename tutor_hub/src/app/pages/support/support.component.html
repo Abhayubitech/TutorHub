@@ -1,0 +1,51 @@
+<section class="page">
+  <div class="container">
+    <header class="hero">
+      <h2>Support Center</h2>
+      <p>We're here to help you with any questions or issues</p>
+    </header>
+
+    <div class="support-grid">
+      <div class="support-card" *ngFor="let category of supportCategories">
+        <div class="card-icon">
+          <i [class]="category.icon"></i>
+        </div>
+        <h3>{{ category.title }}</h3>
+        <p>{{ category.description }}</p>
+        <div class="card-info">
+          <span class="response-time">
+            <i class="fas fa-clock"></i>
+            {{ category.responseTime }}
+          </span>
+          <span class="availability">
+            <i class="fas fa-check-circle"></i>
+            {{ category.availability }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-section">
+      <h3>Other Ways to Reach Us</h3>
+      <div class="contact-grid">
+        <div class="contact-item">
+          <i class="fas fa-envelope"></i>
+          <div>
+            <h4>Email Support</h4>
+            <a href="mailto:support@tutorhub.com">{{ contactInfo.email }}</a>
+            <small>Response within 24 hours</small>
+          </div>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-phone"></i>
+          <div>
+            <h4>Phone Support</h4>
+            <a href="tel:+919630079633">{{ contactInfo.phone }}</a>
+            <small>{{ contactInfo.hours }}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

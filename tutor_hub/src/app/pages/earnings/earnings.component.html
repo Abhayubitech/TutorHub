@@ -1,0 +1,127 @@
+<section class="page">
+  <div class="container">
+    <header class="hero">
+      <h2>Earnings & Payments</h2>
+      <p>Understand how you can earn and receive payments on TutorHub</p>
+    </header>
+
+    <div class="earnings-overview">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-rupee-sign"></i>
+          </div>
+          <div class="stat-content">
+            <h3>Avg. Hourly Rate</h3>
+            <p class="stat-value">₹{{ earningsData.averageHourlyRate }}</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-crown"></i>
+          </div>
+          <div class="stat-content">
+            <h3>Top Earners</h3>
+            <p class="stat-value">₹{{ earningsData.topEarners }}/hour</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <div class="stat-content">
+            <h3>Payment Schedule</h3>
+            <p class="stat-value">{{ earningsData.paymentSchedule }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="benefits-section">
+      <h3>Why Teach with TutorHub?</h3>
+      <div class="benefits-grid">
+        <div class="benefit-card" *ngFor="let benefit of benefits">
+          <div class="benefit-icon">
+            <i [class]="benefit.icon"></i>
+          </div>
+          <h4>{{ benefit.title }}</h4>
+          <p>{{ benefit.description }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="payment-info-section">
+      <h3>Payment Information</h3>
+      <div class="payment-grid">
+        <div class="payment-card" *ngFor="let info of paymentInfo">
+          <div class="payment-icon">
+            <i [class]="info.icon"></i>
+          </div>
+          <h4>{{ info.title }}</h4>
+          <p>{{ info.content }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="calculator-section">
+      <h3>Earnings Calculator</h3>
+      <div class="calculator-card">
+        <div class="calculator-inputs">
+          <div class="input-group">
+            <label>Hourly Rate (₹)</label>
+            <input type="number" [(ngModel)]="hourlyRate" min="100" max="5000" step="50">
+          </div>
+          <div class="input-group">
+            <label>Hours per Week</label>
+            <input type="number" [(ngModel)]="hoursPerWeek" min="1" max="40" step="1">
+          </div>
+          <div class="input-group">
+            <label>Weeks per Month</label>
+            <input type="number" [(ngModel)]="weeksPerMonth" min="1" max="5" step="1">
+          </div>
+        </div>
+        <div class="calculator-results">
+          <div class="result-item">
+            <span>Weekly Earnings:</span>
+            <span>₹{{ weeklyEarnings }}</span>
+          </div>
+          <div class="result-item">
+            <span>Monthly Earnings:</span>
+            <span>₹{{ monthlyEarnings }}</span>
+          </div>
+          <div class="result-item">
+            <span>After Commission (80%):</span>
+            <span>₹{{ afterCommission }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tips-section">
+      <h3>Tips to Maximize Your Earnings</h3>
+      <div class="tips-grid">
+        <div class="tip-item">
+          <i class="fas fa-star"></i>
+          <div>
+            <h4>Get Excellent Reviews</h4>
+            <p>Maintain high ratings to attract more students and justify higher rates.</p>
+          </div>
+        </div>
+        <div class="tip-item">
+          <i class="fas fa-certificate"></i>
+          <div>
+            <h4>Specialize in High-Demand Subjects</h4>
+            <p>Focus on subjects like Math, Science, and competitive exams.</p>
+          </div>
+        </div>
+        <div class="tip-item">
+          <i class="fas fa-users"></i>
+          <div>
+            <h4>Build Your Student Base</h4>
+            <p>Start with competitive rates and gradually increase as you gain experience.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

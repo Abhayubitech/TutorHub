@@ -1,0 +1,59 @@
+<section class="page">
+  <div class="container">
+    <header class="hero">
+      <h2>Teacher Resources</h2>
+      <p>Everything you need to become a more effective educator</p>
+    </header>
+
+    <div class="resources-grid">
+      <div class="resource-card" *ngFor="let resource of resources">
+        <div class="card-header">
+          <div class="card-icon">
+            <i [class]="resource.icon"></i>
+          </div>
+          <span class="category">{{ resource.category }}</span>
+        </div>
+        <h3>{{ resource.title }}</h3>
+        <p>{{ resource.description }}</p>
+        <div class="resource-stats">
+          <span class="stat-item">
+            <i class="fas fa-download"></i>
+            {{ resource.downloads }} downloads
+          </span>
+          <span class="stat-item">
+            <i class="fas fa-star"></i>
+            {{ resource.rating }} rating
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="featured-section">
+      <h3>Quick Tips</h3>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-icon">
+            <i class="fas fa-lightbulb"></i>
+          </div>
+          <h4>Start with Clear Objectives</h4>
+          <p>Begin each lesson with specific, measurable learning goals to guide your teaching.</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <h4>Engage Students Actively</h4>
+          <p>Use interactive methods to keep students involved and motivated throughout the session.</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h4>Track Progress Regularly</h4>
+          <p>Monitor student improvement and adjust your teaching methods based on results.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

@@ -1,0 +1,141 @@
+.cookies-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+.cookies-header {
+  text-align: center;
+  margin-bottom: 40px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 20px;
+}
+
+.cookies-header h1 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.last-updated {
+  color: #666;
+  font-style: italic;
+  margin: 0;
+}
+
+.cookies-content {
+  margin-bottom: 40px;
+}
+
+.cookies-content section {
+  margin-bottom: 30px;
+  background: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.cookies-content h2 {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  border-left: 4px solid #f39c12;
+  padding-left: 15px;
+}
+
+.cookies-content h3 {
+  color: #34495e;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  margin-top: 20px;
+}
+
+.cookies-content p {
+  margin-bottom: 15px;
+  color: #555;
+}
+
+.cookies-content ul {
+  margin: 15px 0;
+  padding-left: 20px;
+}
+
+.cookies-content li {
+  margin-bottom: 8px;
+  color: #666;
+}
+
+.cookies-content strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.cookies-content a {
+  color: #f39c12;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.cookies-content a:hover {
+  color: #e67e22;
+  text-decoration: underline;
+}
+
+.back-to-home {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 30px;
+  background: #f39c12;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn:hover {
+  background: #e67e22;
+  text-decoration: none;
+  color: white;
+}
+
+.btn-primary {
+  background: #f39c12;
+}
+
+.btn-primary:hover {
+  background: #e67e22;
+}
+
+@media (max-width: 768px) {
+  .cookies-container {
+    padding: 20px 15px;
+  }
+  
+  .cookies-header h1 {
+    font-size: 2rem;
+  }
+  
+  .cookies-content section {
+    padding: 20px;
+  }
+  
+  .cookies-content h2 {
+    font-size: 1.3rem;
+  }
+  
+  .cookies-content h3 {
+    font-size: 1.1rem;
+  }
+}

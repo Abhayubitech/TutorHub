@@ -1,0 +1,208 @@
+.page {
+  padding: 2rem 0;
+  min-height: 100vh;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.hero h2 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+.guidelines-intro {
+  margin-bottom: 3rem;
+}
+
+.intro-card {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+}
+
+.intro-card i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.intro-card h3 {
+  margin-bottom: 1rem;
+}
+
+.guidelines-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.guideline-card {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border-left: 4px solid #007bff;
+}
+
+.card-header {
+  margin-bottom: 1rem;
+}
+
+.card-header h3 {
+  color: #2c3e50;
+  margin: 0;
+}
+
+.guideline-description {
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rules-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  color: #495057;
+}
+
+.rules-list i {
+  color: #28a745;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.code-of-conduct {
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 3rem;
+}
+
+.code-of-conduct h3 {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.conduct-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.conduct-item {
+  display: flex;
+  gap: 1rem;
+}
+
+.conduct-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.conduct-icon.positive {
+  background: #28a745;
+}
+
+.conduct-icon.negative {
+  background: #dc3545;
+}
+
+.conduct-icon i {
+  color: white;
+  font-size: 1.2rem;
+}
+
+.conduct-content h4 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.conduct-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.conduct-content li {
+  padding: 0.25rem 0;
+  color: #495057;
+  position: relative;
+  padding-left: 1rem;
+}
+
+.conduct-content li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #6c757d;
+}
+
+.consequences {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.consequences h3 {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.consequences-content p {
+  color: #6c757d;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.consequences-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.consequence-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.consequence-item i {
+  color: #ffc107;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.consequence-item span {
+  color: #495057;
+}

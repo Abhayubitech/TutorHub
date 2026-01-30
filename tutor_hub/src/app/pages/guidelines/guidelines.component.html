@@ -1,0 +1,88 @@
+<section class="page">
+  <div class="container">
+    <header class="hero">
+      <h2>Teacher Guidelines</h2>
+      <p>Professional standards and best practices for TutorHub educators</p>
+    </header>
+
+    <div class="guidelines-intro">
+      <div class="intro-card">
+        <i class="fas fa-book"></i>
+        <h3>Welcome to TutorHub</h3>
+        <p>As a TutorHub educator, you're part of a community dedicated to providing quality education. These guidelines help maintain our high standards and ensure a positive learning experience for all students.</p>
+      </div>
+    </div>
+
+    <div class="guidelines-grid">
+      <div class="guideline-card" *ngFor="let guideline of guidelines">
+        <div class="card-header">
+          <h3>{{ guideline.title }}</h3>
+        </div>
+        <p class="guideline-description">{{ guideline.description }}</p>
+        <ul class="rules-list">
+          <li *ngFor="let rule of guideline.rules">
+            <i class="fas fa-check-circle"></i>
+            <span>{{ rule }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-of-conduct">
+      <h3>Code of Conduct</h3>
+      <div class="conduct-grid">
+        <div class="conduct-item">
+          <div class="conduct-icon positive">
+            <i class="fas fa-thumbs-up"></i>
+          </div>
+          <div class="conduct-content">
+            <h4>Do's</h4>
+            <ul>
+              <li>Be prepared and organized</li>
+              <li>Provide regular feedback</li>
+              <li>Communicate clearly and promptly</li>
+              <li>Respect cultural differences</li>
+              <li>Continuously improve your teaching skills</li>
+            </ul>
+          </div>
+        </div>
+        <div class="conduct-item">
+          <div class="conduct-icon negative">
+            <i class="fas fa-thumbs-down"></i>
+          </div>
+          <div class="conduct-content">
+            <h4>Don'ts</h4>
+            <ul>
+              <li>Miss scheduled sessions without notice</li>
+              <li>Share personal contact information</li>
+              <li>Use inappropriate language or content</li>
+              <li>Discriminate against any student</li>
+              <li>Accept payments outside the platform</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="consequences">
+      <h3>Guideline Violations</h3>
+      <div class="consequences-content">
+        <p>Failure to follow these guidelines may result in:</p>
+        <div class="consequences-list">
+          <div class="consequence-item">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Warning and required training</span>
+          </div>
+          <div class="consequence-item">
+            <i class="fas fa-pause"></i>
+            <span>Temporary suspension from the platform</span>
+          </div>
+          <div class="consequence-item">
+            <i class="fas fa-ban"></i>
+            <span>Permanent removal from TutorHub</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

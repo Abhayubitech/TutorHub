@@ -1,0 +1,263 @@
+.page {
+  padding: 2rem 0;
+  min-height: 100vh;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.hero h2 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.resource-card {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.resource-card:hover {
+  transform: translateY(-5px);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.card-icon {
+  width: 50px;
+  height: 50px;
+  background: #007bff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-icon i {
+  color: white;
+  font-size: 1.2rem;
+}
+
+.category {
+  background: #e9ecef;
+  color: #6c757d;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+}
+
+.resource-card h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.resource-card p {
+  color: #6c757d;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.btn-resource {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-resource:hover {
+  background: #0056b3;
+}
+
+.featured-section {
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 3rem;
+}
+
+.featured-section h3 {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.featured-item {
+  display: flex;
+  gap: 1rem;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.featured-icon {
+  width: 50px;
+  height: 50px;
+  background: #28a745;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.featured-icon i {
+  color: white;
+  font-size: 1.2rem;
+}
+
+.featured-content h4 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.featured-content p {
+  color: #6c757d;
+  margin-bottom: 1rem;
+}
+
+.link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.tips-section h3 {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.tips-list {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.tip-item {
+  display: flex;
+  gap: 1rem;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.tip-item i {
+  color: #ffc107;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.tip-item h4 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.tip-item p {
+  color: #6c757d;
+  margin: 0;
+}
+
+/* Resource Stats */
+.resource-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.stat-item i {
+  color: #007bff;
+}
+
+/* Tips Grid */
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.tip-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.tip-card:hover {
+  transform: translateY(-5px);
+}
+
+.tip-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #ffc107, #ff9800);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.tip-card h4 {
+  color: #2c3e50;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.tip-card p {
+  color: #6c757d;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
