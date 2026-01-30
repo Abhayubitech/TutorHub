@@ -1,12 +1,13 @@
-/* Navbar */
+/* Navbar - Modern Dark Theme */
 .navbar {
-  background: white;
-  box-shadow: var(--shadow-md);
-  padding: 16px 0;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  padding: 12px 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .nav-container {
@@ -20,40 +21,72 @@
 }
 
 .logo {
-  color: var(--primary-color);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-size: 28px;
   margin: 0;
-  font-weight: 800;
-  letter-spacing: -0.5px;
+  font-weight: 900;
+  letter-spacing: -1px;
   cursor: pointer;
-  transition: color 0.3s;
+  transition: all 0.3s ease;
   flex-shrink: 0;
+  text-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-icon {
+  font-size: 24px;
+  filter: none;
+  -webkit-text-fill-color: initial;
+  background: none;
 }
 
 .logo:hover {
-  color: var(--primary-dark);
+  background: linear-gradient(135deg, #764ba2 0%, #f093fb 50%, #667eea 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transform: scale(1.05);
 }
 
 .nav-links {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.nav-links-center {
+  display: flex;
   gap: 14px;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   flex: 1;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 14px;
+  align-items: center;
 }
 
 .nav-link {
   background: none;
   border: none;
-  color: var(--dark-text);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   padding: 8px 10px;
   transition: all 0.3s;
   position: relative;
   letter-spacing: 0.3px;
   text-decoration: none;
+  border-radius: 6px;
 }
 
 .nav-link::after {
@@ -63,7 +96,7 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: var(--primary-color);
+  background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
   transition: width 0.3s;
 }
 
@@ -73,12 +106,13 @@
 }
 
 .nav-link:hover {
-  color: var(--primary-color);
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .user-name {
-  color: var(--dark-text);
-  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
   margin-right: 10px;
   font-size: 14px;
   max-width: 220px;
@@ -87,7 +121,7 @@
   white-space: nowrap;
 }
 
-/* Buttons */
+/* Buttons - Modern Dark Theme */
 button {
   padding: 10px 18px;
   border: none;
@@ -105,33 +139,36 @@ button:active {
 
 .btn-login {
   background: transparent;
-  color: var(--primary-color);
-  border: 2px solid var(--primary-color);
+  color: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .btn-login:hover {
-  background: var(--primary-color);
+  background: rgba(255, 255, 255, 0.1);
   color: white;
-  box-shadow: var(--shadow-md);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
 }
 
 .btn-signup,
 .btn-dashboard {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .btn-signup:hover,
 .btn-dashboard:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
 
 .btn-logout {
-  background: var(--danger-color);
+  background: linear-gradient(135deg, #fc5c65 0%, #eb3b5a 100%);
   color: white;
   border: none;
+  box-shadow: 0 4px 12px rgba(252, 92, 101, 0.3);
 }
 
 .btn-logout:hover {
@@ -185,6 +222,23 @@ button:active {
 
   .nav-links.open {
     display: flex;
+  }
+
+  .nav-links-center {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .nav-buttons {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
   }
 
   .nav-link {

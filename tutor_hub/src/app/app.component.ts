@@ -20,4 +20,9 @@ export class AppComponent {
     const currentUrl = this.router.url;
     return !currentUrl.includes('/login') && !currentUrl.includes('/signup');
   }
+  
+  shouldShowNavbar(): boolean {
+    const currentUrl = this.router.url;
+    return !currentUrl.includes('/login') && !currentUrl.includes('/signup');
+  }
 }

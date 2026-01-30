@@ -1,12 +1,65 @@
 .login-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   padding: 20px;
   position: relative;
   overflow: hidden;
+}
+
+.logo-header {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  z-index: 20;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+  padding: 12px 24px;
+  border-radius: 50px;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+  backdrop-filter: blur(20px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logo-header:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.8));
+}
+
+.logo {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 28px;
+  margin: 0;
+  font-weight: 900;
+  letter-spacing: -1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  text-shadow: 0 2px 4px rgba(102, 126, 234, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-icon {
+  font-size: 24px;
+  filter: none;
+  -webkit-text-fill-color: initial;
+  background: none;
+}
+
+.logo:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #f093fb 50%, #667eea 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transform: scale(1.05);
 }
 
 .login-container::before {
@@ -245,6 +298,16 @@ small {
 @media (max-width: 768px) {
   .login-container {
     padding: 15px;
+  }
+
+  .logo-header {
+    top: 12px;
+    left: 16px;
+    padding: 10px 20px;
+  }
+
+  .logo {
+    font-size: 24px;
   }
 
   .login-card {
