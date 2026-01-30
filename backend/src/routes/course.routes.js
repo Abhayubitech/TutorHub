@@ -1,22 +1,15 @@
-const db = require("../config/db");
+const express = require("express");
+const courseController = require("../controllers/course.controller");
+const auth = require("../middleware/auth.middleware");
 
-async function createCourse(courseData) {
-  const { teacher_id, subject, description, fee, mode, start_date, end_date } = courseData;
-  
-  const [result] = await db.query(
-    "INSERT INTO courses (teacher_id, subject, description, fee, mode, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?)",
-    [teacher_id, subject, description, fee, mode, start_date, end_date]
-  );
-  return result;
-}
+const router = express.Router();
 
-async function getAllCourses() {
-  const [rows] = await db.query(`
-    SELECT courses.*, users.name as teacher_name 
-    FROM courses 
-    JOIN users ON courses.teacher_id = users.id
-  `);
-  return rows;
-}
+router.post("/", auth, courseController.createCourse); 
 
-module.exports = { createCourse, getAllCourses };
+router.get("/", courseController.getAllCourses);
+
+
+router.post("/schedule", auth, courseController.addSchedule);
+
+
+module.exports = router;

@@ -11,7 +11,6 @@ async function createCourse(courseData) {
 }
 
 async function getAllCourses() {
-    
   const [rows] = await db.query(`
     SELECT courses.*, users.name as teacher_name 
     FROM courses 
@@ -20,4 +19,13 @@ async function getAllCourses() {
   return rows;
 }
 
-module.exports = { createCourse, getAllCourses };
+async function addSchedule(scheduleData) {
+    const { course_id, day, start_time, end_time } = scheduleData;
+    const [result] = await db.query(
+        "INSERT INTO course_schedules (course_id, day, start_time, end_time) VALUES (?, ?, ?, ?)",
+        [course_id, day, start_time, end_time]
+    );
+    return result;
+}
+
+module.exports = { createCourse, getAllCourses, addSchedule };
