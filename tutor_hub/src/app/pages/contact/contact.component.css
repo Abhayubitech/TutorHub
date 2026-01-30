@@ -25,7 +25,7 @@
 
 .hero p {
   margin: 0;
-  color: var(--light-text);
+  color: var(--text-color);
   line-height: 1.7;
 }
 
@@ -43,7 +43,7 @@
 }
 
 .info-card {
-  background: white;
+  background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 14px;
   padding: 16px;
@@ -57,46 +57,50 @@
 }
 
 .value {
-  color: var(--light-text);
+  color: var(--text-color);
   line-height: 1.6;
 }
 
 .form {
-  background: white;
-  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  padding: 40px;
   border-radius: 14px;
-  padding: 18px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
   display: grid;
   gap: 14px;
 }
 
 .form-group {
-  display: grid;
-  gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-label {
-  font-weight: 700;
+.form-group label {
+  font-weight: 600;
   color: var(--dark-text);
   font-size: 14px;
+  margin-bottom: 8px;
 }
 
-input,
-textarea {
-  padding: 12px 14px;
+.form-group input,
+.form-group textarea {
+  padding: 14px 16px;
   border: 1.5px solid var(--border-color);
   border-radius: 10px;
   font-size: 14px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--input-bg);
+  color: var(--text-color);
   font-family: inherit;
-  background: #f8f9fa;
 }
 
-input:focus,
-textarea:focus {
+.form-group input:focus,
+.form-group textarea:focus {
   outline: none;
   border-color: var(--primary-color);
-  background: white;
+  background: var(--card-bg);
   box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
 }
 
@@ -106,18 +110,25 @@ textarea:focus {
 }
 
 .btn-submit {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
   color: white;
+  padding: 14px 28px;
   border: none;
-  border-radius: 10px;
-  padding: 12px 18px;
-  font-weight: 800;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.5px;
 }
 
 .btn-submit:hover {
+  transform: translateY(-3px);
   box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
+}
+
+.btn-submit:active {
+  transform: translateY(-1px);
 }
 
 @media (max-width: 900px) {

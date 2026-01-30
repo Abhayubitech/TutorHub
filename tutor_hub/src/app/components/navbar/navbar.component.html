@@ -12,6 +12,8 @@
       </div>
 
       <div class="nav-buttons">
+        <app-theme-toggle class="theme-toggle-desktop"></app-theme-toggle>
+        
         @if (!isAuthenticated) {
           <button (click)="goToLogin()" class="btn-login">Login</button>
           <button (click)="goToSignup()" class="btn-signup">Sign Up</button>
@@ -23,10 +25,13 @@
       </div>
     </div>
 
-    <button class="hamburger" type="button" (click)="toggleMobileMenu()" aria-label="Toggle navigation menu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+    <div class="nav-controls">
+      <app-theme-toggle class="theme-toggle-nav"></app-theme-toggle>
+      <button class="hamburger" type="button" (click)="toggleMobileMenu()" aria-label="Toggle navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
   </div>
 </nav>

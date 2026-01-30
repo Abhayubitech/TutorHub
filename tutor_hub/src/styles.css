@@ -12,12 +12,13 @@ html {
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.9);
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: var(--text-color);
+  background: var(--body-bg);
   min-height: 100vh;
+  transition: var(--transition-smooth);
 }
 
-/* Color Variables */
+/* Color Variables - Light Theme (Default) */
 :root {
   --primary-color: #667eea;
   --primary-dark: #764ba2;
@@ -33,6 +34,32 @@ body {
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --body-bg: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+  --text-color: #333;
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+}
+
+/* Dark Theme Variables */
+[data-theme="dark"] {
+  --primary-color: #667eea;
+  --primary-dark: #764ba2;
+  --secondary-color: #f093fb;
+  --accent-color: #4facfe;
+  --success-color: #26de81;
+  --danger-color: #fc5c65;
+  --warning-color: #fed330;
+  --light-bg: #1a1a2e;
+  --dark-text: #e0e6ed;
+  --border-color: #34495e;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --body-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  --text-color: rgba(255, 255, 255, 0.9);
+  --card-bg: #2c3e50;
+  --input-bg: #34495e;
 }
 
 /* Typography */
@@ -52,7 +79,7 @@ h6 { font-size: 1rem; }
 
 p {
   margin-bottom: 1rem;
-  color: #555;
+  color: var(--text-color);
 }
 
 /* Button Base Styles */
@@ -117,14 +144,15 @@ input, textarea, select {
   padding: 12px 16px;
   font-size: 14px;
   transition: var(--transition-smooth);
-  background: white;
+  background: var(--input-bg);
+  color: var(--text-color);
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 0 0 1px rgba(102, 126, 234, 0.3);
-  background: #fff;
+  background: var(--input-bg);
 }
 
 textarea {
@@ -134,11 +162,13 @@ textarea {
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
+  appearance: none;
   margin: 0;
 }
 
 input[type="number"] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 /* Link Styles */

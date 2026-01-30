@@ -9,13 +9,13 @@
 }
 
 .hero h2 {
-  color: #2c3e50;
+  color: var(--dark-text);
   font-size: 2.5rem;
   margin-bottom: 1rem;
 }
 
 .hero p {
-  color: #6c757d;
+  color: var(--text-color);
   font-size: 1.1rem;
 }
 
@@ -27,10 +27,10 @@
 }
 
 .resource-card {
-  background: white;
+  background: var(--card-bg);
   border-radius: 8px;
   padding: 2rem;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-md);
   transition: transform 0.3s ease;
 }
 
@@ -48,7 +48,7 @@
 .card-icon {
   width: 50px;
   height: 50px;
-  background: #007bff;
+  background: var(--primary-color);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -61,26 +61,26 @@
 }
 
 .category {
-  background: #e9ecef;
-  color: #6c757d;
+  background: var(--light-bg);
+  color: var(--text-color);
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
   font-size: 0.875rem;
 }
 
 .resource-card h3 {
-  color: #2c3e50;
+  color: var(--dark-text);
   margin-bottom: 1rem;
 }
 
 .resource-card p {
-  color: #6c757d;
+  color: var(--text-color);
   line-height: 1.6;
   margin-bottom: 1.5rem;
 }
 
 .btn-resource {
-  background: #007bff;
+  background: var(--primary-color);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -90,18 +90,18 @@
 }
 
 .btn-resource:hover {
-  background: #0056b3;
+  background: var(--primary-dark);
 }
 
 .featured-section {
-  background: #f8f9fa;
+  background: var(--light-bg);
   padding: 2rem;
   border-radius: 8px;
   margin-bottom: 3rem;
 }
 
 .featured-section h3 {
-  color: #2c3e50;
+  color: var(--dark-text);
   text-align: center;
   margin-bottom: 2rem;
 }
@@ -115,10 +115,10 @@
 .featured-item {
   display: flex;
   gap: 1rem;
-  background: white;
+  background: var(--card-bg);
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .featured-icon {
@@ -138,17 +138,17 @@
 }
 
 .featured-content h4 {
-  color: #2c3e50;
+  color: var(--dark-text);
   margin-bottom: 0.5rem;
 }
 
 .featured-content p {
-  color: #6c757d;
+  color: var(--text-color);
   margin-bottom: 1rem;
 }
 
 .link {
-  color: #007bff;
+  color: var(--primary-color);
   text-decoration: none;
   font-weight: 500;
 }
@@ -158,7 +158,7 @@
 }
 
 .tips-section h3 {
-  color: #2c3e50;
+  color: var(--dark-text);
   text-align: center;
   margin-bottom: 2rem;
 }
@@ -171,10 +171,10 @@
 .tip-item {
   display: flex;
   gap: 1rem;
-  background: white;
+  background: var(--card-bg);
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .tip-item i {
@@ -184,12 +184,12 @@
 }
 
 .tip-item h4 {
-  color: #2c3e50;
+  color: var(--dark-text);
   margin-bottom: 0.5rem;
 }
 
 .tip-item p {
-  color: #6c757d;
+  color: var(--text-color);
   margin: 0;
 }
 
@@ -200,7 +200,7 @@
   align-items: center;
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid var(--border-color);
 }
 
 .stat-item {
@@ -208,11 +208,11 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.85rem;
-  color: #6c757d;
+  color: var(--text-color);
 }
 
 .stat-item i {
-  color: #007bff;
+  color: var(--primary-color);
 }
 
 /* Tips Grid */
@@ -224,10 +224,10 @@
 }
 
 .tip-card {
-  background: white;
+  background: var(--card-bg);
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-lg);
   text-align: center;
   transition: transform 0.3s ease;
 }
@@ -250,14 +250,14 @@
 }
 
 .tip-card h4 {
-  color: #2c3e50;
+  color: var(--dark-text);
   font-size: 1.2rem;
   margin-bottom: 1rem;
   font-weight: 600;
 }
 
 .tip-card p {
-  color: #6c757d;
+  color: var(--text-color);
   font-size: 0.95rem;
   line-height: 1.6;
 }

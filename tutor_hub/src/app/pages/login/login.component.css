@@ -4,7 +4,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: var(--body-bg);
   padding: 20px;
   position: relative;
   overflow: hidden;
@@ -15,25 +15,26 @@
   top: 16px;
   left: 20px;
   z-index: 20;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+  background: var(--card-bg);
   padding: 12px 24px;
   border-radius: 50px;
-  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+  box-shadow: var(--shadow-md);
   backdrop-filter: blur(20px);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--border-color);
 }
 
 .logo-header:hover {
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.8));
+  box-shadow: var(--shadow-lg);
+  background: var(--card-bg);
 }
 
 .logo {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary-color);
   font-size: 28px;
   margin: 0;
   font-weight: 900;
@@ -41,7 +42,6 @@
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
-  text-shadow: 0 2px 4px rgba(102, 126, 234, 0.1);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -55,10 +55,7 @@
 }
 
 .logo:hover {
-  background: linear-gradient(135deg, #764ba2 0%, #f093fb 50%, #667eea 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary-dark);
   transform: scale(1.05);
 }
 
@@ -80,15 +77,16 @@
 }
 
 .login-card {
-  background: white;
+  background: var(--card-bg);
   padding: 50px 45px;
   border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-lg);
   width: 100%;
   max-width: 420px;
   position: relative;
   z-index: 10;
   animation: slideInUp 0.5s ease-out;
+  border: 1px solid var(--border-color);
 }
 
 @keyframes slideInUp {
@@ -113,7 +111,7 @@ h1 {
 
 h2 {
   text-align: center;
-  color: #2c3e50;
+  color: var(--dark-text);
   margin-bottom: 35px;
   font-size: 22px;
   font-weight: 700;
@@ -122,15 +120,15 @@ h2 {
 .demo-select {
   margin-bottom: 25px;
   padding: 15px;
-  background: #f8f9fa;
+  background: var(--input-bg);
   border-radius: 10px;
-  border: 1px solid #e0e6ed;
+  border: 1px solid var(--border-color);
 }
 
 .demo-select label {
   margin: 0;
   font-size: 13px;
-  color: #666;
+  color: var(--text-color);
   font-weight: 600;
   margin-bottom: 8px;
   display: block;
@@ -139,11 +137,11 @@ h2 {
 .demo-select select {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 14px;
-  color: #333;
-  background: white;
+  color: var(--text-color);
+  background: var(--input-bg);
   cursor: pointer;
   transition: all 0.3s;
 }
@@ -161,7 +159,7 @@ h2 {
 label {
   display: block;
   margin-bottom: 10px;
-  color: #2c3e50;
+  color: var(--dark-text);
   font-weight: 600;
   font-size: 14px;
   letter-spacing: 0.3px;
@@ -170,35 +168,37 @@ label {
 input {
   width: 100%;
   padding: 13px 16px;
-  border: 1.5px solid #e0e6ed;
+  border: 1.5px solid var(--border-color);
   border-radius: 10px;
   font-size: 14px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: #f8f9fa;
-  color: #333;
+  background: var(--input-bg);
+  color: var(--text-color);
 }
 
 input::placeholder {
-  color: #999;
+  color: var(--text-color);
+  opacity: 0.6;
 }
 
 input:hover {
-  border-color: #667eea;
-  background: white;
+  border-color: var(--primary-color);
+  background: var(--card-bg);
 }
 
 input:focus {
   outline: none;
-  border-color: #667eea;
-  background: white;
+  border-color: var(--primary-color);
+  background: var(--card-bg);
   box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
 }
 
 small {
   display: block;
   margin-top: 6px;
-  color: #999;
+  color: var(--text-color);
   font-size: 12px;
+  opacity: 0.7;
 }
 
 .password-input {
@@ -217,7 +217,7 @@ small {
   right: 14px;
   background: none;
   border: none;
-  color: #667eea;
+  color: var(--primary-color);
   cursor: pointer;
   font-size: 13px;
   padding: 8px;
@@ -226,7 +226,7 @@ small {
 }
 
 .toggle-btn:hover {
-  color: #764ba2;
+  color: var(--primary-dark);
 }
 
 .login-btn {
@@ -276,12 +276,13 @@ small {
 .signup-link {
   text-align: center;
   margin-top: 25px;
-  color: #666;
+  color: var(--text-color);
   font-size: 14px;
+  opacity: 0.8;
 }
 
 .signup-link a {
-  color: #667eea;
+  color: var(--primary-color);
   cursor: pointer;
   font-weight: 700;
   text-decoration: none;
@@ -290,7 +291,7 @@ small {
 }
 
 .signup-link a:hover {
-  color: #764ba2;
+  color: var(--primary-dark);
   text-decoration: underline;
 }
 
@@ -402,4 +403,9 @@ small {
     font-size: 12px;
     margin-top: 16px;
   }
+}
+
+/* Theme toggle styling for login page */
+.theme-toggle-login {
+  transform: scale(0.9);
 }

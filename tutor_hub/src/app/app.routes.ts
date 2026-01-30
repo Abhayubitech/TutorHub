@@ -1,4 +1,8 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './guards/auth.guard';
+import { AdminGuard } from './guards/admin.guard';
+import { TeacherGuard } from './guards/teacher.guard';
+import { StudentGuard } from './guards/student.guard';
 
 export const routes: Routes = [
   {
@@ -52,15 +56,18 @@ export const routes: Routes = [
   },
   {
     path: 'teacher',
-    loadComponent: () => import('./pages/teacher/teacher-dashboard/teacher-dashboard.component').then(m => m.TeacherDashboardComponent)
+    loadComponent: () => import('./pages/teacher/teacher-dashboard/teacher-dashboard.component').then(m => m.TeacherDashboardComponent),
+    canActivate: [AuthGuard, TeacherGuard]
   },
   {
     path: 'student',
-    loadComponent: () => import('./pages/student/student-dashboard/student-dashboard.component').then(m => m.StudentDashboardComponent)
+    loadComponent: () => import('./pages/student/student-dashboard/student-dashboard.component').then(m => m.StudentDashboardComponent),
+    canActivate: [AuthGuard, StudentGuard]
   },
   {
     path: 'admin',
-    loadComponent: () => import('./pages/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent)
+    loadComponent: () => import('./pages/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
+    canActivate: [AuthGuard, AdminGuard]
   },
   {
     path: 'privacy',
