@@ -47,8 +47,8 @@ export class LoginComponent {
           this.toastr.success('Welcome back to TutorHub!', 'Login Successful');
           
           // Token Save Logic
-          localStorage.setItem('token', res[0]);
-          localStorage.setItem('user', JSON.stringify(res[0].name));
+          localStorage.setItem('token', JSON.stringify(res[0].id));
+          localStorage.setItem('user', JSON.stringify(res));
 
           this.loginForm.reset();
           setTimeout(() => {

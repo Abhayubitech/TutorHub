@@ -4,20 +4,27 @@ import { CourseService } from '../../services/course.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MyRequestsComponent } from './components/my-requests/my-requests.component'; // Path check karein
 
 @Component({
   selector: 'app-student-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MyRequestsComponent],
   templateUrl: './student-dashboard.component.html',
-  styles: []
+  styles: [`:host { display: block; }`]
 })
 export class StudentDashboardComponent implements OnInit {
   courses: any[] = [];
+  myRequests: any[] = [];
   loading: boolean = true;
   userParams: any = {};
+  
   activeTab: string = 'explore';
   searchTerm: string = '';
+  isDarkMode: boolean = false;
+  
+  // Is Set se hum track karenge ki user ne kis kis course par click kiya hai
+  requestedCourseIds: Set<number> = new Set(); 
 
   private courseService = inject(CourseService);
   private toastr = inject(ToastrService);
@@ -26,8 +33,35 @@ export class StudentDashboardComponent implements OnInit {
   ngOnInit() {
     const userStr = localStorage.getItem('user');
     if (userStr) this.userParams = JSON.parse(userStr);
+    
+    // Check Theme
+    if (localStorage.getItem('theme') === 'dark') {
+      this.isDarkMode = true;
+    }
+
+    // Load Data
     this.loadCourses();
+    this.loadMyRequests(); // Pehle se bheji hui requests load karo taaki unke buttons disabled rahein
   }
+
+  toggleTheme() {
+    this.isDarkMode = !this.isDarkMode;
+    localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
+  }
+
+  switchTab(tab: string) {
+    this.activeTab = tab;
+    if (tab === 'requested') {
+      this.loadMyRequests();
+    }
+  }
+
+  logout() {
+    localStorage.clear();
+    this.router.navigate(['/login']);
+  }
+
+  // --- API CALLS ---
 
   loadCourses() {
     this.loading = true;
@@ -36,60 +70,61 @@ export class StudentDashboardComponent implements OnInit {
         this.courses = res;
         this.loading = false;
       },
-      error: (err) => {
-        this.toastr.error('Failed to load courses');
-        this.loading = false;
+      error: () => this.loading = false
+    });
+  }
+
+  loadMyRequests() {
+    this.courseService.getMyRequests().subscribe({
+      next: (res: any) => {
+        this.myRequests = res;
+        // Jo requests database mein hain, unhe Set mein daal do taaki button disabled dikhein
+        res.forEach((req: any) => this.requestedCourseIds.add(req.course_id));
       }
     });
   }
 
-  switchTab(tab: string) {
-    this.activeTab = tab;
-  }
+  // ✨ ENROLL BUTTON CLICK LOGIC
+  onRequest(courseId: number ) {
+    if (this.requestedCourseIds.has(courseId)) return; // Agar already sent hai to ignore karo
 
-  onRequest(courseId: number) {
-    this.courseService.requestEnrollment(courseId).subscribe({
-      next: (res) => {
-        this.toastr.success('Request sent successfully!', 'On the way');
+    
+    this.courseService.requestEnrollment(courseId,this.userParams[0].id).subscribe({
+      next: () => {
+        this.toastr.success('Request Sent Successfully!', 'Done');
+        
+        // 1. Button ko turant disable karne ke liye ID add karo
+        this.requestedCourseIds.add(courseId);
+        
+        // 2. Background mein list update kar lo
+        this.loadMyRequests();
       },
       error: (err) => {
-        this.toastr.info(err.error.message || 'Already requested', 'Check Status');
+        this.toastr.info(err.error.message || 'Already requested', 'Info');
+        // Error agar duplicate ka hai, tab bhi button disable kar do
+        if(err.error.message?.includes('already')) {
+           this.requestedCourseIds.add(courseId);
+        }
       }
     });
   }
 
-  logout() {
-    localStorage.clear();
-    this.router.navigate(['/login']);
-  }
-
-  // === 🎨 CREATIVE LOGIC STARTS HERE ===
-
-  // 1. Smart Image Mapping (Based on Subject)
+  // --- Helpers ---
   getCourseImage(subject: string): string {
     const images: any = {
       'Programming': 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80',
       'Mathematics': 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80',
       'Science': 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80',
       'English': 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&w=800&q=80',
-      'History': 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?auto=format&fit=crop&w=800&q=80',
-      'Music': 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=800&q=80',
-      'Design': 'https://images.unsplash.com/photo-1626785774573-4b799314346d?auto=format&fit=crop&w=800&q=80',
-      'Marketing': 'https://images.unsplash.com/photo-1533750516457-a7f992034fec?auto=format&fit=crop&w=800&q=80',
       'Default': 'https://images.unsplash.com/photo-1524178232363-1fb2b075b955?auto=format&fit=crop&w=800&q=80'
     };
     return images[subject] || images['Default'];
   }
 
-  // 2. Dynamic Badge Colors
   getBadgeColor(subject: string): string {
     const colors: any = {
       'Programming': 'bg-indigo-100 text-indigo-700 border-indigo-200',
       'Mathematics': 'bg-blue-100 text-blue-700 border-blue-200',
-      'Science': 'bg-emerald-100 text-emerald-700 border-emerald-200',
-      'English': 'bg-rose-100 text-rose-700 border-rose-200',
-      'Music': 'bg-amber-100 text-amber-700 border-amber-200',
-      'History': 'bg-orange-100 text-orange-700 border-orange-200',
       'Default': 'bg-slate-100 text-slate-700 border-slate-200'
     };
     return colors[subject] || colors['Default'];

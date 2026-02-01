@@ -12,6 +12,8 @@ export class CourseService {
   // Token header mein lagane ke liye helper
   private getHeaders() {
     const token = localStorage.getItem('token');
+    console.log(token);
+    
     return {
       headers: new HttpHeaders({
         'Authorization': `Bearer ${token}`
@@ -24,12 +26,25 @@ export class CourseService {
     return this.http.get(`${this.apiUrl}/Tutor_hub/course`, this.getHeaders());
   }
 
+// ... imports
+
+// Class ke andar ye function add karo
+getMyRequests(): Observable<any> {
+  const token = localStorage.getItem('token');
+  const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+  console.log(headers);
+  
+  
+  return this.http.get(`${this.apiUrl}/Tutor_hub/request-enrollment`, { headers });
+}
+
   // 2. Course Enroll Request bhejna
-  requestEnrollment(courseId: number): Observable<any> {
+  requestEnrollment(courseId: number, studentId: number): Observable<any> {
+    
     return this.http.post(
-      `${this.apiUrl}/enroll/request`, 
-      { courseId }, 
-      this.getHeaders()
+      `${this.apiUrl}/Tutor_hub/request-enrollment`, 
+      { courseId, studentId }, 
+      // this.getHeaders()
     );
   }
 }

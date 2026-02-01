@@ -1,0 +1,81 @@
+<div class="animate-fade-in">
+  
+  <div class="mb-6 flex items-end justify-between">
+    <div>
+      <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Enrollment Requests</h2>
+      <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Track the status of your course applications.</p>
+    </div>
+    
+    <button (click)="loadRequests()" class="p-2 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors" title="Refresh">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="flex flex-col items-center justify-center py-20">
+      <div class="animate-spin rounded-full h-10 w-10 border-4 border-indigo-500 border-t-transparent"></div>
+      <p class="mt-4 text-slate-400 text-sm font-medium">Fetching status...</p>
+    </div>
+  } @else {
+
+    @if (requests.length === 0) {
+      <div class="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-slate-300 dark:bg-slate-800/50 dark:border-slate-700">
+        <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 dark:bg-slate-800">
+          <span class="text-3xl">📂</span>
+        </div>
+        <h3 class="text-lg font-bold text-slate-700 dark:text-white">No Requests Found</h3>
+        <p class="text-slate-500 text-sm mb-6 dark:text-slate-400">You haven't requested any courses yet.</p>
+      </div>
+    } 
+    
+    @else {
+      <div class="space-y-4">
+        @for (req of requests; track req.request_id) {
+          <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 dark:bg-slate-800 dark:border-slate-700">
+            
+            <div class="flex items-center gap-4">
+              <div class="h-12 w-12 rounded-xl flex items-center justify-center text-xl font-bold shrink-0" 
+                   [ngClass]="getSubjectColor(req.subject)">
+                {{ req.subject?.charAt(0) || 'C' }}
+              </div>
+              
+              <div>
+                <h4 class="font-bold text-slate-800 text-lg leading-tight dark:text-white">{{ req.title }}</h4>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded dark:bg-slate-700 dark:text-slate-300">
+                    {{ req.subject }}
+                  </span>
+                  <span class="text-sm text-slate-500 dark:text-slate-400">
+                    • By <span class="font-medium text-slate-700 dark:text-slate-300">{{ req.instructor_name }}</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto gap-2">
+              
+              <span [ngClass]="getStatusClass(req.status)" 
+                    class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border flex items-center gap-1.5">
+                
+                @if(req.status === 'pending') {
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                } @else if(req.status === 'approved') {
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                } @else if(req.status === 'rejected') {
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                }
+                
+                {{ req.status }}
+              </span>
+
+              <span class="text-xs text-slate-400 font-medium">
+                Sent: {{ req.request_date | date:'mediumDate' }}
+              </span>
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+  }
+</div>
