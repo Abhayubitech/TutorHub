@@ -1,0 +1,133 @@
+<div class="max-w-5xl mx-auto animate-fade-in" [class.dark]="activeTheme()">
+  
+  <div class="relative bg-white rounded-[2rem] border border-slate-100 shadow-2xl overflow-hidden group group-[.dark]:bg-slate-800 group-[.dark]:border-slate-700 transition-colors duration-300">
+    
+    <div class="absolute top-0 left-0 w-full h-44 bg-gradient-to-r from-indigo-600 to-purple-700"></div>
+    
+    <div class="relative px-6 sm:px-12 pt-20 pb-8 z-10">
+      
+      <div class="flex flex-col md:flex-row items-center md:items-end gap-6 md:gap-8">
+        
+        <div class="shrink-0">
+          <div class="w-36 h-36 md:w-44 md:h-44 rounded-full bg-white p-1.5 shadow-2xl z-10 group-[.dark]:bg-slate-800 transition-all duration-300">
+            <div class="w-full h-full rounded-full bg-indigo-50 flex items-center justify-center text-5xl md:text-6xl font-black text-indigo-600 group-[.dark]:bg-slate-700 group-[.dark]:text-indigo-400 transition-colors duration-300 uppercase select-none">
+              {{ profileData.name?.charAt(0) || 'U' }}
+            </div>
+          </div>
+        </div>
+
+        <div class="flex-1 text-center md:text-left mb-7 md:mb-4 w-full">
+          <h1 class="text-3xl md:text-4xl font-black text-slate-800 group-[.dark]:text-white transition-colors duration-300 capitalize tracking-tight ">
+            {{ profileData.name || 'Student Name' }}
+          </h1>
+          <div class="flex items-center justify-center md:justify-start gap-2 text-slate-500 font-medium group-[.dark]:text-slate-400 transition-colors duration-300 text-sm md:text-base">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            <span class="truncate">{{ profileData.email || 'student@example.com' }}</span>
+          </div>
+        </div>
+
+        <div class="mb-1 md:mb-4 shrink-0">
+          <button (click)="toggleEdit()" 
+                  class="px-6 py-2.5 md:px-8 md:py-3 rounded-full font-bold text-sm shadow-lg shadow-indigo-500/20 transition-all active:scale-95 flex items-center gap-2"
+                  [ngClass]="isEditing ? 'bg-emerald-500 text-white hover:bg-emerald-600 ring-4 ring-emerald-500/20' : 'bg-slate-900 text-white hover:bg-indigo-600 group-[.dark]:bg-white group-[.dark]:text-slate-900 group-[.dark]:hover:bg-indigo-50'">
+            
+            @if(loading) {
+              <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+              <span class="hidden sm:inline">Saving...</span>
+            } @else if(isEditing) {
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              <span>Save Changes</span>
+            } @else {
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+              <span>Edit Profile</span>
+            }
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="h-px w-full bg-slate-100 group-[.dark]:bg-slate-700/50"></div>
+
+    <div class="px-6 sm:px-12 py-10">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
+
+        <div class="group space-y-2">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Full Name</label>
+          <input type="text" [(ngModel)]="profileData.name" [disabled]="!isEditing"
+                 class="w-full px-5 py-4 rounded-2xl font-bold text-lg transition-all outline-none
+                        disabled:bg-slate-50 disabled:border-transparent disabled:text-slate-700 disabled:cursor-text
+                        enabled:bg-white enabled:border enabled:border-slate-200 enabled:focus:ring-4 enabled:focus:ring-indigo-500/10 enabled:focus:border-indigo-500
+                        group-[.dark]:disabled:bg-slate-800/50 group-[.dark]:disabled:text-slate-300
+                        group-[.dark]:enabled:bg-slate-700 group-[.dark]:enabled:border-slate-600 group-[.dark]:enabled:text-white">
+        </div>
+
+        <div class="group space-y-2">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Qualifications</label>
+          <input type="text" [(ngModel)]="profileData.qualifications" [disabled]="!isEditing" placeholder="e.g. B.Tech in CS"
+                 class="w-full px-5 py-4 rounded-2xl font-bold text-lg transition-all outline-none
+                        disabled:bg-slate-50 disabled:border-transparent disabled:text-slate-700 disabled:cursor-text
+                        enabled:bg-white enabled:border enabled:border-slate-200 enabled:focus:ring-4 enabled:focus:ring-indigo-500/10 enabled:focus:border-indigo-500
+                        group-[.dark]:disabled:bg-slate-800/50 group-[.dark]:disabled:text-slate-300
+                        group-[.dark]:enabled:bg-slate-700 group-[.dark]:enabled:border-slate-600 group-[.dark]:enabled:text-white">
+        </div>
+
+        <div class="group space-y-2">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Email Address</label>
+          <div class="relative">
+            <input type="email" [(ngModel)]="profileData.email" [disabled]="true" 
+                   class="w-full px-5 py-4 rounded-2xl font-bold text-lg outline-none bg-slate-50/50 text-slate-400 border border-transparent cursor-not-allowed
+                          group-[.dark]:bg-slate-800/50 group-[.dark]:text-slate-500">
+            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="group space-y-2">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Phone Number</label>
+          <input type="tel" [(ngModel)]="profileData.phone" [disabled]="!isEditing" placeholder="+91 98765 43210"
+                 class="w-full px-5 py-4 rounded-2xl font-bold text-lg transition-all outline-none
+                        disabled:bg-slate-50 disabled:border-transparent disabled:text-slate-700 disabled:cursor-text
+                        enabled:bg-white enabled:border enabled:border-slate-200 enabled:focus:ring-4 enabled:focus:ring-indigo-500/10 enabled:focus:border-indigo-500
+                        group-[.dark]:disabled:bg-slate-800/50 group-[.dark]:disabled:text-slate-300
+                        group-[.dark]:enabled:bg-slate-700 group-[.dark]:enabled:border-slate-600 group-[.dark]:enabled:text-white">
+        </div>
+
+        <div class="group space-y-2 md:col-span-2">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Permanent Address</label>
+          <div class="relative">
+             <textarea [(ngModel)]="profileData.address" [disabled]="!isEditing" rows="2" placeholder="Enter full address..."
+                    class="w-full px-5 py-4 rounded-2xl font-medium text-lg transition-all outline-none resize-none
+                           disabled:bg-slate-50 disabled:border-transparent disabled:text-slate-700 disabled:cursor-text
+                           enabled:bg-white enabled:border enabled:border-slate-200 enabled:focus:ring-4 enabled:focus:ring-indigo-500/10 enabled:focus:border-indigo-500
+                           group-[.dark]:disabled:bg-slate-800/50 group-[.dark]:disabled:text-slate-300
+                           group-[.dark]:enabled:bg-slate-700 group-[.dark]:enabled:border-slate-600 group-[.dark]:enabled:text-white"></textarea>
+             @if(!isEditing) {
+                <div class="absolute right-4 top-4 text-slate-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </div>
+             }
+          </div>
+        </div>
+
+        <div class="group space-y-2 md:col-span-2">
+          <label class="text-xs font-bold text-indigo-500 uppercase tracking-wider ml-1 flex items-center gap-2">
+            About Yourself 
+            <span class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded text-[10px]" *ngIf="isEditing">Markdown Supported</span>
+          </label>
+          
+          <textarea [(ngModel)]="profileData.bio" [disabled]="!isEditing" rows="5" placeholder="Tell us about your interests, skills, and goals..."
+                    class="w-full px-6 py-5 rounded-2xl font-medium text-lg leading-relaxed transition-all outline-none resize-none
+                           disabled:bg-slate-50 disabled:border-transparent disabled:text-slate-700 disabled:cursor-text
+                           enabled:bg-white enabled:border enabled:border-slate-200 enabled:focus:ring-4 enabled:focus:ring-indigo-500/10 enabled:focus:border-indigo-500
+                           group-[.dark]:disabled:bg-slate-800/50 group-[.dark]:disabled:text-slate-300
+                           group-[.dark]:enabled:bg-slate-700 group-[.dark]:enabled:border-slate-600 group-[.dark]:enabled:text-white"></textarea>
+        </div>
+
+      </div>
+    </div>
+    
+  </div>
+</div>

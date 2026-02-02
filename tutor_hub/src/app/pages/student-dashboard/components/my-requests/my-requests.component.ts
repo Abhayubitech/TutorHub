@@ -1,6 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, input } from '@angular/core'; // 1. Import 'input'
 import { CommonModule, DatePipe } from '@angular/common';
-import { CourseService } from '../../../services/course.service'; // Path check kr lena
+import { CourseService } from '../../../../services/course.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -11,6 +11,11 @@ import { ToastrService } from 'ngx-toastr';
   styles: []
 })
 export class MyRequestsComponent implements OnInit {
+  
+  // 🔥 2. Define Signal Input
+  // Parent will pass the boolean value here.
+  isDarkMode = input<boolean>(false); 
+
   requests: any[] = [];
   loading: boolean = true;
 
@@ -30,7 +35,7 @@ export class MyRequestsComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.toastr.error('Failed to load requests');
+        // this.toastr.error('Failed to load requests'); // Optional
         this.loading = false;
       }
     });

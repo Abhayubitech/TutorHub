@@ -5,11 +5,13 @@ import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MyRequestsComponent } from './components/my-requests/my-requests.component'; // Path check karein
+import { ProfileService } from '../../services/profile.service';
+import { StudentProfileComponent } from './components/student-profile/student-profile.component'; // Path check karein
 
 @Component({
   selector: 'app-student-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, MyRequestsComponent],
+  imports: [CommonModule, FormsModule, MyRequestsComponent, StudentProfileComponent],
   templateUrl: './student-dashboard.component.html',
   styles: [`:host { display: block; }`]
 })
@@ -29,6 +31,9 @@ export class StudentDashboardComponent implements OnInit {
   private courseService = inject(CourseService);
   private toastr = inject(ToastrService);
   private router = inject(Router);
+  private profileService = inject(ProfileService); // <--- Use ProfileService
+  profileData: any;
+  isEditing: boolean | undefined;
 
   ngOnInit() {
     const userStr = localStorage.getItem('user');
@@ -42,6 +47,8 @@ export class StudentDashboardComponent implements OnInit {
     // Load Data
     this.loadCourses();
     this.loadMyRequests(); // Pehle se bheji hui requests load karo taaki unke buttons disabled rahein
+    console.log(this.userParams);
+    
   }
 
   toggleTheme() {
@@ -105,6 +112,37 @@ export class StudentDashboardComponent implements OnInit {
         if(err.error.message?.includes('already')) {
            this.requestedCourseIds.add(courseId);
         }
+      }
+    });
+  }
+
+  fetchProfile() {
+    this.loading = true;
+    // Call method from profileService
+    this.profileService.getStudentProfile().subscribe({
+      next: (res: any) => {
+        this.profileData = res;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.loading = false;
+      }
+    });
+  }
+
+  saveProfile() {
+    this.loading = true;
+    // Call method from profileService
+    this.profileService.updateStudentProfile(this.profileData).subscribe({
+      next: (res: any) => {
+        this.toastr.success('Profile Updated Successfully');
+        this.isEditing = false;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.toastr.error('Failed to update profile');
+        this.loading = false;
       }
     });
   }

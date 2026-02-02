@@ -30,12 +30,12 @@ export class CourseService {
 
 // Class ke andar ye function add karo
 getMyRequests(): Observable<any> {
-  const token = localStorage.getItem('token');
-  const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
-  console.log(headers);
+  // const token = localStorage.getItem('token');
+  // const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+  // console.log(headers);
   
   
-  return this.http.get(`${this.apiUrl}/Tutor_hub/request-enrollment`, { headers });
+  return this.http.get(`${this.apiUrl}/Tutor_hub/my-requests/courses/${localStorage.getItem('token')}`);
 }
 
   // 2. Course Enroll Request bhejna

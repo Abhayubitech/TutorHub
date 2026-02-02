@@ -61,8 +61,8 @@
               <div class="flex items-center gap-3 cursor-pointer group/profile pl-2" (click)="switchTab('profile')">
                   <div class="hidden md:block text-right">
                       <p class="text-sm font-bold text-slate-800 leading-none group-hover/profile:text-indigo-600 transition-colors group-[.dark]:text-white">{{ userParams.name }}</p>
-                      <p class="text-[10px] font-bold text-indigo-500 uppercase mt-0.5 tracking-wide">Student</p>
-                  </div>
+                      <p class="text-[10px] font-bold text-indigo-500 uppercase mt-0.5 tracking-wide">{{userParams[0].role}}</p>  
+                    </div>
                   <div class="h-9 w-9 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 p-0.5 shadow-md group-hover/profile:scale-105 transition-transform">
                       <div class="h-full w-full rounded-full bg-white flex items-center justify-center text-indigo-700 font-black text-sm">
                           {{ userParams.name?.charAt(0) }}
@@ -173,7 +173,7 @@
       }
 
       @if (activeTab === 'requested') {
-        <app-my-requests></app-my-requests>
+        <app-my-requests [isDarkMode]="isDarkMode"></app-my-requests>
       }
 
       @if (activeTab === 'learning') {
@@ -189,27 +189,7 @@
       }
 
       @if (activeTab === 'profile') {
-        <div class="animate-fade-in max-w-3xl mx-auto">
-            <div class="bg-white rounded-[30px] border border-slate-100 shadow-xl overflow-hidden group-[.dark]:bg-slate-800 group-[.dark]:border-slate-700">
-                <div class="h-32 bg-gradient-to-r from-indigo-600 to-purple-600"></div>
-                <div class="px-8 pb-8 relative">
-                    <div class="w-28 h-28 mx-auto -mt-14 rounded-full bg-white p-1 shadow-lg group-[.dark]:bg-slate-800">
-                        <div class="w-full h-full rounded-full bg-indigo-100 flex items-center justify-center text-4xl font-black text-indigo-600">
-                            {{ userParams.name?.charAt(0) }}
-                        </div>
-                    </div>
-                    <div class="text-center mt-4">
-                        <h2 class="text-3xl font-black text-slate-800 group-[.dark]:text-white">{{ userParams.name }}</h2>
-                        <p class="text-slate-500 font-medium group-[.dark]:text-slate-400">{{ userParams.email }}</p>
-                    </div>
-                    <div class="mt-10 pt-8 border-t border-slate-100 text-center group-[.dark]:border-slate-700">
-                        <button (click)="logout()" class="text-rose-500 font-bold hover:text-rose-700 transition-colors text-sm flex items-center justify-center gap-2 mx-auto">
-                            Log Out
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <app-student-profile></app-student-profile>
       }
 
     </main>

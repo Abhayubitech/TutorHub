@@ -13,12 +13,14 @@ async function course(req, res) {
 };
 
 // 2. Get Student's Requests (My Requests Tab ke liye)
-const getMyRequests = (req, res) => {
+const getMyRequests =  async(req, res) => {
+
   try {
-    const studentId = req.user.id;
+    const studentId = req.params.id;
+    console.log("Student ID from Token:", studentId);
 
     const q = `
-            SELECT 
+         SELECT 
                 enrollments.id as request_id,
                 enrollments.status,
                 enrollments.request_date,
@@ -28,18 +30,18 @@ const getMyRequests = (req, res) => {
                 courses.subject,
     users.name as instructor_name
             FROM enrollments
-            INNER JOIN courses ON enrollments.course_id = 1 AND courses.created_by = 2
-           INNER JOIN users ON users.id = 2
-            WHERE enrollments.student_id = 3
+            INNER JOIN courses ON courses.id= enrollments.course_id AND courses.created_by = enrollments.teacher_id
+           INNER JOIN users ON users.id = enrollments.teacher_id
+            WHERE enrollments.student_id = ?
             ORDER BY enrollments.request_date DESC
         `;
 
-    db.query(q, [studentId], (err, data) => {
-      if (err) return res.status(500).json(err);
-      return res.status(200).json(data);
-    });
+  let [result] = await db.query(q,[studentId]);
+  console.log("My Requests Data:", result);
+  return res.status(200).json(result);
 
   } catch (err) {
+    console.log("Error in getMyRequests:", err);
     return res.status(500).json({ error: err.message });
   }
 };
