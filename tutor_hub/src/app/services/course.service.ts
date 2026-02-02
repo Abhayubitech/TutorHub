@@ -47,4 +47,18 @@ getMyRequests(): Observable<any> {
       // this.getHeaders()
     );
   }
+
+  // Angular Service
+getTeacherCourses(teacherId: number) {
+  return this.http.get(`${this.apiUrl}/teacher/courses/${teacherId}`);
+}
+
+getTeacherRequests(teacherId: number) {
+  return this.http.get(`${this.apiUrl}/teacher/requests/${teacherId}`);
+}
+
+// Approve/Reject logic
+updateRequestStatus(requestId: number, status: 'approved' | 'rejected') {
+  return this.http.put(`${this.apiUrl}/teacher/requests/${requestId}`, { status });
+}
 }
