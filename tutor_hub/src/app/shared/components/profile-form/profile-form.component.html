@@ -1,0 +1,89 @@
+<div class="profile-form-container">
+  <form (ngSubmit)="onSubmit()" class="profile-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input 
+          id="name"
+          type="text" 
+          placeholder="Enter your full name" 
+          [(ngModel)]="editingName"
+          name="name"
+          maxlength="33"
+          pattern="[a-zA-Z\s'-]*"
+          required 
+          (input)="onNameInput()"
+          [disabled]="isLoading"
+          aria-describedby="name-error"
+        />
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          id="email"
+          type="email" 
+          placeholder="Enter your email" 
+          [(ngModel)]="userEmail"
+          name="email"
+          readonly
+          disabled
+        />
+        <small class="form-help">Email cannot be changed</small>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="phone">Phone (Optional)</label>
+        <input 
+          id="phone"
+          type="tel" 
+          placeholder="Enter your phone number" 
+          [(ngModel)]="editingPhone"
+          name="phone"
+          maxlength="20"
+          pattern="[\d+\-\s()]*"
+          (input)="onPhoneInput()"
+          [disabled]="isLoading"
+          aria-describedby="phone-error"
+        />
+      </div>
+    </div>
+
+    <!-- Validation Errors -->
+    @if (validationErrors.length > 0) {
+      <div class="validation-errors" role="alert" aria-live="polite">
+        @for (error of validationErrors; track error) {
+          <div class="error-item">
+            <span class="error-icon">⚠️</span>
+            <span class="error-text">{{ error }}</span>
+          </div>
+        }
+      </div>
+    }
+
+    <div class="form-actions">
+      <button 
+        type="submit" 
+        class="btn-save" 
+        [disabled]="isLoading"
+        aria-label="Save profile changes"
+      >
+        @if (isLoading) {
+          <span class="loading-spinner"></span>
+          Saving...
+        } @else {
+          {{ submitButtonText }}
+        }
+      </button>
+      <button 
+        type="button" 
+        (click)="onCancel()" 
+        class="btn-cancel"
+        [disabled]="isLoading"
+        aria-label="Cancel profile editing"
+      >
+        {{ cancelButtonText }}
+      </button>
+    </div>
+  </form>
+</div>

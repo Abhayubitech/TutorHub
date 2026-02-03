@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { AdminService } from '../../../services/admin.service';
+import { StatsGridComponent, StatItem } from '../../../shared/components/stats-grid/stats-grid.component';
+import { ProfileFormComponent, ProfileData } from '../../../shared/components/profile-form/profile-form.component';
+import { HamburgerMenuComponent, MenuItem } from '../../../shared/components/hamburger-menu/hamburger-menu.component';
 
 interface User {
   id: number;
@@ -16,7 +19,7 @@ interface User {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, StatsGridComponent, ProfileFormComponent, HamburgerMenuComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css'
 })
@@ -24,9 +27,9 @@ export class AdminDashboardComponent implements OnInit {
   userFilter: 'all' | 'student' | 'teacher' = 'all';
   isEditingProfile = false;
   editingUserId: string | null = null;
-  editingName = '';
-  editingEmail = '';
-  editingPhone = '';
+  isProfileLoading = false;
+  currentNavSection = signal<string>('overview');
+  isMenuOpen: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -62,42 +65,27 @@ export class AdminDashboardComponent implements OnInit {
     const user = this.adminService.users().find(u => u.id === userId);
     if (user) {
       this.editingUserId = String(userId);
-      this.editingName = user.name;
-      this.editingEmail = user.email;
-      this.editingPhone = user.phone || '';
       this.isEditingProfile = true;
     }
   }
 
-  updateUser(): void {
-    // Validate name
-    const nameRegex = /^[a-zA-Z\s'-]*$/;
-    if (!nameRegex.test(this.editingName)) {
-      alert('Name can only contain letters, spaces, hyphens, and apostrophes');
-      return;
-    }
-
-    if (this.editingName.length > 33) {
-      alert('Name must be maximum 33 characters');
-      return;
-    }
-
+  updateUser(userData: ProfileData): void {
     if (this.editingUserId) {
-      const userData = {
-        name: this.editingName,
-        phone: this.editingPhone || null
-      };
+      this.isProfileLoading = true;
+      
       this.adminService.updateUser(this.editingUserId, userData);
-      this.cancelEditUser();
+      
+      // Simulate API call delay
+      setTimeout(() => {
+        this.isProfileLoading = false;
+        this.cancelEditUser();
+      }, 1000);
     }
   }
 
   cancelEditUser(): void {
     this.isEditingProfile = false;
     this.editingUserId = null;
-    this.editingName = '';
-    this.editingEmail = '';
-    this.editingPhone = '';
   }
 
   deleteUser(userId: string | number): void {
@@ -107,14 +95,8 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   editAdminProfile(): void {
-    const user = this.authService.user();
-    if (user) {
-      this.editingUserId = 'self';
-      this.editingName = user.name;
-      this.editingEmail = user.email;
-      this.editingPhone = user.phone || '';
-      this.isEditingProfile = true;
-    }
+    this.editingUserId = 'self';
+    this.isEditingProfile = true;
   }
 
   deleteMyProfile(): void {
@@ -170,5 +152,66 @@ export class AdminDashboardComponent implements OnInit {
 
   get error() {
     return this.adminService.error();
+  }
+
+  get stats(): StatItem[] {
+    return [
+      { value: this.totalUsers, label: 'Total Users', icon: '👥' },
+      { value: this.studentCount, label: 'Students', icon: '🎓' },
+      { value: this.teacherCount, label: 'Teachers', icon: '👨‍🏫' },
+      { value: this.courseCount, label: 'Total Courses', icon: '📚' }
+    ];
+  }
+
+  get menuItems(): MenuItem[] {
+    return [
+      { id: 'overview', label: 'Dashboard', icon: '📊', active: this.currentNavSection() === 'overview' },
+      { id: 'users', label: 'Manage Users', icon: '👥', active: this.currentNavSection() === 'users' },
+      { id: 'profile', label: 'My Profile', icon: '👤', active: this.currentNavSection() === 'profile' },
+      { id: 'settings', label: 'Settings', icon: '⚙️', active: this.currentNavSection() === 'settings' },
+      { id: 'logout', label: 'Logout', icon: '🚪' }
+    ];
+  }
+
+  onMenuClick(item: MenuItem): void {
+    switch (item.id) {
+      case 'overview':
+        this.currentNavSection.set('overview');
+        break;
+      case 'users':
+        this.currentNavSection.set('users');
+        break;
+      case 'profile':
+        this.currentNavSection.set('profile');
+        break;
+      case 'settings':
+        this.currentNavSection.set('settings');
+        break;
+      case 'logout':
+        this.logout();
+        break;
+    }
+  }
+
+  setNavSection(section: string): void {
+    this.currentNavSection.set(section);
+  }
+
+  getEditingUserData(): { name: string; email: string; phone: string | null } {
+    if (this.editingUserId === 'self') {
+      const user = this.authService.user();
+      return {
+        name: user?.name || '',
+        email: user?.email || '',
+        phone: user?.phone || null
+      };
+    } else {
+      const user = this.adminService.users().find(u => u.id === this.editingUserId);
+      return {
+        name: user?.name || '',
+        email: user?.email || '',
+        phone: user?.phone || null
+      };
+    }
   }
 }

@@ -1,0 +1,32 @@
+<nav 
+  class="dashboard-nav" 
+  [class.horizontal]="orientation === 'horizontal'"
+  [class.vertical]="orientation === 'vertical'"
+  role="tablist"
+  aria-label="Dashboard navigation"
+>
+  @for (item of navItems; track item.id) {
+    <button
+      [class.active]="activeTab === item.id"
+      [class.disabled]="item.disabled"
+      (click)="onTabClick(item.id)"
+      (keydown)="onKeyDown($event, item.id)"
+      class="nav-item"
+      [attr.aria-selected]="activeTab === item.id"
+      [attr.aria-controls]="item.id + '-panel'"
+      [attr.aria-disabled]="item.disabled"
+      role="tab"
+      tabindex="0"
+    >
+      @if (item.icon) {
+        <span class="nav-icon" aria-hidden="true">{{ item.icon }}</span>
+      }
+      <span class="nav-label">{{ item.label }}</span>
+      @if (item.badge) {
+        <span class="nav-badge" aria-hidden="true">
+          {{ item.badge }}
+        </span>
+      }
+    </button>
+  }
+</nav>

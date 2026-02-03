@@ -1,0 +1,14 @@
+<header class="dashboard-header" role="banner">
+  <h1>{{ dashboardTitle }}</h1>
+  <div class="header-right">
+    <span class="user-info">{{ user?.name }}</span>
+    @if (showProfileEdit) {
+      <button (click)="onProfileEdit()" class="btn-profile" aria-label="Edit profile">
+        👤 Edit Profile
+      </button>
+    }
+    <button (click)="logout()" class="btn-logout" aria-label="Logout">
+      Logout
+    </button>
+  </div>
+</header>

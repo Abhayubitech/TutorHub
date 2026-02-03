@@ -27,6 +27,7 @@ export class AppComponent {
   
   shouldShowNavbar(): boolean {
     const currentUrl = this.router.url;
-    return !currentUrl.includes('/login') && !currentUrl.includes('/signup');
+    const isDashboardPage = currentUrl.includes('/teacher') || currentUrl.includes('/student') || currentUrl.includes('/admin');
+    return !currentUrl.includes('/login') && !currentUrl.includes('/signup') && !isDashboardPage;
   }
 }

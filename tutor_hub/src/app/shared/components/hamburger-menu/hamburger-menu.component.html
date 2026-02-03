@@ -1,0 +1,43 @@
+<div class="hamburger-menu" [class.open]="isOpen">
+  <button 
+    class="hamburger-toggle" 
+    (click)="toggleMenu()" 
+    aria-label="Toggle navigation menu"
+    aria-expanded="isOpen"
+  >
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+
+  <div class="menu-overlay" [class.visible]="isOpen" (click)="closeMenu()"></div>
+  
+  <nav class="menu-content" [class.visible]="isOpen" role="navigation" aria-label="Main navigation">
+    <div class="menu-header">
+      <h3>Menu</h3>
+      <button class="close-btn" (click)="closeMenu()" aria-label="Close menu">×</button>
+    </div>
+    
+    <ul class="menu-items">
+      @for (item of menuItems; track item.id) {
+        <li class="menu-item">
+          <button 
+            [class.active]="item.active"
+            [class.disabled]="item.disabled"
+            (click)="onItemClick(item)"
+            [attr.aria-disabled]="item.disabled"
+            class="menu-button"
+          >
+            @if (item.icon) {
+              <span class="menu-icon" aria-hidden="true">{{ item.icon }}</span>
+            }
+            <span class="menu-label">{{ item.label }}</span>
+            @if (item.badge) {
+              <span class="menu-badge" aria-hidden="true">{{ item.badge }}</span>
+            }
+          </button>
+        </li>
+      }
+    </ul>
+  </nav>
+</div>

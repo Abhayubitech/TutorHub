@@ -1,102 +1,91 @@
 <div class="student-dashboard">
-  <!-- Header -->
-    <header class="dashboard-header">
-    <h1>Student Dashboard</h1>
+  <div class="dashboard-header-container">
+    <div class="header-left">
+      <app-hamburger-menu 
+        [menuItems]="menuItems" 
+        [isOpen]="isMenuOpen"
+        (menuToggle)="isMenuOpen = $event"
+        (itemClick)="onMenuClick($event)"
+      />
+      <h1 class="dashboard-title">Student Dashboard</h1>
+    </div>
     <div class="header-right">
       <span class="user-info">{{ user?.name }}</span>
-      <button (click)="logout()" class="btn-logout">Logout</button>
     </div>
-  </header>
-
-  <!-- Navigation Tabs -->
-  <nav class="tabs-nav">
-    <button
-      [class.active]="currentTab() === 'profile'"
-      (click)="setTab('profile')"
-      class="tab-btn"
-    >
-      My Profile
-    </button>
-    <button
-      [class.active]="currentTab() === 'courses'"
-      (click)="setTab('courses')"
-      class="tab-btn"
-    >
-      Browse Courses
-    </button>
-    <button
-      [class.active]="currentTab() === 'teachers'"
-      (click)="setTab('teachers')"
-      class="tab-btn"
-    >
-      Teachers
-    </button>
-    <button
-      [class.active]="currentTab() === 'enrollments'"
-      (click)="setTab('enrollments')"
-      class="tab-btn"
-    >
-      My Enrollments ({{ enrollmentCount }})
-    </button>
-    <button
-      [class.active]="currentTab() === 'requests'"
-      (click)="setTab('requests')"
-      class="tab-btn"
-    >
-      My Requests
-    </button>
-  </nav>
+  </div>
 
   <div class="dashboard-content">
     @if (error) {
       <div class="error-message">{{ error }}</div>
     }
 
+    <!-- Overview Section -->
+    @if (currentTab() === 'overview') {
+      <div class="overview-section">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-value">{{ allCourses.length }}</div>
+            <div class="stat-label">Available Courses</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📝</div>
+            <div class="stat-value">{{ enrollmentCount }}</div>
+            <div class="stat-label">My Enrollments</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">👨‍🏫</div>
+            <div class="stat-value">{{ allTeachers.length }}</div>
+            <div class="stat-label">Available Teachers</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-value">{{ myRequests.length }}</div>
+            <div class="stat-label">Pending Requests</div>
+          </div>
+        </div>
+        
+        <div class="quick-actions">
+          <h2>Quick Actions</h2>
+          <div class="action-cards">
+            <button class="action-card" (click)="currentTab.set('courses')">
+              <div class="card-icon">📚</div>
+              <h3>Browse Courses</h3>
+              <p>Explore available courses</p>
+            </button>
+            <button class="action-card" (click)="currentTab.set('teachers')">
+              <div class="card-icon">👨‍🏫</div>
+              <h3>Find Teachers</h3>
+              <p>Connect with qualified teachers</p>
+            </button>
+            <button class="action-card" (click)="currentTab.set('enrollments')">
+              <div class="card-icon">📝</div>
+              <h3>My Enrollments</h3>
+              <p>View your enrolled courses</p>
+              @if (enrollmentCount > 0) {
+                <span class="badge">{{ enrollmentCount }}</span>
+              }
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
     <!-- My Profile Tab -->
     @if (currentTab() === 'profile') {
-      <div class="tab-content">
+      <div class="tab-content" role="tabpanel" id="profile-panel">
         <h2>My Profile</h2>
         @if (isEditingProfile()) {
-          <form (ngSubmit)="updateProfile()" class="profile-form">
-            <div class="form-group">
-              <label>Full Name</label>
-              <input 
-                type="text" 
-                placeholder="Enter your full name" 
-                [(ngModel)]="editingName"
-                name="editingName"
-                maxlength="33"
-                pattern="[a-zA-Z\s'-]*"
-                required 
-              />
-            </div>
-            <div class="form-group">
-              <label>Email</label>
-              <input 
-                type="email" 
-                placeholder="Enter your email" 
-                [(ngModel)]="editingEmail"
-                name="editingEmail"
-                readonly
-              />
-              <small>Email cannot be changed</small>
-            </div>
-            <div class="form-group">
-              <label>Phone (Optional)</label>
-              <input 
-                type="tel" 
-                placeholder="Enter your phone number" 
-                [(ngModel)]="editingPhone"
-                name="editingPhone"
-                maxlength="20"
-                pattern="[\d+\-\s()]*"
-              />
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="btn-save">Save Changes</button>
-              <button type="button" (click)="cancelEditProfile()" class="btn-cancel">Cancel</button>
-            </div>
-          </form>
+          <app-profile-form
+            [userName]="user?.name || ''"
+            [userEmail]="user?.email || ''"
+            [userPhone]="user?.phone"
+            [isLoading]="isProfileLoading()"
+            submitButtonText="Save Changes"
+            cancelButtonText="Cancel"
+            (submit)="updateProfile($event)"
+            (cancel)="cancelEditProfile()"
+          />
         } @else {
           <div class="profile-card">
             <div class="profile-info">
@@ -115,20 +104,26 @@
 
     <!-- Browse Courses Tab -->
     @if (currentTab() === 'courses') {
-      <div class="tab-content">
+      <div class="tab-content" role="tabpanel" id="courses-panel">
         <h2>Browse Courses</h2>
 
         <div class="search-bar">
           <input
             type="text"
-            placeholder="Search courses..."
+            placeholder="Search courses (min. 2 characters)..."
             [(ngModel)]="searchQuery"
             (keyup.enter)="search()"
+            (input)="onSearchInput()"
             class="search-input"
           />
-          <button (click)="search()" class="search-btn">Search</button>
+          <button (click)="search()" class="search-btn" [disabled]="searchQuery().trim().length < 2">Search</button>
+          <button (click)="clearSearch()" class="clear-btn" title="Clear search" [disabled]="!searchQuery().trim()">✖ Clear</button>
           <button (click)="refreshCourses()" class="refresh-btn" title="Refresh courses list">🔄 Refresh</button>
         </div>
+
+        @if (searchQuery().trim().length > 0 && searchQuery().trim().length < 2) {
+          <p class="search-hint">Please enter at least 2 characters to search.</p>
+        }
 
         @if (loading) {
           <p class="loading">Loading courses...</p>
@@ -180,7 +175,7 @@
 
     <!-- Teachers Tab -->
     @if (currentTab() === 'teachers') {
-      <div class="tab-content">
+      <div class="tab-content" role="tabpanel" id="teachers-panel">
         <h2>Our Teachers</h2>
         @if (loading) {
           <p class="loading">Loading teachers...</p>
@@ -209,7 +204,7 @@
 
     <!-- My Enrollments Tab -->
     @if (currentTab() === 'enrollments') {
-      <div class="tab-content">
+      <div class="tab-content" role="tabpanel" id="enrollments-panel">
         <h2>My Enrollments</h2>
         @if (loading) {
           <p class="loading">Loading enrollments...</p>
@@ -240,7 +235,7 @@
 
     <!-- My Requests Tab -->
     @if (currentTab() === 'requests') {
-      <div class="tab-content">
+      <div class="tab-content" role="tabpanel" id="requests-panel">
         <h2>My Enrollment Requests</h2>
         @if (loading) {
           <p class="loading">Loading requests...</p>
@@ -268,6 +263,29 @@
         } @else {
           <p class="no-results">You have no enrollment requests.</p>
         }
+      </div>
+    }
+    <!-- Settings Section -->
+    @if (currentTab() === 'settings') {
+      <div class="tab-content" role="tabpanel" id="settings-panel">
+        <h2>Settings</h2>
+        <div class="settings-content">
+          <div class="setting-item">
+            <h3>Account Settings</h3>
+            <p>Manage your account preferences and security settings.</p>
+            <button class="btn-secondary">Account Settings</button>
+          </div>
+          <div class="setting-item">
+            <h3>Learning Preferences</h3>
+            <p>Configure your learning style and notification preferences.</p>
+            <button class="btn-secondary">Learning Settings</button>
+          </div>
+          <div class="setting-item">
+            <h3>Payment Methods</h3>
+            <p>Manage your payment methods and billing information.</p>
+            <button class="btn-secondary">Payment Settings</button>
+          </div>
+        </div>
       </div>
     }
   </div>

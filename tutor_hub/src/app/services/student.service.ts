@@ -160,4 +160,8 @@ export class StudentService {
       }
     });
   }
+
+  clearSearchResults(): void {
+    this.searchResultsSignal.set([]);
+  }
 }

@@ -1,0 +1,19 @@
+<div class="stats-grid" [style.grid-template-columns]="'repeat(auto-fit, minmax(' + (240 / this.columns * 4) + 'px, 1fr))'">
+  @for (stat of stats; track stat.label) {
+    <div class="stat-card">
+      @if (stat.icon) {
+        <div class="stat-icon" aria-hidden="true">{{ stat.icon }}</div>
+      }
+      <div class="stat-content">
+        <h3>{{ stat.value }}</h3>
+        <p>{{ stat.label }}</p>
+        @if (stat.trend) {
+          <div class="stat-trend" [class.positive]="stat.trend.isPositive" [class.negative]="!stat.trend.isPositive">
+            <span class="trend-icon">{{ stat.trend.isPositive ? '↑' : '↓' }}</span>
+            <span class="trend-value">{{ stat.trend.value }}%</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
