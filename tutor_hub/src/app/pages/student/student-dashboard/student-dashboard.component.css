@@ -309,7 +309,7 @@
 
 .course-card,
 .teacher-card {
-  background: white;
+  background: var(--card-bg);
   padding: 28px;
   border-radius: 14px;
   box-shadow: var(--shadow-sm);
@@ -348,10 +348,11 @@
 
 .course-card p,
 .teacher-card p {
-  color: #666;
+  color: var(--text-color);
   margin: 12px 0;
   line-height: 1.7;
   font-size: 14px;
+  opacity: 0.9;
 }
 
 .course-meta {
@@ -360,8 +361,9 @@
   flex-wrap: wrap;
   margin: 18px 0;
   font-size: 13px;
-  color: #888;
+  color: var(--text-color);
   font-weight: 500;
+  opacity: 0.8;
 }
 
 .teacher-meta {
@@ -369,8 +371,9 @@
   flex-direction: column;
   gap: 8px;
   font-size: 14px;
-  color: #666;
+  color: var(--text-color);
   margin: 12px 0;
+  opacity: 0.9;
 }
 
 .qualification {
@@ -436,7 +439,7 @@
 
 .enrollment-item,
 .request-item {
-  background: white;
+  background: var(--card-bg);
   padding: 24px;
   border-radius: 14px;
   box-shadow: var(--shadow-sm);
@@ -470,14 +473,15 @@
   display: flex;
   gap: 20px;
   font-size: 13px;
-  color: #888;
+  color: var(--text-color);
   font-weight: 500;
 }
 
 .enrollment-date,
 .request-status {
   text-align: right;
-  color: #999;
+  color: var(--text-color);
+  opacity: 0.7;
   font-size: 14px;
 }
 
@@ -511,10 +515,11 @@
 .loading,
 .no-results {
   text-align: center;
-  color: #999;
+  color: var(--text-color);
+  opacity: 0.7;
   padding: 50px 20px;
   font-size: 16px;
-  background: white;
+  background: var(--card-bg);
   border-radius: 14px;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-color);
@@ -534,7 +539,7 @@
 
 /* Profile Card Styles */
 .profile-card {
-  background: white;
+  background: var(--card-bg);
   padding: 32px;
   border-radius: 16px;
   box-shadow: var(--shadow-md);
@@ -708,96 +713,379 @@
   }
 }
 
-@media (max-width: 480px) {
-  .dashboard-content {
-    padding: 0 8px;
-    margin: 16px auto;
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .student-dashboard {
+    background: #0f172a;
   }
 
-  .section {
-    padding: 12px;
-    margin-bottom: 12px;
+  .dashboard-header-container {
+    background: #1e293b;
+    border-bottom-color: #334155;
   }
 
-  .section h2 {
-    font-size: 16px;
-    margin-bottom: 10px;
+  .dashboard-title {
+    color: #f1f5f9;
+  }
+
+  .user-info {
+    color: #cbd5e1;
+  }
+
+  .tab-content h2 {
+    color: #f1f5f9;
   }
 
   .course-card,
-  .teacher-card {
-    padding: 12px;
-    border-radius: 8px;
+  .teacher-card,
+  .enrollment-item,
+  .request-item,
+  .profile-card {
+    background: #1e293b;
+    border-color: #334155;
   }
 
   .course-card h3,
-  .teacher-card h3 {
-    font-size: 15px;
+  .teacher-card h3,
+  .enrollment-item h3,
+  .request-item h3 {
+    color: #f1f5f9;
   }
 
   .course-card p,
   .teacher-card p {
-    font-size: 12px;
-    margin: 6px 0;
+    color: #94a3b8;
   }
 
-  .course-meta {
-    font-size: 11px;
-    margin: 8px 0;
-    gap: 8px;
-  }
-
-  .btn-enroll,
-  .btn-cancel {
-    padding: 8px 12px;
-    font-size: 12px;
-    margin-top: 8px;
-  }
-
-  .enrollment-item,
-  .request-item {
-    padding: 12px;
-    gap: 8px;
-  }
-
-  .tab-content h2 {
-    font-size: 18px;
-    margin-bottom: 16px;
-  }
-
-  .search-input {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
-
-  .search-btn,
-  .refresh-btn {
-    padding: 8px 16px;
-    font-size: 12px;
-  }
-
-  .profile-card {
-    padding: 16px;
+  .course-meta,
+  .teacher-meta,
+  .enrollment-meta {
+    color: #64748b;
   }
 
   .profile-info p {
-    font-size: 13px;
-    margin: 6px 0;
+    color: #cbd5e1;
   }
 
-  .btn-edit {
-    padding: 10px 16px;
-    font-size: 13px;
+  .profile-info strong {
+    color: #f1f5f9;
   }
 
   .loading,
   .no-results {
-    padding: 30px 16px;
-    font-size: 14px;
+    background: #1e293b;
+    color: #94a3b8;
+    border-color: #334155;
   }
 
-  .error-message {
-    padding: 12px 14px;
-    font-size: 13px;
+  .search-input {
+    background: #0f172a;
+    color: #f1f5f9;
+    border-color: #334155;
+  }
+
+  .search-input:focus {
+    background: #0f172a;
+  }
+
+  .setting-item {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .setting-item h3 {
+    color: #f1f5f9;
+  }
+
+  .setting-item p {
+    color: #94a3b8;
+  }
+
+  .btn-secondary {
+    background: #1e293b;
+    color: #cbd5e1;
+    border-color: #334155;
+  }
+
+  .btn-secondary:hover {
+    background: #0f172a;
+    color: #60a5fa;
+  }
+}
+
+/* Settings Forms Styles */
+.settings-form {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.form-section {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.form-section h3 {
+  color: var(--dark-text);
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 700;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 8px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--dark-text);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  background: var(--input-bg);
+  color: var(--text-color);
+  transition: all 0.3s ease;
+}
+
+.form-input:hover {
+  border-color: var(--primary-color);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.checkbox-group,
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkbox-label,
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  color: var(--text-color);
+  font-size: 14px;
+}
+
+.checkbox-label input,
+.radio-label input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-color);
+}
+
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.payment-method {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.method-type {
+  font-weight: 600;
+  color: var(--dark-text);
+}
+
+.method-details {
+  color: var(--text-color);
+  font-size: 14px;
+}
+
+.btn-remove {
+  background: linear-gradient(135deg, #fc5c65 0%, #ee5a52 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-remove:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(252, 92, 101, 0.3);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  margin-right: 12px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.analytics-dashboard {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.chart-section {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.chart-section h3 {
+  color: var(--dark-text);
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.chart-placeholder {
+  height: 300px;
+  background: var(--input-bg);
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+  font-size: 16px;
+}
+
+.clear-btn {
+  padding: 13px 20px;
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.clear-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(108, 117, 125, 0.3);
+}
+
+.clear-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-edit {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+/* Dark mode for settings forms */
+@media (prefers-color-scheme: dark) {
+  .form-section {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .form-section h3 {
+    color: #f1f5f9;
+  }
+
+  .form-group label {
+    color: #f1f5f9;
+  }
+
+  .form-input {
+    background: #0f172a;
+    color: #f1f5f9;
+    border-color: #334155;
+  }
+
+  .form-input:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+  }
+
+  .checkbox-label,
+  .radio-label {
+    color: #cbd5e1;
+  }
+
+  .payment-method {
+    background: #0f172a;
+    border-color: #334155;
+  }
+
+  .method-type {
+    color: #f1f5f9;
+  }
+
+  .method-details {
+    color: #94a3b8;
+  }
+
+  .chart-section {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .chart-section h3 {
+    color: #f1f5f9;
+  }
+
+  .chart-placeholder {
+    background: #0f172a;
+    border-color: #334155;
+    color: #94a3b8;
   }
 }

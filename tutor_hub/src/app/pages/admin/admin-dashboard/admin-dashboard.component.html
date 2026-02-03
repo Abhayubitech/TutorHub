@@ -1,4 +1,5 @@
 <div class="admin-dashboard">
+  <app-toast />
   <div class="dashboard-header-container">
     <div class="header-left">
       <app-hamburger-menu 
@@ -57,6 +58,16 @@
               <div class="card-icon">⚙️</div>
               <h3>Settings</h3>
               <p>Configure system settings</p>
+            </button>
+            <button class="action-card" (click)="currentNavSection.set('teacher-courses')">
+              <div class="card-icon">👨‍🏫</div>
+              <h3>Teacher Courses</h3>
+              <p>View which teacher teaches which courses</p>
+            </button>
+            <button class="action-card" (click)="currentNavSection.set('student-enrollments')">
+              <div class="card-icon">🎓</div>
+              <h3>Student Enrollments</h3>
+              <p>View student course enrollments</p>
             </button>
           </div>
         </div>
@@ -123,6 +134,87 @@
       </div>
     }
 
+    <!-- Teacher Courses Section -->
+    @if (currentNavSection() === 'teacher-courses') {
+      <div role="tabpanel" id="teacher-courses-panel">
+        <section class="section">
+          <h2>Teacher Courses</h2>
+          <p class="section-description">View which teachers are teaching which courses and their enrollment statistics.</p>
+          
+          @if (manageTeacherCourses.length > 0) {
+            <div class="teacher-courses-grid">
+              @for (item of manageTeacherCourses; track item.teacherId) {
+                <div class="teacher-course-card">
+                  <div class="teacher-info">
+                    <h3>{{ item.teacherName }}</h3>
+                    <p class="teacher-email">{{ item.teacherEmail }}</p>
+                    <span class="teacher-role">TEACHER</span>
+                  </div>
+                  <div class="courses-info">
+                    <h4>Courses Teaching ({{ item.courses.length }})</h4>
+                    <div class="courses-list">
+                      @for (course of item.courses; track course.id) {
+                        <div class="course-item">
+                          <span class="course-name">{{ course.subject }}</span>
+                          <span class="course-details">
+                            💰 ₹{{ course.fee }} | 📍 {{ course.mode }} | 👥 {{ course.enrolledStudents || 0 }} students
+                          </span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="no-data">No teacher-course assignments found.</p>
+          }
+        </section>
+      </div>
+    }
+
+    <!-- Student Enrollments Section -->
+    @if (currentNavSection() === 'student-enrollments') {
+      <div role="tabpanel" id="student-enrollments-panel">
+        <section class="section">
+          <h2>Student Enrollments</h2>
+          <p class="section-description">View which students are enrolled in which courses and their enrollment details.</p>
+          
+          @if (manageStudentEnrollments.length > 0) {
+            <div class="student-enrollments-grid">
+              @for (item of manageStudentEnrollments; track item.studentId) {
+                <div class="student-enrollment-card">
+                  <div class="student-info">
+                    <h3>{{ item.studentName }}</h3>
+                    <p class="student-email">{{ item.studentEmail }}</p>
+                    <span class="student-role">STUDENT</span>
+                  </div>
+                  <div class="enrollments-info">
+                    <h4>Enrolled Courses ({{ item.enrollments.length }})</h4>
+                    <div class="enrollments-list">
+                      @for (enrollment of item.enrollments; track enrollment.id) {
+                        <div class="enrollment-item">
+                          <span class="course-name">{{ enrollment.subject }}</span>
+                          <span class="enrollment-details">
+                            👨‍🏫 {{ enrollment.teacherName }} | 💰 ₹{{ enrollment.fee }} | 📅 Enrolled: {{ enrollment.enrolledAt | date: 'mediumDate' }}
+                          </span>
+                          <span class="enrollment-status" [class]="enrollment.status">
+                            {{ enrollment.status | uppercase }}
+                          </span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="no-data">No student enrollments found.</p>
+          }
+        </section>
+      </div>
+    }
+
     <!-- Settings Section -->
     @if (currentNavSection() === 'settings') {
       <div role="tabpanel" id="settings-panel">
@@ -132,17 +224,32 @@
             <div class="setting-item">
               <h3>System Configuration</h3>
               <p>Manage platform-wide settings and configurations.</p>
-              <button class="btn-secondary">System Settings</button>
+              <button class="btn-secondary" (click)="openSystemSettings()">System Settings</button>
             </div>
             <div class="setting-item">
               <h3>User Management</h3>
               <p>Configure user roles, permissions, and registration settings.</p>
-              <button class="btn-secondary">User Settings</button>
+              <button class="btn-secondary" (click)="openUserSettings()">User Settings</button>
             </div>
             <div class="setting-item">
               <h3>Platform Analytics</h3>
               <p>View detailed analytics and reports about platform usage.</p>
-              <button class="btn-secondary">View Analytics</button>
+              <button class="btn-secondary" (click)="openPlatformAnalytics()">View Analytics</button>
+            </div>
+            <div class="setting-item">
+              <h3>Account Settings</h3>
+              <p>Manage your admin account preferences and security settings.</p>
+              <button class="btn-secondary" (click)="openAccountSettings()">Account Settings</button>
+            </div>
+            <div class="setting-item">
+              <h3>Manage Payments</h3>
+              <p>Configure payment gateways and manage financial transactions.</p>
+              <button class="btn-secondary" (click)="openPaymentSettings()">Manage Payments</button>
+            </div>
+            <div class="setting-item">
+              <h3>Learning Settings</h3>
+              <p>Configure platform-wide learning preferences and educational settings.</p>
+              <button class="btn-secondary" (click)="openLearningSettings()">Learning Settings</button>
             </div>
           </div>
         </section>

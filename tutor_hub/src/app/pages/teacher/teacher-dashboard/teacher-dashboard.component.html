@@ -1,4 +1,5 @@
 <div class="teacher-dashboard">
+  <app-toast />
   <div class="dashboard-header-container">
     <div class="header-left">
       <app-hamburger-menu 
@@ -234,17 +235,27 @@
           <div class="setting-item">
             <h3>Account Settings</h3>
             <p>Manage your account preferences and security settings.</p>
-            <button class="btn-secondary">Account Settings</button>
+            <button class="btn-secondary" (click)="openAccountSettings()">Account Settings</button>
           </div>
           <div class="setting-item">
             <h3>Notification Preferences</h3>
             <p>Configure how you receive notifications about enrollments and course updates.</p>
-            <button class="btn-secondary">Notification Settings</button>
+            <button class="btn-secondary" (click)="openNotificationSettings()">Notification Settings</button>
           </div>
           <div class="setting-item">
             <h3>Payment Settings</h3>
             <p>Manage your payment methods and payout preferences.</p>
-            <button class="btn-secondary">Payment Settings</button>
+            <button class="btn-secondary" (click)="openPaymentSettings()">Payment Settings</button>
+          </div>
+          <div class="setting-item">
+            <h3>Learning Settings</h3>
+            <p>Configure your teaching preferences and availability.</p>
+            <button class="btn-secondary" (click)="openLearningSettings()">Learning Settings</button>
+          </div>
+          <div class="setting-item">
+            <h3>Platform Analytics</h3>
+            <p>View detailed analytics about your courses and student performance.</p>
+            <button class="btn-secondary" (click)="openPlatformAnalytics()">Platform Analytics</button>
           </div>
         </div>
       </section>
@@ -317,6 +328,223 @@
           </div>
         </div>
       </div>
+    }
+
+    <!-- Account Settings Section -->
+    @if (currentSection === 'account-settings') {
+      <section class="section">
+        <h2>Account Settings</h2>
+        <div class="settings-form">
+          <div class="form-section">
+            <h3>Personal Information</h3>
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" class="form-input" [value]="user?.name || ''" />
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" class="form-input" [value]="user?.email || ''" />
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" class="form-input" [value]="user?.phone || ''" />
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <h3>Security Settings</h3>
+            <div class="form-group">
+              <label>Current Password</label>
+              <input type="password" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label>New Password</label>
+              <input type="password" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label>Confirm New Password</label>
+              <input type="password" class="form-input" />
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button class="btn-primary" (click)="toastService.success('Account settings saved')">Save Changes</button>
+            <button class="btn-secondary" (click)="currentSection = 'settings'">Back to Settings</button>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- Notification Settings Section -->
+    @if (currentSection === 'notification-settings') {
+      <section class="section">
+        <h2>Notification Preferences</h2>
+        <div class="settings-form">
+          <div class="form-section">
+            <h3>Email Notifications</h3>
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" checked />
+                <span>New enrollment requests</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" checked />
+                <span>Course updates and changes</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" />
+                <span>Student messages</span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <h3>Push Notifications</h3>
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" checked />
+                <span>Real-time enrollment alerts</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" />
+                <span>Daily summary reports</span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button class="btn-primary" (click)="toastService.success('Notification preferences saved')">Save Preferences</button>
+            <button class="btn-secondary" (click)="currentSection = 'settings'">Back to Settings</button>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- Payment Settings Section -->
+    @if (currentSection === 'payment-settings') {
+      <section class="section">
+        <h2>Payment Settings</h2>
+        <div class="settings-form">
+          <div class="form-section">
+            <h3>Payment Methods</h3>
+            <div class="payment-methods">
+              <div class="payment-method">
+                <span class="method-type">Bank Account</span>
+                <span class="method-details">****1234</span>
+                <button class="btn-small">Edit</button>
+              </div>
+            </div>
+            <button class="btn-secondary">Add Payment Method</button>
+          </div>
+          
+          <div class="form-section">
+            <h3>Payout Preferences</h3>
+            <div class="form-group">
+              <label>Payout Frequency</label>
+              <select class="form-input">
+                <option>Weekly</option>
+                <option>Bi-weekly</option>
+                <option>Monthly</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button class="btn-primary" (click)="toastService.success('Payment settings updated')">Update Payment Settings</button>
+            <button class="btn-secondary" (click)="currentSection = 'settings'">Back to Settings</button>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- Learning Settings Section -->
+    @if (currentSection === 'learning-settings') {
+      <section class="section">
+        <h2>Teaching Preferences</h2>
+        <div class="settings-form">
+          <div class="form-section">
+            <h3>Teaching Style</h3>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="teaching-style" value="interactive" checked />
+                <span>Interactive</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="teaching-style" value="lecture" />
+                <span>Lecture-based</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="teaching-style" value="hands-on" />
+                <span>Hands-on</span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <h3>Availability</h3>
+            <div class="form-group">
+              <label>Available Days</label>
+              <div class="checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" checked />
+                  <span>Monday</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" checked />
+                  <span>Tuesday</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" checked />
+                  <span>Wednesday</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" checked />
+                  <span>Thursday</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" checked />
+                  <span>Friday</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button class="btn-primary" (click)="toastService.success('Teaching preferences saved')">Save Preferences</button>
+            <button class="btn-secondary" (click)="currentSection = 'settings'">Back to Settings</button>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- Platform Analytics Section -->
+    @if (currentSection === 'platform-analytics') {
+      <section class="section">
+        <h2>Platform Analytics</h2>
+        <div class="analytics-content">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">👥</div>
+              <div class="stat-value">{{ courseCount }}</div>
+              <div class="stat-label">Total Courses</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">📈</div>
+              <div class="stat-value">{{ pendingRequests }}</div>
+              <div class="stat-label">Pending Requests</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">💰</div>
+              <div class="stat-value">₹0</div>
+              <div class="stat-label">Total Earnings</div>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button class="btn-secondary" (click)="currentSection = 'settings'">Back to Settings</button>
+          </div>
+        </div>
+      </section>
     }
   </div>
 </div>

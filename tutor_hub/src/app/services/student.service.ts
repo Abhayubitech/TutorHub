@@ -147,18 +147,35 @@ export class StudentService {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
+    // Try API search first
     this.apiService.searchCourses(query).subscribe({
       next: (response) => {
-        if (response.success) {
+        if (response.success && response.courses) {
           this.searchResultsSignal.set(response.courses);
+        } else {
+          // Fallback to client-side search if API doesn't return expected format
+          this.performClientSideSearch(query);
         }
         this.loadingSignal.set(false);
       },
       error: (error) => {
-        this.errorSignal.set(error.error?.message || 'Search failed');
+        console.warn('API search failed, falling back to client-side search:', error);
+        // Fallback to client-side search
+        this.performClientSideSearch(query);
         this.loadingSignal.set(false);
       }
     });
+  }
+
+  private performClientSideSearch(query: string): void {
+    const allCourses = this.allCoursesSignal();
+    const filteredCourses = allCourses.filter(course => 
+      course.subject?.toLowerCase().includes(query.toLowerCase()) ||
+      course.description?.toLowerCase().includes(query.toLowerCase()) ||
+      course.teacher_name?.toLowerCase().includes(query.toLowerCase()) ||
+      course.mode?.toLowerCase().includes(query.toLowerCase())
+    );
+    this.searchResultsSignal.set(filteredCourses);
   }
 
   clearSearchResults(): void {

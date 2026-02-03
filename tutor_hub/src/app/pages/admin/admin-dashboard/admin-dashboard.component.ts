@@ -4,9 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { AdminService } from '../../../services/admin.service';
+import { ToastService } from '../../../services/toast.service';
 import { StatsGridComponent, StatItem } from '../../../shared/components/stats-grid/stats-grid.component';
 import { ProfileFormComponent, ProfileData } from '../../../shared/components/profile-form/profile-form.component';
 import { HamburgerMenuComponent, MenuItem } from '../../../shared/components/hamburger-menu/hamburger-menu.component';
+import { ToastComponent } from '../../../shared/components/toast/toast.component';
 
 interface User {
   id: number;
@@ -19,7 +21,7 @@ interface User {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, StatsGridComponent, ProfileFormComponent, HamburgerMenuComponent],
+  imports: [CommonModule, FormsModule, StatsGridComponent, ProfileFormComponent, HamburgerMenuComponent, ToastComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css'
 })
@@ -34,7 +36,8 @@ export class AdminDashboardComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private adminService: AdminService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {
     if (!this.authService.isAuthenticated() || this.authService.user()?.role !== 'admin') {
       this.router.navigate(['/login']);
@@ -187,10 +190,41 @@ export class AdminDashboardComponent implements OnInit {
       case 'settings':
         this.currentNavSection.set('settings');
         break;
+      case 'teacher-courses':
+        this.currentNavSection.set('teacher-courses');
+        break;
+      case 'student-enrollments':
+        this.currentNavSection.set('student-enrollments');
+        break;
       case 'logout':
         this.logout();
         break;
     }
+  }
+
+  // Settings functionality
+  openSystemSettings(): void {
+    this.currentNavSection.set('system-settings');
+  }
+
+  openUserSettings(): void {
+    this.currentNavSection.set('user-settings');
+  }
+
+  openPlatformAnalytics(): void {
+    this.currentNavSection.set('platform-analytics');
+  }
+
+  openAccountSettings(): void {
+    this.currentNavSection.set('account-settings');
+  }
+
+  openPaymentSettings(): void {
+    this.currentNavSection.set('payment-settings');
+  }
+
+  openLearningSettings(): void {
+    this.currentNavSection.set('learning-settings');
   }
 
   setNavSection(section: string): void {

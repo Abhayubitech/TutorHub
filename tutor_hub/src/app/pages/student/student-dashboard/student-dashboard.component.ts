@@ -4,13 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { StudentService } from '../../../services/student.service';
 import { AuthService } from '../../../services/auth.service';
+import { ToastService } from '../../../services/toast.service';
 import { ProfileFormComponent, ProfileData } from '../../../shared/components/profile-form/profile-form.component';
 import { HamburgerMenuComponent, MenuItem } from '../../../shared/components/hamburger-menu/hamburger-menu.component';
+import { ToastComponent } from '../../../shared/components/toast/toast.component';
 
 @Component({
   selector: 'app-student-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProfileFormComponent, HamburgerMenuComponent],
+  imports: [CommonModule, FormsModule, ProfileFormComponent, HamburgerMenuComponent, ToastComponent],
   templateUrl: './student-dashboard.component.html',
   styleUrl: './student-dashboard.component.css'
 })
@@ -24,7 +26,8 @@ export class StudentDashboardComponent implements OnInit {
   constructor(
     private studentService: StudentService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    public toastService: ToastService
   ) {
     // Check if user is authenticated
     if (!this.authService.isAuthenticated()) {
@@ -79,7 +82,7 @@ export class StudentDashboardComponent implements OnInit {
   }
 
   editProfile(): void {
-    this.isEditingProfile.set(true);
+    this.currentTab.set('settings');
   }
 
   updateProfile(profileData: ProfileData): void {
@@ -99,7 +102,7 @@ export class StudentDashboardComponent implements OnInit {
   }
 
   logout(): void {
-    this.authService.logout();
+    this.authService.logoutWithConfirmation();
     this.router.navigate(['/home']);
   }
 
@@ -147,6 +150,8 @@ export class StudentDashboardComponent implements OnInit {
       { id: 'teachers', label: 'Teachers', icon: '👨‍🏫', active: this.currentTab() === 'teachers' },
       { id: 'enrollments', label: 'My Enrollments', icon: '📝', active: this.currentTab() === 'enrollments', badge: this.enrollmentCount > 0 ? String(this.enrollmentCount) : undefined },
       { id: 'requests', label: 'My Requests', icon: '⏳', active: this.currentTab() === 'requests' },
+      { id: 'notifications', label: 'Notifications', icon: '🔔', active: this.currentTab() === 'notifications', badge: '3' },
+      { id: 'help', label: 'Help & Support', icon: '💬', active: this.currentTab() === 'help' },
       { id: 'settings', label: 'Settings', icon: '⚙️', active: this.currentTab() === 'settings' },
       { id: 'logout', label: 'Logout', icon: '🚪' }
     ];
@@ -172,6 +177,12 @@ export class StudentDashboardComponent implements OnInit {
       case 'requests':
         this.currentTab.set('requests');
         break;
+      case 'notifications':
+        this.currentTab.set('notifications');
+        break;
+      case 'help':
+        this.currentTab.set('help');
+        break;
       case 'settings':
         this.currentTab.set('settings');
         break;
@@ -179,5 +190,26 @@ export class StudentDashboardComponent implements OnInit {
         this.logout();
         break;
     }
+  }
+
+  // Settings functionality
+  openAccountSettings(): void {
+    this.currentTab.set('account-settings');
+  }
+
+  openLearningSettings(): void {
+    this.currentTab.set('learning-settings');
+  }
+
+  openPaymentSettings(): void {
+    this.currentTab.set('payment-settings');
+  }
+
+  openUserSettings(): void {
+    this.currentTab.set('user-settings');
+  }
+
+  openPlatformAnalytics(): void {
+    this.currentTab.set('platform-analytics');
   }
 }

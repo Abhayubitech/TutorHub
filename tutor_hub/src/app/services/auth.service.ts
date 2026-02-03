@@ -1,5 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { ApiService } from './api.service';
+import { ToastService } from './toast.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class AuthService {
   loading = computed(() => this.loadingSignal());
   error = computed(() => this.errorSignal());
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private toastService: ToastService) {
     this.checkAuthStatus();
   }
 
@@ -78,6 +79,31 @@ export class AuthService {
     localStorage.removeItem('user');
     this.userSignal.set(null);
     this.isAuthenticatedSignal.set(false);
+    this.toastService.info('You have been logged out successfully');
+  }
+
+  logoutWithConfirmation(): void {
+    if (confirm('Are you sure you want to logout? Any unsaved changes will be lost.')) {
+      this.logout();
+    }
+  }
+
+  logoutAndClearData(): void {
+    if (confirm('Are you sure you want to logout? This will clear all local data and cache.')) {
+      localStorage.clear();
+      sessionStorage.clear();
+      this.userSignal.set(null);
+      this.isAuthenticatedSignal.set(false);
+      this.toastService.warning('Logged out and all local data cleared');
+    }
+  }
+
+  logoutToSpecificRole(role: 'student' | 'teacher' | 'admin'): void {
+    if (confirm(`Are you sure you want to logout and switch to ${role} dashboard?`)) {
+      this.logout();
+      // Additional logic for role switching can be added here
+      this.toastService.info(`Logged out. You can now login as ${role}`);
+    }
   }
 
   updateUserProfile(profileData: any): void {
@@ -96,13 +122,13 @@ export class AuthService {
         if (response.success && response.user) {
           localStorage.setItem('user', JSON.stringify(response.user));
           this.userSignal.set(response.user);
-          alert('Profile updated successfully');
+          this.toastService.success('Profile updated successfully');
         }
         this.loadingSignal.set(false);
       },
       error: (error) => {
         this.errorSignal.set(error.error?.message || 'Failed to update profile');
-        alert('Error: ' + (error.error?.message || 'Failed to update profile'));
+        this.toastService.error('Error: ' + (error.error?.message || 'Failed to update profile'));
         this.loadingSignal.set(false);
       }
     });

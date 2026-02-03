@@ -4,14 +4,16 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { TeacherService } from '../../../services/teacher.service';
+import { ToastService } from '../../../services/toast.service';
 import { StatsGridComponent, StatItem } from '../../../shared/components/stats-grid/stats-grid.component';
 import { ProfileFormComponent, ProfileData } from '../../../shared/components/profile-form/profile-form.component';
 import { HamburgerMenuComponent, MenuItem } from '../../../shared/components/hamburger-menu/hamburger-menu.component';
+import { ToastComponent } from '../../../shared/components/toast/toast.component';
 
 @Component({
   selector: 'app-teacher-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, StatsGridComponent, ProfileFormComponent, HamburgerMenuComponent],
+  imports: [CommonModule, FormsModule, StatsGridComponent, ProfileFormComponent, HamburgerMenuComponent, ToastComponent],
   templateUrl: './teacher-dashboard.component.html',
   styleUrl: './teacher-dashboard.component.css'
 })
@@ -40,7 +42,8 @@ export class TeacherDashboardComponent implements OnInit {
   constructor(
     private teacherService: TeacherService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    public toastService: ToastService
   ) {
     if (!this.authService.isAuthenticated() || this.authService.user()?.role !== 'teacher') {
       this.router.navigate(['/login']);
@@ -71,8 +74,18 @@ export class TeacherDashboardComponent implements OnInit {
 
     if (this.editingCourseId) {
       this.teacherService.updateCourse(this.editingCourseId, courseData);
+      this.toastService.success('Course updated successfully');
+      // Redirect back to My Courses after update
+      setTimeout(() => {
+        this.currentSection = 'my-courses';
+      }, 1000);
     } else {
       this.teacherService.createCourse(courseData);
+      this.toastService.success('Course created successfully');
+      // Redirect back to My Courses after creation
+      setTimeout(() => {
+        this.currentSection = 'my-courses';
+      }, 1000);
     }
 
     // clear form
@@ -95,7 +108,7 @@ export class TeacherDashboardComponent implements OnInit {
   }
 
   editProfile(): void {
-    this.isEditingProfile = true;
+    this.currentSection = 'settings';
   }
 
   updateProfile(profileData: ProfileData): void {
@@ -115,7 +128,7 @@ export class TeacherDashboardComponent implements OnInit {
   }
 
   logout(): void {
-    this.authService.logout();
+    this.authService.logoutWithConfirmation();
     this.router.navigate(['/home']);
   }
 
@@ -164,6 +177,7 @@ export class TeacherDashboardComponent implements OnInit {
     this.scheduleTime = course.schedule_time || '';
     this.durationPerClass = course.duration_per_class || null;
     this.showEditModal = true;
+    this.currentSection = 'create-course';
     
     // Scroll to form
     setTimeout(() => {
@@ -172,11 +186,14 @@ export class TeacherDashboardComponent implements OnInit {
         element.scrollIntoView({ behavior: 'smooth' });
       }
     }, 100);
+    
+    this.toastService.info(`Editing course: ${course.subject}`);
   }
 
   deleteCourse(courseId: string | number): void {
     if (confirm('Are you sure you want to delete this course?')) {
       this.teacherService.deleteCourse(String(courseId));
+      this.toastService.success('Course deleted successfully');
     }
   }
 
@@ -202,6 +219,7 @@ export class TeacherDashboardComponent implements OnInit {
   removeStudent(studentId: number): void {
     if (confirm('Are you sure you want to remove this student from the course?')) {
       this.enrolledStudents = this.enrolledStudents.filter(student => student.id !== studentId);
+      this.toastService.success('Student removed from course');
     }
   }
 
@@ -248,6 +266,7 @@ export class TeacherDashboardComponent implements OnInit {
         break;
       case 'edit-profile':
         this.editProfile();
+        this.currentSection = 'settings';
         break;
       case 'settings':
         this.currentSection = 'settings';
@@ -256,5 +275,26 @@ export class TeacherDashboardComponent implements OnInit {
         this.logout();
         break;
     }
+  }
+
+  // Settings functionality
+  openAccountSettings(): void {
+    this.currentSection = 'account-settings';
+  }
+
+  openNotificationSettings(): void {
+    this.currentSection = 'notification-settings';
+  }
+
+  openPaymentSettings(): void {
+    this.currentSection = 'payment-settings';
+  }
+
+  openLearningSettings(): void {
+    this.currentSection = 'learning-settings';
+  }
+
+  openPlatformAnalytics(): void {
+    this.currentSection = 'platform-analytics';
   }
 }

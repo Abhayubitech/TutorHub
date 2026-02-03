@@ -14,7 +14,7 @@
   
   <nav class="menu-content" [class.visible]="isOpen" role="navigation" aria-label="Main navigation">
     <div class="menu-header">
-      <h3>Menu</h3>
+      <h3>{{ menuTitle() }}</h3>
       <button class="close-btn" (click)="closeMenu()" aria-label="Close menu">×</button>
     </div>
     

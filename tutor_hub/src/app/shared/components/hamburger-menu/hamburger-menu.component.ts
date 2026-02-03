@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 
 export interface MenuItem {
   id: string;
@@ -21,14 +21,20 @@ export class HamburgerMenuComponent {
   @Input() isOpen: boolean = false;
   @Output() menuToggle = new EventEmitter<boolean>();
   @Output() itemClick = new EventEmitter<MenuItem>();
+  
+  menuTitle = signal<string>('Menu');
 
   toggleMenu(): void {
     this.isOpen = !this.isOpen;
+    const titles = ['Navigation', 'Quick Access', 'Main Menu', 'Dashboard'];
+    const randomTitle = titles[Math.floor(Math.random() * titles.length)];
+    this.menuTitle.set(this.isOpen ? randomTitle : 'Menu');
     this.menuToggle.emit(this.isOpen);
   }
 
   closeMenu(): void {
     this.isOpen = false;
+    this.menuTitle.set('Menu');
     this.menuToggle.emit(false);
   }
 

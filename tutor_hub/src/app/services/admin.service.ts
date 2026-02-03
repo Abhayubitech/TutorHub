@@ -1,5 +1,6 @@
 import { Injectable, signal, computed, isDevMode } from '@angular/core';
 import { ApiService } from './api.service';
+import { ToastService } from './toast.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,7 @@ export class AdminService {
   teacherCount = computed(() => this.usersSignal().filter(u => u.role === 'teacher').length);
   courseCount = computed(() => this.coursesSignal().length);
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private toastService: ToastService) {}
 
   loadAllUsers(): void {
     this.loadingSignal.set(true);
@@ -92,13 +93,13 @@ export class AdminService {
       next: (response) => {
         if (response.success) {
           this.loadAllUsers();
-          alert('User deleted successfully');
+          this.toastService.success('User deleted successfully');
         }
         this.loadingSignal.set(false);
       },
       error: (error) => {
         this.errorSignal.set(error.error?.message || 'Failed to delete user');
-        alert('Error: ' + (error.error?.message || 'Failed to delete user'));
+        this.toastService.error('Error: ' + (error.error?.message || 'Failed to delete user'));
         this.loadingSignal.set(false);
       }
     });
@@ -112,13 +113,13 @@ export class AdminService {
       next: (response) => {
         if (response.success) {
           this.loadAllUsers();
-          alert('User updated successfully');
+          this.toastService.success('User updated successfully');
         }
         this.loadingSignal.set(false);
       },
       error: (error) => {
         this.errorSignal.set(error.error?.message || 'Failed to update user');
-        alert('Error: ' + (error.error?.message || 'Failed to update user'));
+        this.toastService.error('Error: ' + (error.error?.message || 'Failed to update user'));
         this.loadingSignal.set(false);
       }
     });
