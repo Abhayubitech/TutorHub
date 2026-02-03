@@ -101,8 +101,8 @@ export class StudentDashboardComponent implements OnInit {
     this.isEditingProfile.set(false);
   }
 
-  logout(): void {
-    this.authService.logoutWithConfirmation();
+  async logout(): Promise<void> {
+    await this.authService.logoutWithConfirmation();
     this.router.navigate(['/home']);
   }
 

@@ -1,6 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { ApiService } from './api.service';
 import { ToastService } from './toast.service';
+import { ConfirmationService } from '../shared/services/confirmation.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class AuthService {
   loading = computed(() => this.loadingSignal());
   error = computed(() => this.errorSignal());
 
-  constructor(private apiService: ApiService, private toastService: ToastService) {
+  constructor(private apiService: ApiService, private toastService: ToastService, private confirmationService: ConfirmationService) {
     this.checkAuthStatus();
   }
 
@@ -82,14 +83,30 @@ export class AuthService {
     this.toastService.info('You have been logged out successfully');
   }
 
-  logoutWithConfirmation(): void {
-    if (confirm('Are you sure you want to logout? Any unsaved changes will be lost.')) {
+  async logoutWithConfirmation(): Promise<void> {
+    const confirmed = await this.confirmationService.confirm({
+      title: 'Confirm Logout',
+      message: 'Are you sure you want to logout? Any unsaved changes will be lost.',
+      confirmText: 'Logout',
+      cancelText: 'Cancel',
+      type: 'warning'
+    });
+    
+    if (confirmed) {
       this.logout();
     }
   }
 
-  logoutAndClearData(): void {
-    if (confirm('Are you sure you want to logout? This will clear all local data and cache.')) {
+  async logoutAndClearData(): Promise<void> {
+    const confirmed = await this.confirmationService.confirm({
+      title: 'Clear All Data',
+      message: 'Are you sure you want to logout? This will clear all local data and cache.',
+      confirmText: 'Clear & Logout',
+      cancelText: 'Cancel',
+      type: 'danger'
+    });
+    
+    if (confirmed) {
       localStorage.clear();
       sessionStorage.clear();
       this.userSignal.set(null);
@@ -98,8 +115,16 @@ export class AuthService {
     }
   }
 
-  logoutToSpecificRole(role: 'student' | 'teacher' | 'admin'): void {
-    if (confirm(`Are you sure you want to logout and switch to ${role} dashboard?`)) {
+  async logoutToSpecificRole(role: 'student' | 'teacher' | 'admin'): Promise<void> {
+    const confirmed = await this.confirmationService.confirm({
+      title: 'Switch Role',
+      message: `Are you sure you want to logout and switch to ${role} dashboard?`,
+      confirmText: `Switch to ${role}`,
+      cancelText: 'Cancel',
+      type: 'info'
+    });
+    
+    if (confirmed) {
       this.logout();
       // Additional logic for role switching can be added here
       this.toastService.info(`Logged out. You can now login as ${role}`);

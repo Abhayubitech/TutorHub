@@ -127,8 +127,8 @@ export class TeacherDashboardComponent implements OnInit {
     this.isEditingProfile = false;
   }
 
-  logout(): void {
-    this.authService.logoutWithConfirmation();
+  async logout(): Promise<void> {
+    await this.authService.logoutWithConfirmation();
     this.router.navigate(['/home']);
   }
 
