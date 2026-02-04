@@ -3,6 +3,11 @@
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
+/* Ensure dialog appears above everything */
+.fixed.inset-0 {
+  z-index: 9999 !important;
+}
+
 /* Animation for dialog appearance */
 .transform {
   animation: slideIn 0.3s ease-out;

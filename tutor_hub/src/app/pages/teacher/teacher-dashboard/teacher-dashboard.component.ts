@@ -120,6 +120,8 @@ export class TeacherDashboardComponent implements OnInit {
     setTimeout(() => {
       this.isProfileLoading = false;
       this.cancelEditProfile();
+      // Navigate back to settings to see updated data
+      this.currentSection = 'settings';
     }, 1000);
   }
 
@@ -138,9 +140,17 @@ export class TeacherDashboardComponent implements OnInit {
   }
 
   async logout(): Promise<void> {
-    await this.authService.logoutWithConfirmation();
+    console.log('Teacher dashboard logout method called');
+    
+    // Use direct logout like student dashboard for consistency
+    this.authService.logout();
+    
+    // Close menu before navigation
+    this.isMenuOpen = false;
+    
     // Force navigation after a short delay to ensure auth state is updated
     setTimeout(() => {
+      console.log('Navigating to home after logout');
       this.router.navigate(['/home']).catch(err => {
         console.error('Navigation error during logout:', err);
         // Fallback navigation
@@ -267,7 +277,7 @@ export class TeacherDashboardComponent implements OnInit {
     ];
   }
 
-  onMenuClick(item: MenuItem): void {
+  async onMenuClick(item: MenuItem): Promise<void> {
     switch (item.id) {
       case 'overview':
         this.currentSection = 'overview';
@@ -289,7 +299,7 @@ export class TeacherDashboardComponent implements OnInit {
         this.currentSection = 'settings';
         break;
       case 'logout':
-        this.logout();
+        await this.logout();
         break;
     }
   }

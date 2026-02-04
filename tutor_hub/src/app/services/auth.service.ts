@@ -77,10 +77,14 @@ export class AuthService {
 
   logout(): void {
     try {
+      console.log('Starting logout process...');
+      
       // Clear all authentication data
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       sessionStorage.clear();
+      
+      console.log('Cleared local storage and session storage');
       
       // Reset signals
       this.userSignal.set(null);
@@ -88,7 +92,10 @@ export class AuthService {
       this.loadingSignal.set(false);
       this.errorSignal.set(null);
       
+      console.log('Reset auth signals');
+      
       this.toastService.info('You have been logged out successfully');
+      console.log('Logout completed successfully');
     } catch (error) {
       console.error('Logout error:', error);
       // Force logout even if there's an error
@@ -99,15 +106,27 @@ export class AuthService {
   }
 
   async logoutWithConfirmation(): Promise<void> {
-    const confirmed = await this.confirmationService.confirm({
-      title: 'Confirm Logout',
-      message: 'Are you sure you want to logout? Any unsaved changes will be lost.',
-      confirmText: 'Logout',
-      cancelText: 'Cancel',
-      type: 'warning'
-    });
-    
-    if (confirmed) {
+    try {
+      console.log('Starting logout confirmation...');
+      const confirmed = await this.confirmationService.confirm({
+        title: 'Confirm Logout',
+        message: 'Are you sure you want to logout? Any unsaved changes will be lost.',
+        confirmText: 'Logout',
+        cancelText: 'Cancel',
+        type: 'warning'
+      });
+      
+      console.log('Confirmation result:', confirmed);
+      
+      if (confirmed) {
+        console.log('User confirmed logout, proceeding...');
+        this.logout();
+      } else {
+        console.log('User cancelled logout');
+      }
+    } catch (error) {
+      console.error('Error during logout confirmation:', error);
+      // Fallback: logout without confirmation
       this.logout();
     }
   }
@@ -160,7 +179,9 @@ export class AuthService {
     this.apiService.updateUserProfile(userId, profileData).subscribe({
       next: (response) => {
         if (response.success && response.user) {
+          // Update localStorage immediately
           localStorage.setItem('user', JSON.stringify(response.user));
+          // Update the user signal to trigger UI updates
           this.userSignal.set(response.user);
           this.toastService.success('Profile updated successfully');
         }
@@ -177,5 +198,10 @@ export class AuthService {
   getRole(): string | null {
     const user = this.userSignal();
     return user?.role || null;
+  }
+
+  updateCurrentUser(updatedUser: any): void {
+    this.userSignal.set(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
   }
 }

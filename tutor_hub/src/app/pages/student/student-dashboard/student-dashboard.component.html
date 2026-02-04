@@ -181,47 +181,56 @@
         @if (loading) {
           <p class="loading">Loading teachers...</p>
         } @else {
-          <div class="teachers-grid">
+          <div class="teachers-list">
             @for (teacher of allTeachers; track teacher.id) {
-              <div class="teacher-card">
-                <h3>{{ teacher.name }}</h3>
-                <p class="qualification">{{ teacher.qualification || 'Qualification not specified' }}</p>
-                <p class="bio">{{ teacher.bio }}</p>
-                <div class="teacher-meta">
-                  <span>📧 {{ teacher.email }}</span>
-                  @if (teacher.hourly_rate) {
-                    <span>💵 ₹{{ teacher.hourly_rate }}/hour</span>
-                  }
+              <div class="teacher-item">
+                <div class="teacher-header" (click)="toggleTeacherCourses(teacher.id)">
+                  <div class="teacher-basic-info">
+                    <h3>{{ teacher.name }}</h3>
+                    <p class="qualification">{{ teacher.qualification || 'Qualification not specified' }}</p>
+                    <p class="bio">{{ teacher.bio }}</p>
+                    <div class="teacher-meta">
+                      <span>📧 {{ teacher.email }}</span>
+                      @if (teacher.hourly_rate) {
+                        <span>💵 ₹{{ teacher.hourly_rate }}/hour</span>
+                      }
+                    </div>
+                  </div>
+                  <div class="teacher-actions">
+                    <button class="toggle-courses-btn" [class.expanded]="expandedTeachers.has(teacher.id)">
+                      <span class="toggle-icon">{{ expandedTeachers.has(teacher.id) ? '▼' : '▶' }}</span>
+                      {{ expandedTeachers.has(teacher.id) ? 'Hide Courses' : 'View Courses' }}
+                      @if (teacher.courses && teacher.courses.length > 0) {
+                        <span class="course-count">({{ teacher.courses.length }})</span>
+                      }
+                    </button>
+                    @if (teacher.is_verified) {
+                      <div class="verified-badge">✓ Verified</div>
+                    }
+                  </div>
                 </div>
                 
-                <!-- Courses launched by this teacher -->
-                @if (teacher.courses && teacher.courses.length > 0) {
-                  <div class="teacher-courses">
-                    <h4>📚 Courses Launched:</h4>
-                    <div class="courses-list">
+                @if (expandedTeachers.has(teacher.id) && teacher.courses && teacher.courses.length > 0) {
+                  <div class="teacher-courses-expanded">
+                    <h4>📚 Courses by {{ teacher.name }}:</h4>
+                    <div class="courses-grid">
                       @for (course of teacher.courses; track course.id) {
-                        <div class="course-item">
-                          <div class="course-info">
-                            <h5>{{ course.subject }}</h5>
-                            <p>{{ course.description }}</p>
-                            <div class="course-meta">
-                              <span>💰 ₹{{ course.fee }}</span>
-                              <span>📍 {{ course.mode }}</span>
-                            </div>
+                        <div class="course-card">
+                          <h5>{{ course.subject }}</h5>
+                          <p>{{ course.description }}</p>
+                          <div class="course-meta">
+                            <span>💰 ₹{{ course.fee }}</span>
+                            <span>📍 {{ course.mode }}</span>
                           </div>
-                          <button class="btn-enroll" (click)="requestEnrollment(course.id)">Enroll</button>
+                          <button class="btn-enroll" (click)="requestEnrollment(course.id)">Request Enrollment</button>
                         </div>
                       }
                     </div>
                   </div>
-                } @else {
-                  <div class="no-courses">
-                    <p>No courses launched yet</p>
+                } @else if (expandedTeachers.has(teacher.id)) {
+                  <div class="no-courses-expanded">
+                    <p>No courses launched yet by this teacher.</p>
                   </div>
-                }
-                
-                @if (teacher.is_verified) {
-                  <div class="verified-badge">✓ Verified</div>
                 }
               </div>
             }

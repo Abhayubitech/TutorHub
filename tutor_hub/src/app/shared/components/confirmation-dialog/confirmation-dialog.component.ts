@@ -21,12 +21,10 @@ export class ConfirmationDialogComponent {
 
   onConfirm(): void {
     this.confirm.emit();
-    this.close();
   }
 
   onCancel(): void {
     this.cancel.emit();
-    this.close();
   }
 
   close(): void {

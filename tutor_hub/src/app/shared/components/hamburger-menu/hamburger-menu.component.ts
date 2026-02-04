@@ -38,11 +38,25 @@ export class HamburgerMenuComponent {
     this.menuToggle.emit(false);
   }
 
-  onItemClick(item: MenuItem): void {
+  async onItemClick(item: MenuItem): Promise<void> {
+    console.log('Hamburger menu item clicked:', item.id, item.label);
+    
     if (item.disabled) {
+      console.log('Item is disabled, ignoring');
       return;
     }
-    this.itemClick.emit(item);
-    this.closeMenu();
+    
+    if (item.id === 'logout') {
+      console.log('Logout clicked, emitting event');
+      // For logout, emit the event and let parent handle the async operation
+      // The parent component should close the menu after logout completes
+      this.itemClick.emit(item);
+      // Also close menu immediately for better UX
+      this.closeMenu();
+    } else {
+      console.log('Other item clicked:', item.id);
+      this.itemClick.emit(item);
+      this.closeMenu();
+    }
   }
 }

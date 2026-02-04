@@ -22,6 +22,7 @@ export class StudentDashboardComponent implements OnInit {
   isEditingProfile = signal<boolean>(false);
   isProfileLoading = signal<boolean>(false);
   isMenuOpen: boolean = false;
+  expandedTeachers = new Set<string>();
 
   constructor(
     private studentService: StudentService,
@@ -71,6 +72,14 @@ export class StudentDashboardComponent implements OnInit {
     this.studentService.refreshCourses();
   }
 
+  toggleTeacherCourses(teacherId: string): void {
+    if (this.expandedTeachers.has(teacherId)) {
+      this.expandedTeachers.delete(teacherId);
+    } else {
+      this.expandedTeachers.add(teacherId);
+    }
+  }
+
   requestEnrollment(courseId: string): void {
     this.studentService.requestEnrollment(courseId);
   }
@@ -94,6 +103,8 @@ export class StudentDashboardComponent implements OnInit {
     setTimeout(() => {
       this.isProfileLoading.set(false);
       this.cancelEditProfile();
+      // Navigate back to profile tab to see updated data
+      this.currentTab.set('profile');
     }, 1000);
   }
 
@@ -112,9 +123,15 @@ export class StudentDashboardComponent implements OnInit {
   }
 
   async logout(): Promise<void> {
-    await this.authService.logoutWithConfirmation();
+    console.log('Student dashboard logout method called');
+    
+    // Temporarily bypass confirmation for testing
+    console.log('Bypassing confirmation for testing...');
+    this.authService.logout();
+    
     // Force navigation after a short delay to ensure auth state is updated
     setTimeout(() => {
+      console.log('Navigating to home after logout');
       this.router.navigate(['/home']).catch(err => {
         console.error('Navigation error during logout:', err);
         // Fallback navigation
@@ -172,7 +189,9 @@ export class StudentDashboardComponent implements OnInit {
     ];
   }
 
-  onMenuClick(item: MenuItem): void {
+  async onMenuClick(item: MenuItem): Promise<void> {
+    console.log('Student dashboard menu click received:', item.id, item.label);
+    
     switch (item.id) {
       case 'overview':
         this.currentTab.set('overview');
@@ -196,7 +215,8 @@ export class StudentDashboardComponent implements OnInit {
         this.currentTab.set('settings');
         break;
       case 'logout':
-        this.logout();
+        console.log('Logout case triggered in student dashboard');
+        await this.logout();
         break;
     }
   }

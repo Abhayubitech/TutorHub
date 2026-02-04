@@ -3,6 +3,67 @@
   background: var(--body-bg);
 }
 
+/* Edit Profile Modal Overlay */
+.edit-profile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.edit-profile-modal {
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+}
+
+.edit-profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.edit-profile-header h2 {
+  margin: 0;
+  color: var(--dark-text);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: var(--input-bg);
+  color: var(--dark-text);
+}
+
+.edit-profile-content {
+  padding: 24px;
+}
+
 .dashboard-header-container {
   display: flex;
   justify-content: space-between;
@@ -749,5 +810,114 @@
   .no-data {
     padding: 30px 20px;
     font-size: 14px;
+  }
+}
+
+/* Dark mode styles for better visibility */
+@media (prefers-color-scheme: dark) {
+  .user-item:hover {
+    background: rgba(102, 126, 234, 0.1);
+    border-color: #667eea;
+  }
+
+  .user-info-card h3 {
+    color: #f1f5f9;
+  }
+
+  .user-info-card .user-email {
+    color: #cbd5e1;
+  }
+
+  .user-info-card .user-phone {
+    color: #cbd5e1;
+  }
+
+  .role-teacher {
+    background: rgba(123, 31, 162, 0.2);
+    color: #e9d5ff;
+    border: 1px solid rgba(123, 31, 162, 0.3);
+  }
+
+  .role-student {
+    background: rgba(25, 118, 210, 0.2);
+    color: #bfdbfe;
+    border: 1px solid rgba(25, 118, 210, 0.3);
+  }
+
+  .role-admin {
+    background: rgba(220, 38, 38, 0.2);
+    color: #fecaca;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+  }
+
+  .teacher-info h3,
+  .student-info h3 {
+    color: #f1f5f9;
+  }
+
+  .teacher-email,
+  .student-email {
+    color: #cbd5e1;
+  }
+
+  .teacher-role,
+  .student-role {
+    background: rgba(123, 31, 162, 0.2);
+    color: #e9d5ff;
+    border: 1px solid rgba(123, 31, 162, 0.3);
+  }
+
+  .course-name {
+    color: #f1f5f9;
+  }
+
+  .course-details,
+  .enrollment-details {
+    color: #cbd5e1;
+  }
+
+  .action-card:hover {
+    background: rgba(102, 126, 234, 0.1);
+  }
+
+  .action-card h3 {
+    color: #f1f5f9;
+  }
+
+  .action-card p {
+    color: #cbd5e1;
+  }
+
+  .section h2 {
+    color: #f1f5f9;
+  }
+
+  .setting-item h3 {
+    color: #f1f5f9;
+  }
+
+  .setting-item p {
+    color: #cbd5e1;
+  }
+
+  .profile-card h3 {
+    color: #f1f5f9;
+  }
+
+  .profile-card p {
+    color: #cbd5e1;
+  }
+
+  .dashboard-title {
+    color: #f1f5f9;
+  }
+
+  .quick-actions h2 {
+    color: #f1f5f9;
+  }
+
+  .courses-info h4,
+  .enrollments-info h4 {
+    color: #f1f5f9;
   }
 }

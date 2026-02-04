@@ -35,7 +35,7 @@ export class AdminService {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
-    this.apiService.getAllUsers(isDevMode()).subscribe({
+    this.apiService.getAllUsers(false).subscribe({
       next: (response) => {
         if (response.success && response.users) {
           this.usersSignal.set(response.users);
@@ -53,7 +53,7 @@ export class AdminService {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
-    this.apiService.getUsersByRole(role, isDevMode()).subscribe({
+    this.apiService.getUsersByRole(role, false).subscribe({
       next: (response) => {
         if (response.success && response.users) {
           this.usersSignal.set(response.users);
@@ -71,7 +71,7 @@ export class AdminService {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
-    this.apiService.getRecentUsers(limit, isDevMode()).subscribe({
+    this.apiService.getRecentUsers(limit, false).subscribe({
       next: (response) => {
         if (response.success && response.users) {
           this.recentUsersSignal.set(response.users);
@@ -129,7 +129,7 @@ export class AdminService {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
-    this.apiService.getAllCoursesAdmin(isDevMode()).subscribe({
+    this.apiService.getAllCoursesAdmin(false).subscribe({
       next: (response) => {
         if (response.success && response.courses) {
           this.coursesSignal.set(response.courses);
@@ -147,7 +147,7 @@ export class AdminService {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
-    this.apiService.getAdminManageOverview(isDevMode()).subscribe({
+    this.apiService.getAdminManageOverview(false).subscribe({
       next: (response) => {
         if (response.success && response.manage) {
           this.manageTeacherCoursesSignal.set(response.manage.teacherCourses || []);

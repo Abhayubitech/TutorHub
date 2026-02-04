@@ -78,10 +78,20 @@ export class AdminDashboardComponent implements OnInit {
       
       this.adminService.updateUser(this.editingUserId, userData);
       
+      // Check if the edited user is the current logged-in user
+      const currentUser = this.authService.user();
+      if (currentUser && String(currentUser.id) === this.editingUserId) {
+        // Update the current user data in auth service immediately
+        const updatedUser = { ...currentUser, ...userData };
+        this.authService.updateCurrentUser(updatedUser);
+      }
+      
       // Simulate API call delay
       setTimeout(() => {
         this.isProfileLoading = false;
         this.cancelEditUser();
+        // Refresh users list to show updated data
+        this.adminService.loadAllUsers();
       }, 1000);
     }
   }
@@ -91,22 +101,19 @@ export class AdminDashboardComponent implements OnInit {
     this.editingUserId = null;
   }
 
+  getEditingUserData(): User | undefined {
+    if (this.editingUserId) {
+      return this.adminService.users().find(u => u.id === Number(this.editingUserId));
+    }
+    return undefined;
+  }
+
   deleteUser(userId: string | number): void {
     if (confirm('Are you sure you want to delete this user account?')) {
       this.adminService.deleteUser(String(userId));
     }
   }
 
-  editAdminProfile(): void {
-    this.editingUserId = 'self';
-    this.isEditingProfile = true;
-  }
-
-  deleteMyProfile(): void {
-    if (confirm('Are you sure you want to delete your admin profile? This action cannot be undone.')) {
-      this.logout();
-    }
-  }
 
   goBack(): void {
     // Try to use browser history back first
@@ -118,10 +125,18 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
-  logout(): void {
+  async logout(): Promise<void> {
+    console.log('Admin dashboard logout method called');
+    
+    // Use direct logout like student dashboard for consistency
     this.authService.logout();
+    
+    // Close menu before navigation
+    this.isMenuOpen = false;
+    
     // Force navigation after a short delay to ensure auth state is updated
     setTimeout(() => {
+      console.log('Navigating to home after logout');
       this.router.navigate(['/home']).catch(err => {
         console.error('Navigation error during logout:', err);
         // Fallback navigation
@@ -187,22 +202,18 @@ export class AdminDashboardComponent implements OnInit {
     return [
       { id: 'overview', label: 'Dashboard', icon: '📊', active: this.currentNavSection() === 'overview' },
       { id: 'users', label: 'Manage Users', icon: '👥', active: this.currentNavSection() === 'users' },
-      { id: 'profile', label: 'My Profile', icon: '👤', active: this.currentNavSection() === 'profile' },
       { id: 'settings', label: 'Settings', icon: '⚙️', active: this.currentNavSection() === 'settings' },
       { id: 'logout', label: 'Logout', icon: '🚪' }
     ];
   }
 
-  onMenuClick(item: MenuItem): void {
+  async onMenuClick(item: MenuItem): Promise<void> {
     switch (item.id) {
       case 'overview':
         this.currentNavSection.set('overview');
         break;
       case 'users':
         this.currentNavSection.set('users');
-        break;
-      case 'profile':
-        this.currentNavSection.set('profile');
         break;
       case 'settings':
         this.currentNavSection.set('settings');
@@ -214,7 +225,7 @@ export class AdminDashboardComponent implements OnInit {
         this.currentNavSection.set('student-enrollments');
         break;
       case 'logout':
-        this.logout();
+        await this.logout();
         break;
     }
   }
@@ -228,21 +239,4 @@ export class AdminDashboardComponent implements OnInit {
     this.currentNavSection.set(section);
   }
 
-  getEditingUserData(): { name: string; email: string; phone: string | null } {
-    if (this.editingUserId === 'self') {
-      const user = this.authService.user();
-      return {
-        name: user?.name || '',
-        email: user?.email || '',
-        phone: user?.phone || null
-      };
-    } else {
-      const user = this.adminService.users().find(u => u.id === this.editingUserId);
-      return {
-        name: user?.name || '',
-        email: user?.email || '',
-        phone: user?.phone || null
-      };
-    }
-  }
 }

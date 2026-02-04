@@ -42,9 +42,11 @@ export class ConfirmationDialogContainerComponent implements OnInit, OnDestroy {
 
   onConfirm(): void {
     this.confirmationService.respond(true);
+    this.isVisible = false;
   }
 
   onCancel(): void {
     this.confirmationService.respond(false);
+    this.isVisible = false;
   }
 }
