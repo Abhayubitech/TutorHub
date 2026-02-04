@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { TeacherService } from '../../../services/teacher.service';
 import { ToastService } from '../../../services/toast.service';
+import { SweetAlertService } from '../../../services/sweetalert.service';
 import { StatsGridComponent, StatItem } from '../../../shared/components/stats-grid/stats-grid.component';
 import { ProfileFormComponent, ProfileData } from '../../../shared/components/profile-form/profile-form.component';
 import { HamburgerMenuComponent, MenuItem } from '../../../shared/components/hamburger-menu/hamburger-menu.component';
@@ -43,7 +44,8 @@ export class TeacherDashboardComponent implements OnInit {
     private teacherService: TeacherService,
     private authService: AuthService,
     private router: Router,
-    public toastService: ToastService
+    public toastService: ToastService,
+    private sweetAlert: SweetAlertService
   ) {
     if (!this.authService.isAuthenticated() || this.authService.user()?.role !== 'teacher') {
       this.router.navigate(['/login']);
@@ -142,21 +144,23 @@ export class TeacherDashboardComponent implements OnInit {
   async logout(): Promise<void> {
     console.log('Teacher dashboard logout method called');
     
-    // Use direct logout like student dashboard for consistency
-    this.authService.logout();
-    
-    // Close menu before navigation
-    this.isMenuOpen = false;
-    
-    // Force navigation after a short delay to ensure auth state is updated
-    setTimeout(() => {
-      console.log('Navigating to home after logout');
-      this.router.navigate(['/home']).catch(err => {
-        console.error('Navigation error during logout:', err);
-        // Fallback navigation
-        window.location.href = '/home';
-      });
-    }, 100);
+    const confirmed = await this.sweetAlert.confirmLogout();
+    if (confirmed) {
+      this.authService.logout();
+      
+      // Close menu before navigation
+      this.isMenuOpen = false;
+      
+      // Force navigation after a short delay to ensure auth state is updated
+      setTimeout(() => {
+        console.log('Navigating to home after logout');
+        this.router.navigate(['/home']).catch(err => {
+          console.error('Navigation error during logout:', err);
+          // Fallback navigation
+          window.location.href = '/home';
+        });
+      }, 100);
+    }
   }
 
   get user() {
@@ -217,10 +221,12 @@ export class TeacherDashboardComponent implements OnInit {
     this.toastService.info(`Editing course: ${course.subject}`);
   }
 
-  deleteCourse(courseId: string | number): void {
-    if (confirm('Are you sure you want to delete this course?')) {
+  async deleteCourse(courseId: string | number): Promise<void> {
+    const confirmed = await this.sweetAlert.confirmDelete('this course');
+    if (confirmed) {
       this.teacherService.deleteCourse(String(courseId));
       this.toastService.success('Course deleted successfully');
+      this.sweetAlert.showSuccess('Deleted!', 'Course has been deleted successfully.');
     }
   }
 
@@ -243,10 +249,12 @@ export class TeacherDashboardComponent implements OnInit {
     this.enrolledStudents = [];
   }
 
-  removeStudent(studentId: number): void {
-    if (confirm('Are you sure you want to remove this student from the course?')) {
+  async removeStudent(studentId: number): Promise<void> {
+    const confirmed = await this.sweetAlert.confirmRemove('this student from the course');
+    if (confirmed) {
       this.enrolledStudents = this.enrolledStudents.filter(student => student.id !== studentId);
       this.toastService.success('Student removed from course');
+      this.sweetAlert.showSuccess('Removed!', 'Student has been removed from the course.');
     }
   }
 

@@ -94,7 +94,7 @@ export class AuthService {
       
       console.log('Reset auth signals');
       
-      this.toastService.info('You have been logged out successfully');
+      this.toastService.info('You have been logged out successfully', 5000);
       console.log('Logout completed successfully');
     } catch (error) {
       console.error('Logout error:', error);

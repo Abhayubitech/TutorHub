@@ -8,6 +8,7 @@ import { ToastService } from '../../../services/toast.service';
 import { ProfileFormComponent, ProfileData } from '../../../shared/components/profile-form/profile-form.component';
 import { HamburgerMenuComponent, MenuItem } from '../../../shared/components/hamburger-menu/hamburger-menu.component';
 import { ToastComponent } from '../../../shared/components/toast/toast.component';
+import { SweetAlertService } from '../../../services/sweetalert.service';
 
 @Component({
   selector: 'app-student-dashboard',
@@ -28,7 +29,8 @@ export class StudentDashboardComponent implements OnInit {
     private studentService: StudentService,
     private authService: AuthService,
     private router: Router,
-    public toastService: ToastService
+    public toastService: ToastService,
+    private sweetAlert: SweetAlertService
   ) {
     // Check if user is authenticated
     if (!this.authService.isAuthenticated()) {
@@ -84,9 +86,11 @@ export class StudentDashboardComponent implements OnInit {
     this.studentService.requestEnrollment(courseId);
   }
 
-  cancelRequest(requestId: string): void {
-    if (confirm('Are you sure you want to cancel this request?')) {
+  async cancelRequest(requestId: string): Promise<void> {
+    const confirmed = await this.sweetAlert.confirmCancel('this enrollment request');
+    if (confirmed) {
       this.studentService.cancelRequest(requestId);
+      this.sweetAlert.showSuccess('Cancelled!', 'Your request has been cancelled.');
     }
   }
 
@@ -125,19 +129,20 @@ export class StudentDashboardComponent implements OnInit {
   async logout(): Promise<void> {
     console.log('Student dashboard logout method called');
     
-    // Temporarily bypass confirmation for testing
-    console.log('Bypassing confirmation for testing...');
-    this.authService.logout();
-    
-    // Force navigation after a short delay to ensure auth state is updated
-    setTimeout(() => {
-      console.log('Navigating to home after logout');
-      this.router.navigate(['/home']).catch(err => {
-        console.error('Navigation error during logout:', err);
-        // Fallback navigation
-        window.location.href = '/home';
-      });
-    }, 100);
+    const confirmed = await this.sweetAlert.confirmLogout();
+    if (confirmed) {
+      this.authService.logout();
+      
+      // Force navigation after a short delay to ensure auth state is updated
+      setTimeout(() => {
+        console.log('Navigating to home after logout');
+        this.router.navigate(['/home']).catch(err => {
+          console.error('Navigation error during logout:', err);
+          // Fallback navigation
+          window.location.href = '/home';
+        });
+      }, 100);
+    }
   }
 
   get user() {

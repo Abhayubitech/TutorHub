@@ -9,6 +9,7 @@ import { StatsGridComponent, StatItem } from '../../../shared/components/stats-g
 import { ProfileFormComponent, ProfileData } from '../../../shared/components/profile-form/profile-form.component';
 import { HamburgerMenuComponent, MenuItem } from '../../../shared/components/hamburger-menu/hamburger-menu.component';
 import { ToastComponent } from '../../../shared/components/toast/toast.component';
+import { SweetAlertService } from '../../../services/sweetalert.service';
 
 interface User {
   id: number;
@@ -37,7 +38,8 @@ export class AdminDashboardComponent implements OnInit {
     private authService: AuthService,
     private adminService: AdminService,
     private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private sweetAlert: SweetAlertService
   ) {
     if (!this.authService.isAuthenticated() || this.authService.user()?.role !== 'admin') {
       this.router.navigate(['/login']);
@@ -108,9 +110,11 @@ export class AdminDashboardComponent implements OnInit {
     return undefined;
   }
 
-  deleteUser(userId: string | number): void {
-    if (confirm('Are you sure you want to delete this user account?')) {
+  async deleteUser(userId: string | number): Promise<void> {
+    const confirmed = await this.sweetAlert.confirmDelete('this user account');
+    if (confirmed) {
       this.adminService.deleteUser(String(userId));
+      this.sweetAlert.showSuccess('Deleted!', 'User has been deleted.');
     }
   }
 
@@ -128,21 +132,23 @@ export class AdminDashboardComponent implements OnInit {
   async logout(): Promise<void> {
     console.log('Admin dashboard logout method called');
     
-    // Use direct logout like student dashboard for consistency
-    this.authService.logout();
-    
-    // Close menu before navigation
-    this.isMenuOpen = false;
-    
-    // Force navigation after a short delay to ensure auth state is updated
-    setTimeout(() => {
-      console.log('Navigating to home after logout');
-      this.router.navigate(['/home']).catch(err => {
-        console.error('Navigation error during logout:', err);
-        // Fallback navigation
-        window.location.href = '/home';
-      });
-    }, 100);
+    const confirmed = await this.sweetAlert.confirmLogout();
+    if (confirmed) {
+      this.authService.logout();
+      
+      // Close menu before navigation
+      this.isMenuOpen = false;
+      
+      // Force navigation after a short delay to ensure auth state is updated
+      setTimeout(() => {
+        console.log('Navigating to home after logout');
+        this.router.navigate(['/home']).catch(err => {
+          console.error('Navigation error during logout:', err);
+          // Fallback navigation
+          window.location.href = '/home';
+        });
+      }, 100);
+    }
   }
 
   get user() {
