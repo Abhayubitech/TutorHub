@@ -79,12 +79,32 @@ async function requestEnrollment(studentId, courseId) {
 
     // Check if already requested
     const [requested] = await db.query(
-      "SELECT id FROM course_requests WHERE student_id = ? AND course_id = ?",
+      "SELECT id, status, rejection_date FROM course_requests WHERE student_id = ? AND course_id = ?",
       [studentId, courseId]
     );
 
     if (requested.length > 0) {
-      throw new Error("Enrollment request already pending");
+      const request = requested[0];
+      
+      if (request.status === 'pending') {
+        throw new Error("Enrollment request already pending");
+      }
+      
+      if (request.status === 'rejected') {
+        // Check if 11-day waiting period has passed
+        if (request.rejection_date) {
+          const rejectionDate = new Date(request.rejection_date);
+          const currentDate = new Date();
+          const daysSinceRejection = Math.floor((currentDate - rejectionDate) / (1000 * 60 * 60 * 24));
+          
+          if (daysSinceRejection < 11) {
+            const daysRemaining = 11 - daysSinceRejection;
+            throw new Error(`You must wait ${daysRemaining} more day(s) before applying again for this course`);
+          }
+        } else {
+          throw new Error("Your previous request was rejected. Please wait 11 days before applying again.");
+        }
+      }
     }
 
     const [result] = await db.query(
@@ -114,6 +134,27 @@ async function getMyRequests(studentId) {
        ORDER BY cr.request_date DESC`,
       [studentId]
     );
+
+    // Add remaining waiting days for rejected requests
+    for (let request of requests) {
+      if (request.status === 'rejected' && request.rejection_date) {
+        const rejectionDate = new Date(request.rejection_date);
+        const currentDate = new Date();
+        const daysSinceRejection = Math.floor((currentDate - rejectionDate) / (1000 * 60 * 60 * 24));
+        
+        if (daysSinceRejection < 11) {
+          request.days_remaining = 11 - daysSinceRejection;
+          request.can_reapply = false;
+        } else {
+          request.days_remaining = 0;
+          request.can_reapply = true;
+        }
+      } else if (request.status === 'rejected') {
+        // For old rejections without rejection_date, assume they can reapply
+        request.days_remaining = 0;
+        request.can_reapply = true;
+      }
+    }
 
     return requests;
   } catch (err) {
@@ -167,7 +208,7 @@ async function cancelRequest(requestId, studentId) {
   }
 }
 
-// Get all teachers
+// Get all teachers with their courses
 async function getAllTeachers() {
   try {
     const [teachers] = await db.query(
@@ -177,6 +218,18 @@ async function getAllTeachers() {
        WHERE u.role = 'teacher'
        ORDER BY tp.is_verified DESC, u.name ASC`
     );
+
+    // Get courses for each teacher
+    for (let teacher of teachers) {
+      const [courses] = await db.query(
+        `SELECT id, subject, description, fee, mode, start_date, end_date 
+         FROM courses 
+         WHERE teacher_id = ? 
+         ORDER BY created_at DESC`,
+        [teacher.id]
+      );
+      teacher.courses = courses;
+    }
 
     return teachers;
   } catch (err) {

@@ -67,6 +67,7 @@ CREATE TABLE course_requests (
     status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
     request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     response_date TIMESTAMP NULL,
+    rejection_date TIMESTAMP NULL,
     FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
     UNIQUE KEY unique_request (student_id, course_id)
@@ -83,6 +84,33 @@ CREATE TABLE course_enrollments (
     UNIQUE KEY unique_enrollment (student_id, course_id)
 );
 
+-- 7️⃣ WhatsApp Groups Table
+CREATE TABLE whatsapp_groups (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    course_id INT NOT NULL,
+    group_id VARCHAR(255) UNIQUE NOT NULL, -- WhatsApp group ID
+    group_name VARCHAR(255) NOT NULL,
+    invite_link VARCHAR(500),
+    teacher_phone VARCHAR(20), -- Teacher's WhatsApp number
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+);
+
+-- 8️⃣ WhatsApp Group Members Table
+CREATE TABLE whatsapp_group_members (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    group_id INT NOT NULL,
+    user_id INT NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    role ENUM('admin', 'member') DEFAULT 'member',
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (group_id) REFERENCES whatsapp_groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_group_member (group_id, user_id)
+);
+
 -- Create indexes for better query performance
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_role ON users(role);
@@ -93,3 +121,6 @@ CREATE INDEX idx_course_requests_course_id ON course_requests(course_id);
 CREATE INDEX idx_course_requests_status ON course_requests(status);
 CREATE INDEX idx_enrollments_student_id ON course_enrollments(student_id);
 CREATE INDEX idx_enrollments_course_id ON course_enrollments(course_id);
+CREATE INDEX idx_whatsapp_groups_course_id ON whatsapp_groups(course_id);
+CREATE INDEX idx_whatsapp_group_members_group_id ON whatsapp_group_members(group_id);
+CREATE INDEX idx_whatsapp_group_members_user_id ON whatsapp_group_members(user_id);

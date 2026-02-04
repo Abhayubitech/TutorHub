@@ -62,6 +62,13 @@ export class NavbarComponent {
   logout(): void {
     this.closeMobileMenu();
     this.authService.logout();
-    this.router.navigate(['/home']);
+    // Force navigation after a short delay to ensure auth state is updated
+    setTimeout(() => {
+      this.router.navigate(['/home']).catch(err => {
+        console.error('Navigation error during logout:', err);
+        // Fallback navigation
+        window.location.href = '/home';
+      });
+    }, 100);
   }
 }

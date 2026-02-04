@@ -1,0 +1,223 @@
+const { Client } = require('whatsapp-web.js');
+const qrcode = require('qrcode-terminal');
+const db = require('../config/db');
+
+class WhatsAppService {
+  constructor() {
+    this.client = null;
+    this.isConnected = false;
+    this.initializeClient();
+  }
+
+  initializeClient() {
+    this.client = new Client({
+      puppeteer: {
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      }
+    });
+
+    this.client.on('qr', (qr) => {
+      console.log('QR Code received, please scan:');
+      qrcode.generate(qr, { small: true });
+    });
+
+    this.client.on('ready', () => {
+      console.log('WhatsApp client is ready!');
+      this.isConnected = true;
+    });
+
+    this.client.on('authenticated', () => {
+      console.log('WhatsApp client authenticated!');
+    });
+
+    this.client.on('auth_failure', (msg) => {
+      console.error('Authentication failure:', msg);
+      this.isConnected = false;
+    });
+
+    this.client.on('disconnected', (reason) => {
+      console.log('WhatsApp client disconnected:', reason);
+      this.isConnected = false;
+    });
+
+    this.client.initialize().catch(err => {
+      console.error('Failed to initialize WhatsApp client:', err);
+    });
+  }
+
+  async createGroup(courseId, courseName, teacherPhone) {
+    try {
+      if (!this.isConnected) {
+        throw new Error('WhatsApp client not connected');
+      }
+
+      const groupName = `${courseName} - TutorHub`;
+      
+      // Create group with teacher as first participant
+      const group = await this.client.createGroup(groupName, [`${teacherPhone}@c.us`]);
+      
+      // Save group info to database
+      const connection = await db.getConnection();
+      try {
+        const [result] = await connection.execute(
+          `INSERT INTO whatsapp_groups (course_id, group_id, group_name, teacher_phone, is_active) 
+           VALUES (?, ?, ?, ?, ?)`,
+          [courseId, group.gid._serialized, groupName, teacherPhone, true]
+        );
+
+        // Add teacher as group member in database
+        await connection.execute(
+          `INSERT INTO whatsapp_group_members (group_id, user_id, phone, role) 
+           VALUES (?, (SELECT id FROM users WHERE phone = ?), ?, 'admin')`,
+          [result.insertId, teacherPhone, teacherPhone]
+        );
+
+        return {
+          success: true,
+          groupId: group.gid._serialized,
+          groupName: groupName,
+          dbId: result.insertId
+        };
+      } finally {
+        connection.release();
+      }
+    } catch (error) {
+      console.error('Error creating WhatsApp group:', error);
+      throw error;
+    }
+  }
+
+  async getGroupInviteLink(groupId) {
+    try {
+      if (!this.isConnected) {
+        throw new Error('WhatsApp client not connected');
+      }
+
+      const inviteLink = await this.client.getGroupInviteLink(groupId);
+      
+      // Update invite link in database
+      const connection = await db.getConnection();
+      try {
+        await connection.execute(
+          'UPDATE whatsapp_groups SET invite_link = ? WHERE group_id = ?',
+          [inviteLink, groupId]
+        );
+      } finally {
+        connection.release();
+      }
+
+      return inviteLink;
+    } catch (error) {
+      console.error('Error getting group invite link:', error);
+      throw error;
+    }
+  }
+
+  async addParticipantToGroup(groupId, phoneNumber) {
+    try {
+      if (!this.isConnected) {
+        throw new Error('WhatsApp client not connected');
+      }
+
+      const participantId = `${phoneNumber}@c.us`;
+      await this.client.getGroupById(groupId).addParticipants([participantId]);
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error adding participant to group:', error);
+      throw error;
+    }
+  }
+
+  async sendMessageToGroup(groupId, message) {
+    try {
+      if (!this.isConnected) {
+        throw new Error('WhatsApp client not connected');
+      }
+
+      await this.client.sendMessage(groupId, message);
+      return { success: true };
+    } catch (error) {
+      console.error('Error sending message to group:', error);
+      throw error;
+    }
+  }
+
+  async sendZoomLink(groupId, zoomLink) {
+    const message = `🎥 *Zoom Meeting Link*\n\nJoin your class using the link below:\n${zoomLink}\n\n⏰ Please join 5 minutes before the scheduled time.\n📚 TutorHub Team`;
+    return this.sendMessageToGroup(groupId, message);
+  }
+
+  async sendPaymentInfo(groupId, paymentDetails) {
+    const message = `💳 *Payment Information*\n\nCourse Fee: ₹${paymentDetails.fee}\nPayment Method: ${paymentDetails.method}\nDue Date: ${paymentDetails.dueDate}\n\nPlease complete the payment to continue accessing the course.\n📚 TutorHub Team`;
+    return this.sendMessageToGroup(groupId, message);
+  }
+
+  async getGroupInfo(courseId) {
+    try {
+      const connection = await db.getConnection();
+      try {
+        const [rows] = await connection.execute(
+          'SELECT * FROM whatsapp_groups WHERE course_id = ? AND is_active = ?',
+          [courseId, true]
+        );
+        
+        return rows.length > 0 ? rows[0] : null;
+      } finally {
+        connection.release();
+      }
+    } catch (error) {
+      console.error('Error getting group info:', error);
+      throw error;
+    }
+  }
+
+  async updateGroupInfo(groupId, updates) {
+    try {
+      const connection = await db.getConnection();
+      try {
+        const fields = [];
+        const values = [];
+        
+        if (updates.groupName) {
+          fields.push('group_name = ?');
+          values.push(updates.groupName);
+        }
+        
+        if (updates.isActive !== undefined) {
+          fields.push('is_active = ?');
+          values.push(updates.isActive);
+        }
+        
+        if (fields.length > 0) {
+          values.push(groupId);
+          await connection.execute(
+            `UPDATE whatsapp_groups SET ${fields.join(', ')} WHERE group_id = ?`,
+            values
+          );
+        }
+        
+        return { success: true };
+      } finally {
+        connection.release();
+      }
+    } catch (error) {
+      console.error('Error updating group info:', error);
+      throw error;
+    }
+  }
+
+  isClientConnected() {
+    return this.isConnected;
+  }
+
+  async disconnect() {
+    if (this.client) {
+      await this.client.destroy();
+      this.isConnected = false;
+    }
+  }
+}
+
+module.exports = new WhatsAppService();

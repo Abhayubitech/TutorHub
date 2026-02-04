@@ -90,7 +90,7 @@ export class StudentDashboardComponent implements OnInit {
     
     this.authService.updateUserProfile(profileData);
     
-    // Simulate API call delay
+    // Wait for the auth service to complete the update
     setTimeout(() => {
       this.isProfileLoading.set(false);
       this.cancelEditProfile();
@@ -101,9 +101,26 @@ export class StudentDashboardComponent implements OnInit {
     this.isEditingProfile.set(false);
   }
 
+  goBack(): void {
+    // Try to use browser history back first
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      // Fallback to navigating to home
+      this.router.navigate(['/home']);
+    }
+  }
+
   async logout(): Promise<void> {
     await this.authService.logoutWithConfirmation();
-    this.router.navigate(['/home']);
+    // Force navigation after a short delay to ensure auth state is updated
+    setTimeout(() => {
+      this.router.navigate(['/home']).catch(err => {
+        console.error('Navigation error during logout:', err);
+        // Fallback navigation
+        window.location.href = '/home';
+      });
+    }, 100);
   }
 
   get user() {
@@ -150,8 +167,6 @@ export class StudentDashboardComponent implements OnInit {
       { id: 'teachers', label: 'Teachers', icon: '👨‍🏫', active: this.currentTab() === 'teachers' },
       { id: 'enrollments', label: 'My Enrollments', icon: '📝', active: this.currentTab() === 'enrollments', badge: this.enrollmentCount > 0 ? String(this.enrollmentCount) : undefined },
       { id: 'requests', label: 'My Requests', icon: '⏳', active: this.currentTab() === 'requests' },
-      { id: 'notifications', label: 'Notifications', icon: '🔔', active: this.currentTab() === 'notifications', badge: '3' },
-      { id: 'help', label: 'Help & Support', icon: '💬', active: this.currentTab() === 'help' },
       { id: 'settings', label: 'Settings', icon: '⚙️', active: this.currentTab() === 'settings' },
       { id: 'logout', label: 'Logout', icon: '🚪' }
     ];
@@ -177,12 +192,6 @@ export class StudentDashboardComponent implements OnInit {
       case 'requests':
         this.currentTab.set('requests');
         break;
-      case 'notifications':
-        this.currentTab.set('notifications');
-        break;
-      case 'help':
-        this.currentTab.set('help');
-        break;
       case 'settings':
         this.currentTab.set('settings');
         break;
@@ -197,19 +206,4 @@ export class StudentDashboardComponent implements OnInit {
     this.currentTab.set('account-settings');
   }
 
-  openLearningSettings(): void {
-    this.currentTab.set('learning-settings');
-  }
-
-  openPaymentSettings(): void {
-    this.currentTab.set('payment-settings');
-  }
-
-  openUserSettings(): void {
-    this.currentTab.set('user-settings');
-  }
-
-  openPlatformAnalytics(): void {
-    this.currentTab.set('platform-analytics');
-  }
 }

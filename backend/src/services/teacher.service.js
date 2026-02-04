@@ -291,10 +291,20 @@ async function handleEnrollmentRequest(requestId, teacherId, action) {
     }
 
     const status = action === "approve" ? "approved" : "rejected";
-    await db.query(
-      "UPDATE course_requests SET status = ?, response_date = NOW() WHERE id = ?",
-      [status, requestId]
-    );
+    
+    if (action === "reject") {
+      // Set rejection_date when rejecting
+      await db.query(
+        "UPDATE course_requests SET status = ?, response_date = NOW(), rejection_date = NOW() WHERE id = ?",
+        [status, requestId]
+      );
+    } else {
+      // Clear rejection_date when approving (in case of re-approval)
+      await db.query(
+        "UPDATE course_requests SET status = ?, response_date = NOW(), rejection_date = NULL WHERE id = ?",
+        [status, requestId]
+      );
+    }
 
     if (action === "approve") {
       const { student_id, course_id } = request[0];

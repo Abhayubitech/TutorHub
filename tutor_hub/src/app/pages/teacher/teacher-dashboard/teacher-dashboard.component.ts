@@ -127,9 +127,26 @@ export class TeacherDashboardComponent implements OnInit {
     this.isEditingProfile = false;
   }
 
+  goBack(): void {
+    // Try to use browser history back first
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      // Fallback to navigating to home
+      this.router.navigate(['/home']);
+    }
+  }
+
   async logout(): Promise<void> {
     await this.authService.logoutWithConfirmation();
-    this.router.navigate(['/home']);
+    // Force navigation after a short delay to ensure auth state is updated
+    setTimeout(() => {
+      this.router.navigate(['/home']).catch(err => {
+        console.error('Navigation error during logout:', err);
+        // Fallback navigation
+        window.location.href = '/home';
+      });
+    }, 100);
   }
 
   get user() {

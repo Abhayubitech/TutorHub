@@ -108,9 +108,26 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
+  goBack(): void {
+    // Try to use browser history back first
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      // Fallback to navigating to home
+      this.router.navigate(['/home']);
+    }
+  }
+
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/home']);
+    // Force navigation after a short delay to ensure auth state is updated
+    setTimeout(() => {
+      this.router.navigate(['/home']).catch(err => {
+        console.error('Navigation error during logout:', err);
+        // Fallback navigation
+        window.location.href = '/home';
+      });
+    }, 100);
   }
 
   get user() {
@@ -203,28 +220,8 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   // Settings functionality
-  openSystemSettings(): void {
-    this.currentNavSection.set('system-settings');
-  }
-
-  openUserSettings(): void {
-    this.currentNavSection.set('user-settings');
-  }
-
-  openPlatformAnalytics(): void {
-    this.currentNavSection.set('platform-analytics');
-  }
-
   openAccountSettings(): void {
     this.currentNavSection.set('account-settings');
-  }
-
-  openPaymentSettings(): void {
-    this.currentNavSection.set('payment-settings');
-  }
-
-  openLearningSettings(): void {
-    this.currentNavSection.set('learning-settings');
   }
 
   setNavSection(section: string): void {

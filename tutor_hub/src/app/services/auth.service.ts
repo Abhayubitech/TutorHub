@@ -76,11 +76,26 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    this.userSignal.set(null);
-    this.isAuthenticatedSignal.set(false);
-    this.toastService.info('You have been logged out successfully');
+    try {
+      // Clear all authentication data
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      sessionStorage.clear();
+      
+      // Reset signals
+      this.userSignal.set(null);
+      this.isAuthenticatedSignal.set(false);
+      this.loadingSignal.set(false);
+      this.errorSignal.set(null);
+      
+      this.toastService.info('You have been logged out successfully');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Force logout even if there's an error
+      this.userSignal.set(null);
+      this.isAuthenticatedSignal.set(false);
+      this.toastService.warning('Logged out with some issues');
+    }
   }
 
   async logoutWithConfirmation(): Promise<void> {

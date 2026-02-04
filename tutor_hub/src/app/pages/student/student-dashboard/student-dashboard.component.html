@@ -193,6 +193,33 @@
                     <span>💵 ₹{{ teacher.hourly_rate }}/hour</span>
                   }
                 </div>
+                
+                <!-- Courses launched by this teacher -->
+                @if (teacher.courses && teacher.courses.length > 0) {
+                  <div class="teacher-courses">
+                    <h4>📚 Courses Launched:</h4>
+                    <div class="courses-list">
+                      @for (course of teacher.courses; track course.id) {
+                        <div class="course-item">
+                          <div class="course-info">
+                            <h5>{{ course.subject }}</h5>
+                            <p>{{ course.description }}</p>
+                            <div class="course-meta">
+                              <span>💰 ₹{{ course.fee }}</span>
+                              <span>📍 {{ course.mode }}</span>
+                            </div>
+                          </div>
+                          <button class="btn-enroll" (click)="requestEnrollment(course.id)">Enroll</button>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                } @else {
+                  <div class="no-courses">
+                    <p>No courses launched yet</p>
+                  </div>
+                }
+                
                 @if (teacher.is_verified) {
                   <div class="verified-badge">✓ Verified</div>
                 }
@@ -252,6 +279,18 @@
                   <span class="status-badge" [class]="request.status">
                     {{ request.status | uppercase }}
                   </span>
+                  @if (request.status === 'rejected' && request.days_remaining > 0) {
+                    <div class="waiting-period">
+                      <p>⏰ Wait {{ request.days_remaining }} more day(s) to reapply</p>
+                    </div>
+                  } @else if (request.status === 'rejected' && request.can_reapply) {
+                    <div class="can-reapply">
+                      <p>✅ You can now apply again</p>
+                      <button (click)="requestEnrollment(request.course_id)" class="btn-reapply">
+                        Apply Again
+                      </button>
+                    </div>
+                  }
                 </div>
                 @if (request.status === 'pending') {
                   <button (click)="cancelRequest(request.id)" class="btn-cancel">
@@ -267,123 +306,6 @@
       </div>
     }
 
-    <!-- Notifications Section -->
-    @if (currentTab() === 'notifications') {
-      <div class="tab-content" role="tabpanel" id="notifications-panel">
-        <h2>Notifications</h2>
-        <div class="notifications-content">
-          <div class="notification-filters">
-            <button class="filter-btn active">All</button>
-            <button class="filter-btn">Unread</button>
-            <button class="filter-btn">Enrollments</button>
-            <button class="filter-btn">System</button>
-          </div>
-          
-          <div class="notifications-list">
-            <div class="notification-item unread">
-              <div class="notification-icon">📚</div>
-              <div class="notification-content">
-                <h4>Course Enrollment Approved</h4>
-                <p>Your enrollment request for "Mathematics 101" has been approved.</p>
-                <span class="notification-time">2 hours ago</span>
-              </div>
-              <button class="mark-read-btn">✓</button>
-            </div>
-            
-            <div class="notification-item unread">
-              <div class="notification-icon">👨‍🏫</div>
-              <div class="notification-content">
-                <h4>New Teacher Available</h4>
-                <p>Dr. John Smith is now available for Physics tutoring.</p>
-                <span class="notification-time">5 hours ago</span>
-              </div>
-              <button class="mark-read-btn">✓</button>
-            </div>
-            
-            <div class="notification-item">
-              <div class="notification-icon">⏰</div>
-              <div class="notification-content">
-                <h4>Class Reminder</h4>
-                <p>Your Chemistry class starts in 30 minutes.</p>
-                <span class="notification-time">1 day ago</span>
-              </div>
-            </div>
-            
-            <div class="notification-item">
-              <div class="notification-icon">💰</div>
-              <div class="notification-content">
-                <h4>Payment Successful</h4>
-                <p>Your payment for Mathematics course has been processed.</p>
-                <span class="notification-time">2 days ago</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    }
-
-    <!-- Help & Support Section -->
-    @if (currentTab() === 'help') {
-      <div class="tab-content" role="tabpanel" id="help-panel">
-        <h2>Help & Support</h2>
-        <div class="help-content">
-          <div class="help-categories">
-            <div class="help-category">
-              <h3>📚 Getting Started</h3>
-              <ul>
-                <li><a href="#">How to enroll in a course</a></li>
-                <li><a href="#">Finding the right teacher</a></li>
-                <li><a href="#">Setting up your profile</a></li>
-              </ul>
-            </div>
-            
-            <div class="help-category">
-              <h3>💳 Payments & Billing</h3>
-              <ul>
-                <li><a href="#">Payment methods accepted</a></li>
-                <li><a href="#">Refund policy</a></li>
-                <li><a href="#">Invoice history</a></li>
-              </ul>
-            </div>
-            
-            <div class="help-category">
-              <h3>🔧 Technical Support</h3>
-              <ul>
-                <li><a href="#">Troubleshooting video issues</a></li>
-                <li><a href="#">Mobile app guide</a></li>
-                <li><a href="#">System requirements</a></li>
-              </ul>
-            </div>
-            
-            <div class="help-category">
-              <h3>📖 Learning Resources</h3>
-              <ul>
-                <li><a href="#">Study tips and techniques</a></li>
-                <li><a href="#">Time management for students</a></li>
-                <li><a href="#">Best practices for online learning</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div class="contact-support">
-            <h3>Still need help?</h3>
-            <p>Our support team is available 24/7 to assist you.</p>
-            <div class="support-options">
-              <button class="support-btn" (click)="toastService.info('Opening live chat...')">
-                💬 Live Chat
-              </button>
-              <button class="support-btn" (click)="toastService.info('Opening email client...')">
-                📧 Email Support
-              </button>
-              <button class="support-btn" (click)="toastService.info('Call us at: +1-800-TUTOR-HUB')">
-                📞 Phone Support
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    }
-
     <!-- Settings Section -->
     @if (currentTab() === 'settings') {
       <div class="tab-content" role="tabpanel" id="settings-panel">
@@ -393,26 +315,6 @@
             <h3>Account Settings</h3>
             <p>Manage your account preferences and security settings.</p>
             <button class="btn-secondary" (click)="openAccountSettings()">Account Settings</button>
-          </div>
-          <div class="setting-item">
-            <h3>Learning Preferences</h3>
-            <p>Configure your learning style and notification preferences.</p>
-            <button class="btn-secondary" (click)="openLearningSettings()">Learning Settings</button>
-          </div>
-          <div class="setting-item">
-            <h3>Payment Methods</h3>
-            <p>Manage your payment methods and billing information.</p>
-            <button class="btn-secondary" (click)="openPaymentSettings()">Payment Settings</button>
-          </div>
-          <div class="setting-item">
-            <h3>User Settings</h3>
-            <p>Manage your profile information and privacy settings.</p>
-            <button class="btn-secondary" (click)="openUserSettings()">User Settings</button>
-          </div>
-          <div class="setting-item">
-            <h3>Platform Analytics</h3>
-            <p>View your learning progress and performance analytics.</p>
-            <button class="btn-secondary" (click)="openPlatformAnalytics()">Platform Analytics</button>
           </div>
         </div>
       </div>
@@ -481,163 +383,5 @@
       </div>
     }
 
-    <!-- Learning Settings Tab -->
-    @if (currentTab() === 'learning-settings') {
-      <div class="tab-content" role="tabpanel" id="learning-settings-panel">
-        <h2>Learning Preferences</h2>
-        <div class="settings-form">
-          <div class="form-section">
-            <h3>Learning Style</h3>
-            <div class="radio-group">
-              <label class="radio-label">
-                <input type="radio" name="learning-style" value="visual" checked />
-                <span>Visual Learner</span>
-              </label>
-              <label class="radio-label">
-                <input type="radio" name="learning-style" value="auditory" />
-                <span>Auditory Learner</span>
-              </label>
-              <label class="radio-label">
-                <input type="radio" name="learning-style" value="kinesthetic" />
-                <span>Kinesthetic Learner</span>
-              </label>
-            </div>
-          </div>
-          
-          <div class="form-section">
-            <h3>Study Reminders</h3>
-            <div class="checkbox-group">
-              <label class="checkbox-label">
-                <input type="checkbox" checked />
-                <span>Daily study reminders</span>
-              </label>
-              <label class="checkbox-label">
-                <input type="checkbox" checked />
-                <span>Assignment deadline alerts</span>
-              </label>
-              <label class="checkbox-label">
-                <input type="checkbox" />
-                <span>Weekly study schedule</span>
-              </label>
-            </div>
-          </div>
-          
-          <div class="form-actions">
-            <button class="btn-primary" (click)="toastService.success('Learning preferences saved')">Save Preferences</button>
-            <button class="btn-secondary" (click)="currentTab.set('settings')">Back to Settings</button>
-          </div>
-        </div>
-      </div>
-    }
-
-    <!-- Payment Settings Tab -->
-    @if (currentTab() === 'payment-settings') {
-      <div class="tab-content" role="tabpanel" id="payment-settings-panel">
-        <h2>Payment Settings</h2>
-        <div class="settings-form">
-          <div class="form-section">
-            <h3>Payment Methods</h3>
-            <div class="payment-methods">
-              <div class="payment-method">
-                <span class="method-type">Credit Card</span>
-                <span class="method-details">**** **** **** 1234</span>
-                <button class="btn-remove">Remove</button>
-              </div>
-            </div>
-            <button class="btn-secondary">Add Payment Method</button>
-          </div>
-          
-          <div class="form-section">
-            <h3>Billing Information</h3>
-            <div class="form-group">
-              <label>Billing Address</label>
-              <textarea class="form-input" rows="3"></textarea>
-            </div>
-          </div>
-          
-          <div class="form-actions">
-            <button class="btn-primary" (click)="toastService.success('Payment settings updated')">Update Payment Settings</button>
-            <button class="btn-secondary" (click)="currentTab.set('settings')">Back to Settings</button>
-          </div>
-        </div>
-      </div>
-    }
-
-    <!-- User Settings Tab -->
-    @if (currentTab() === 'user-settings') {
-      <div class="tab-content" role="tabpanel" id="user-settings-panel">
-        <h2>User Settings</h2>
-        <div class="settings-form">
-          <div class="form-section">
-            <h3>Profile Information</h3>
-            <div class="form-group">
-              <label>Bio</label>
-              <textarea class="form-input" rows="4" placeholder="Tell us about yourself..."></textarea>
-            </div>
-            <div class="form-group">
-              <label>Profile Picture</label>
-              <input type="file" class="form-input" accept="image/*" />
-            </div>
-          </div>
-          
-          <div class="form-section">
-            <h3>Privacy Settings</h3>
-            <div class="checkbox-group">
-              <label class="checkbox-label">
-                <input type="checkbox" checked />
-                <span>Show profile to other students</span>
-              </label>
-              <label class="checkbox-label">
-                <input type="checkbox" />
-                <span>Show enrollment status</span>
-              </label>
-            </div>
-          </div>
-          
-          <div class="form-actions">
-            <button class="btn-primary" (click)="toastService.success('User settings saved')">Save Settings</button>
-            <button class="btn-secondary" (click)="currentTab.set('settings')">Back to Settings</button>
-          </div>
-        </div>
-      </div>
-    }
-
-    <!-- Platform Analytics Tab -->
-    @if (currentTab() === 'platform-analytics') {
-      <div class="tab-content" role="tabpanel" id="platform-analytics-panel">
-        <h2>Platform Analytics</h2>
-        <div class="analytics-dashboard">
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-value">85%</div>
-              <div class="stat-label">Course Completion Rate</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-value">142</div>
-              <div class="stat-label">Study Hours</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-value">4.8</div>
-              <div class="stat-label">Average Grade</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-value">12</div>
-              <div class="stat-label">Completed Courses</div>
-            </div>
-          </div>
-          
-          <div class="chart-section">
-            <h3>Learning Progress</h3>
-            <div class="chart-placeholder">
-              <p>📊 Progress chart would be displayed here</p>
-            </div>
-          </div>
-          
-          <div class="form-actions">
-            <button class="btn-secondary" (click)="currentTab.set('settings')">Back to Settings</button>
-          </div>
-        </div>
-      </div>
-    }
-  </div>
+    </div>
 </div>

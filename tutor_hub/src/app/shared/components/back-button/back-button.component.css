@@ -1,0 +1,76 @@
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-color);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.back-button:hover {
+  background: var(--body-bg);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.back-icon {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.back-text {
+  white-space: nowrap;
+}
+
+/* Icon-only version */
+.back-button:not(.show-text) {
+  padding: 8px 12px;
+}
+
+.back-button:not(.show-text) .back-text {
+  display: none;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .back-button {
+    background: #1e293b;
+    border-color: #334155;
+    color: #cbd5e1;
+  }
+
+  .back-button:hover {
+    background: #0f172a;
+    border-color: #60a5fa;
+    color: #60a5fa;
+  }
+}
+
+/* Compact version */
+.back-button.compact {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.back-button.compact .back-icon {
+  font-size: 14px;
+}
+
+/* Large version */
+.back-button.large {
+  padding: 12px 20px;
+  font-size: 16px;
+}
+
+.back-button.large .back-icon {
+  font-size: 18px;
+}
