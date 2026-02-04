@@ -15,4 +15,15 @@ router.get('/requests/:teacherId', teacherController.getTeacherRequests);
 // Body: { "status": "approved" } OR { "status": "rejected" }
 router.put('/requests/:requestId', teacherController.updateRequestStatus);
 
+router.post('/create-course', teacherController.createCourse);
+
+router.put('/update-course/:id', teacherController.updateCourse);
+
+
+// ✅ NEW: Update Route (PUT /api/courses/:id)
+// router.put('/:id', courseController.updateCourse);
+
+// PUT /api/requests/:id/status
+// router.put('/:id/status', teacherController.updateRequestStatus);
+
 module.exports = router;

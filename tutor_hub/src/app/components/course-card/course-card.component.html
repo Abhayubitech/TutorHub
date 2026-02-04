@@ -56,30 +56,16 @@
                     disabled:opacity-70 disabled:cursor-not-allowed disabled:bg-slate-500 group-[.dark]:disabled:bg-slate-700">
             
             @if (!isRequested()) {
-                <span>Enroll Now</span>
+                <span>{{ actionLabel() }}</span>
+                
+                <svg class="w-4 h-4 transition-transform group-hover/card:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
             } @else {
                 <span class="flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    <svg class="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                     Request Sent
                 </span>
             }
         </button>
 
-        <button (click)="onAction()" 
-        [disabled]="isRequested()"
-        class="w-full py-3.5 rounded-xl font-bold text-sm transition-all duration-300 relative overflow-hidden shadow-lg active:scale-95 flex items-center justify-center gap-2
-            bg-slate-900 text-white hover:bg-indigo-600 
-            group-[.dark]:bg-indigo-600 group-[.dark]:hover:bg-indigo-500
-            disabled:opacity-70 disabled:cursor-not-allowed disabled:bg-slate-500 group-[.dark]:disabled:bg-slate-700">
-    
-    @if (!isRequested()) {
-        <span>{{ actionLabel() }}</span>
-    } @else {
-        <span class="flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-            Request Sent
-        </span>
-    }
-</button>
     </div>
 </div>

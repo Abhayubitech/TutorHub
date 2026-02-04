@@ -2,6 +2,7 @@ const express = require("express");
 const userRoutes = require("./routes/user.routes");
 const courseRoutes = require("./routes/course.routes");
 const profileRoutes = require("./routes/profile.routes");
+const teacherRoutes = require("./routes/teacher.routes");
 
 const cors = require("cors");
 // const auth = require("./middleware/auth.middleware");
@@ -12,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/Tutor_hub", courseRoutes);
+app.use("/teacher", teacherRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/user", profileRoutes);
 // app.use("/api/student", userRoutes);

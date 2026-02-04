@@ -58,7 +58,27 @@ getTeacherRequests(teacherId: number) {
 }
 
 // Approve/Reject logic
-updateRequestStatus(requestId: number, status: 'approved' | 'rejected') {
-  return this.http.put(`${this.apiUrl}/teacher/requests/${requestId}`, { status });
+updateRequestStatus(requestId: number, status: 'accepted' | 'rejected') {
+  // console.log(requestId,status);
+  // Ab URL banega: /api/teacher/5/102 (Jahan 5 teacherId hai aur 102 requestId)
+return this.http.put(`${this.apiUrl}/teacher/requests/${requestId}`, { status });
+
+  // return this.http.put(`${this.apiUrl}/teacher/:id/${requestId}`, { status });
 }
+
+
+// Create New Course
+  createCourse(courseData: any) {
+    return this.http.post(`${this.apiUrl}/teacher/create-course`, courseData);
+  }
+
+  // Update Existing Course
+  updateCourse(id: number, courseData: any) {
+    return this.http.put(`${this.apiUrl}/teacher/update-course/${id}`,[courseData,localStorage.getItem('token')]);
+  }
+
+  // 9. Get Approved/Enrolled Courses (For 'My Learning' Tab)
+  getEnrolledCourses(studentId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/Tutor_hub/enrolled/${studentId}`);
+  }
 }

@@ -97,7 +97,41 @@ const requestEnrollment = async (req, res) => {
         return res.status(500).json({ error: err.message });
     }
 };
+const getEnrolledCourses = async (req, res) => {
+    try {
+        const {studentId} = req.params; // Frontend se student ID aayegi
 
+        if (!studentId) {
+            return res.status(400).json({ error: "Student ID is required" });
+        }
+
+        // ✅ SQL Query: JOIN enrollments & courses table
+        // Sirf wahi data layega jahan status 'accepted' hai
+        const sql = `
+            SELECT 
+                c.id, 
+                c.title, 
+                c.subject, 
+                c.price, 
+                c.description, 
+                c.created_by,
+                e.request_date as enrollment_date,
+                e.status
+            FROM enrollments e
+            JOIN courses c ON e.course_id = c.id
+            WHERE e.student_id = ? AND e.status = 'accepted'
+        `;
+
+        const [rows] = await db.query(sql, [studentId]);
+
+        // Agar koi course nahi mila toh empty array bhejenge, error nahi
+        res.status(200).json(rows);
+
+    } catch (error) {
+        console.error("Error fetching enrolled courses:", error);
+        res.status(500).json({ error: "Failed to fetch enrolled courses" });
+    }
+};
 // async function  createUser (req, res) {
 //   try {
 //     const user = req.body
@@ -110,4 +144,4 @@ const requestEnrollment = async (req, res) => {
 
 
 
-module.exports = { course, getMyRequests, requestEnrollment };
+module.exports = { course, getMyRequests, requestEnrollment,getEnrolledCourses };

@@ -1,4 +1,4 @@
-import { Component, input, output, model } from '@angular/core';
+import { Component, input, output, model, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -11,27 +11,39 @@ import { FormsModule } from '@angular/forms';
 })
 export class DashboardNavbarComponent {
   
-  // ✅ FIX: Use 'userParams' (and make sure 'user' variable is removed from this file)
-  // using input<any>({}) makes it optional with a default empty object
   userParams = input<any>({}); 
-
   activeTab = input<string>('explore');
   isDarkMode = input<boolean>(false);
-
-  // Two-way binding for search
   searchTerm = model<string>(''); 
+  tabs = input<{ id: string, label: string }[]>([]);
 
-  // Events
   tabChange = output<string>();
   themeToggle = output<void>();
   logout = output<void>();
 
-  // ✅ FIX: Ye Input Missing tha!
-  // Default value Student Tabs rakhi hai taaki purana code na tute
-  tabs = input<{ id: string, label: string }[]>([
-    { id: 'explore', label: 'Explore' },
-    { id: 'requested', label: 'Requests' },
-    { id: 'learning', label: 'My Learning' },
-    { id: 'profile', label: 'Profile' }
-  ]);
+  // ✅ New States
+  showProfileMenu = signal<boolean>(false);
+  showNotifications = signal<boolean>(false);
+  showMobileMenu = signal<boolean>(false);
+
+  // Mock Notifications
+  notifications = [
+    { text: 'New course "Angular 18" added.', time: '2m ago', read: false },
+    { text: 'Your enrollment was approved.', time: '1h ago', read: false },
+    { text: 'Welcome to TutorHub!', time: '1d ago', read: true }
+  ];
+
+  toggleProfileMenu() { this.showProfileMenu.update(v => !v); this.showNotifications.set(false); }
+  toggleNotifications() { this.showNotifications.update(v => !v); this.showProfileMenu.set(false); }
+  toggleMobileMenu() { this.showMobileMenu.update(v => !v); }
+
+  closeMenus() {
+    this.showProfileMenu.set(false);
+    this.showNotifications.set(false);
+    this.showMobileMenu.set(false);
+  }
+
+  get unreadCount() {
+    return this.notifications.filter(n => !n.read).length;
+  }
 }

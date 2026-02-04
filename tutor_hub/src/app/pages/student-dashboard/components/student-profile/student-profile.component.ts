@@ -13,6 +13,8 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class StudentProfileComponent implements OnInit {
   
+ userParams = input<any>({}); 
+
   // Theme Signal (from Parent)
   isDarkModeInput = input<boolean>(false, { alias: 'isDarkMode' });
   activeTheme = signal<boolean>(false);

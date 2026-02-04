@@ -44,25 +44,18 @@ export class LoginComponent {
         next: (res: any) => {
           console.log(res[0].name);
 
-          this.toastr.success('Welcome back to TutorHub!', 'Login Successful');
-
+          
           // Token Save Logic
           localStorage.setItem('token', JSON.stringify(res[0].id));
           localStorage.setItem('role', JSON.stringify(res[0].role));
           localStorage.setItem('user', JSON.stringify(res));
-          if (res[0].role == 'teacher') {
-             this.loginForm.reset();
-            setTimeout(() => {
-              this.router.navigate(['/teacher-dashboard']); // Dashboard ya Home par redirect
-            }, 500);
-
           
-          } else if(res[0].role == 'student'){
-              this.loginForm.reset();
-            setTimeout(() => {
-              this.router.navigate(['/student-dashboard']); // Dashboard ya Home par redirect
-            }, 500);
-          }
+          
+          this.loginForm.reset();
+          this.toastr.success('Welcome back to TutorHub!', 'Login Successful');
+          setTimeout(() => {
+            this.router.navigate(['/dashboard']); // Dashboard ya Home par redirect
+          }, 500);
         },
         error: (err) => {
           this.toastr.error(err.error.message || 'Invalid credentials', 'Login Failed');
