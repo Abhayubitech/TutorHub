@@ -49,7 +49,7 @@ export class DashboardComponent implements OnInit {
   currentTabs: { id: string, label: string }[] = [];
   requestedCourseIds: Set<number> = new Set();
   enrolledCourses: any[] = []; // ✅ New Variable
-  
+
   private courseService = inject(CourseService);
   private toastr = inject(ToastrService);
   private router = inject(Router);
@@ -68,6 +68,7 @@ export class DashboardComponent implements OnInit {
       const userData = Array.isArray(this.userParams) ? this.userParams[0] : this.userParams;
       this.userRole = userData?.role === 'teacher' ? 'teacher' : 'student';
     }
+    
 
     if (localStorage.getItem('theme') === 'dark') this.isDarkMode = true;
     this.setupTabs();
@@ -86,8 +87,7 @@ export class DashboardComponent implements OnInit {
       this.currentTabs = [
         { id: 'explore', label: 'Explore' },
         { id: 'requested', label: 'My Requests' },
-        { id: 'learning', label: 'My Learning' },
-        { id: 'profile', label: 'Profile' }
+        { id: 'learning', label: 'My Learning' }
       ];
       this.activeTab = 'explore';
     }
@@ -129,7 +129,7 @@ export class DashboardComponent implements OnInit {
       this.courseService.getEnrolledCourses(userId).subscribe({
         next: (res: any) => {
             this.enrolledCourses = res; 
-            console.log("Enrolled:", this.enrolledCourses);
+            // console.log("Enrolled:", this.enrolledCourses);
         }
       });
     }

@@ -1,0 +1,107 @@
+<div class="min-h-screen bg-slate-50 dark:bg-slate-900 font-sans transition-colors duration-300">
+
+  <nav class="fixed w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-20 items-center">
+        
+        <div class="flex items-center gap-3">
+          <div class="p-2 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl shadow-lg shadow-indigo-500/20 text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+          </div>
+          <span class="text-2xl font-black text-slate-800 dark:text-white tracking-tight">TutorHub</span>
+        </div>
+
+        <div class="hidden md:flex items-center gap-8">
+          <a routerLink="/login" class="text-sm font-bold text-slate-600 hover:text-indigo-600 dark:text-slate-300 dark:hover:text-white transition-colors">Log In</a>
+          <a routerLink="/signup" class="px-6 py-2.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm hover:bg-slate-800 dark:hover:bg-slate-100 transition-all transform hover:scale-105 shadow-lg">
+            Get Started
+          </a>
+        </div>
+
+        <button (click)="toggleMenu()" class="md:hidden p-2 text-slate-600 dark:text-slate-300">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="isMenuOpen" class="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 absolute w-full p-4 space-y-4 shadow-xl">
+      <a routerLink="/login" class="block w-full text-center py-3 font-bold text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-xl">Log In</a>
+      <a routerLink="/signup" class="block w-full text-center py-3 font-bold text-white bg-indigo-600 rounded-xl">Get Started</a>
+    </div>
+  </nav>
+
+  <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+      
+      <span class="inline-block py-1 px-3 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 text-xs font-bold uppercase tracking-wider mb-6 border border-indigo-200 dark:border-indigo-800 animate-fade-in">
+        🚀 The Future of Learning
+      </span>
+      
+      <h1 class="text-5xl md:text-7xl font-black text-slate-900 dark:text-white mb-8 tracking-tight leading-tight">
+        Master New Skills <br class="hidden md:block">
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">Without Limits.</span>
+      </h1>
+      
+      <p class="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+        Connect with expert tutors, request specific courses, and track your learning journey. Whether you're a student or a teacher, TutorHub is your platform.
+      </p>
+      
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a routerLink="/signup" class="px-8 py-4 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-lg shadow-xl shadow-indigo-500/30 transition-all transform hover:-translate-y-1">
+          Start Learning Free
+        </a>
+        <a routerLink="/signup" class="px-8 py-4 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white font-bold text-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+          Become a Teacher
+        </a>
+      </div>
+
+    </div>
+
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 pointer-events-none">
+      <div class="absolute top-20 left-10 w-72 h-72 bg-purple-300 dark:bg-purple-900/20 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+      <div class="absolute bottom-20 right-10 w-96 h-96 bg-indigo-300 dark:bg-indigo-900/20 rounded-full blur-3xl opacity-30 animate-pulse delay-1000"></div>
+    </div>
+  </section>
+
+  <section class="py-20 bg-white dark:bg-slate-800/50 border-y border-slate-100 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-4">Why Choose TutorHub?</h2>
+        <p class="text-slate-500 dark:text-slate-400 max-w-xl mx-auto">We bridge the gap between curious learners and passionate educators.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="p-8 rounded-3xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:shadow-xl transition-all group">
+          <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">🎓</div>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">For Students</h3>
+          <p class="text-slate-500 dark:text-slate-400">Browse courses, request specific topics, and track your enrollment status in real-time.</p>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:shadow-xl transition-all group">
+          <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">👩‍🏫</div>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">For Teachers</h3>
+          <p class="text-slate-500 dark:text-slate-400">Create courses easily, manage student requests, and approve enrollments with one click.</p>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:shadow-xl transition-all group">
+          <div class="w-14 h-14 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">⚡</div>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Instant Access</h3>
+          <p class="text-slate-500 dark:text-slate-400">Simple dashboard interface. Toggle dark mode, search courses, and start learning instantly.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="py-12 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <div class="flex items-center justify-center gap-2 mb-4 opacity-50 grayscale hover:grayscale-0 transition-all">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+        <span class="font-bold text-slate-900 dark:text-white">TutorHub</span>
+      </div>
+      <p class="text-slate-500 text-sm">© 2024 TutorHub. All rights reserved.</p>
+    </div>
+  </footer>
+
+</div>
