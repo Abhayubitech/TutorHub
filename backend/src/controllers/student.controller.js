@@ -1,5 +1,6 @@
 const studentService = require("../services/student.service");
 
+
 async function applyForCourse(req, res) {
   try {
     const { student_id, course_id } = req.body;
@@ -10,9 +11,10 @@ async function applyForCourse(req, res) {
   }
 }
 
+
 async function getMyRequests(req, res) {
   try {
-    const { student_id } = req.params; 
+    const { student_id } = req.params;
     const requests = await studentService.getStudentRequests(student_id);
     res.json(requests);
   } catch (err) {
@@ -20,16 +22,18 @@ async function getMyRequests(req, res) {
   }
 }
 
+
 async function addProfile(req, res) {
   try {
     const profileData = req.body;
     
-    if (!profileData.user_id) {
-        return res.status(400).json({ error: "User ID is required" });
+    if (req.file) {
+        profileData.profile_pic = req.file.filename; 
     }
 
     const result = await studentService.createStudentProfile(profileData);
-    res.json({ message: "Student profile updated", id: result.insertId });
+    
+    res.json({ message: "Student profile updated successfully", result });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -38,10 +42,10 @@ async function addProfile(req, res) {
 async function getProfile(req, res) {
     try {
         const { user_id } = req.params;
-        const profile = await studentService.getStudentProfile(user_id);
+        const profile = await studentService.getStudentProfileData(user_id);
         
         if(!profile) {
-            return res.status(404).json({ message: "Profile not found" });
+            return res.status(404).json({ message: "User not found" });
         }
         
         res.json(profile);
@@ -52,7 +56,7 @@ async function getProfile(req, res) {
 
 module.exports = { 
     applyForCourse, 
-    getMyRequests,  
-    addProfile,     
-    getProfile      
+    getMyRequests, 
+    addProfile, 
+    getProfile 
 };

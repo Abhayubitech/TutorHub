@@ -1,0 +1,114 @@
+<div class="h-screen w-full flex bg-slate-50 dark:bg-slate-900 overflow-hidden relative font-sans transition-colors duration-300">
+
+  <a routerLink="/" class="absolute top-6 left-6 z-50 flex items-center gap-2 group cursor-pointer">
+    <div class="bg-blue-600 text-white p-2 rounded-lg shadow-md group-hover:scale-105 transition-transform">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+      </svg>
+    </div>
+    <span class="text-xl font-bold text-slate-800 dark:text-white tracking-tight">TutorHub</span>
+  </a>
+
+  <div class="w-full lg:w-1/2 flex items-center justify-center mt-10 md:mt-3 p-6 relative z-10 h-full overflow-y-auto">
+    <div class="w-full max-w-lg space-y-6 my-auto">
+      <div class="text-center lg:text-left">
+        <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white">Create Account 🚀</h2>
+        <p class="text-slate-500 dark:text-slate-400 mt-1">Join us! It takes only a few steps.</p>
+      </div>
+
+      <form (ngSubmit)="onRegister()" #regForm="ngForm" class="space-y-4">
+        
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Full Name</label>
+          <input type="text" [ngModel]="name()" (ngModelChange)="name.set($event)" name="name" #nameRef="ngModel" required minlength="3"
+            class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+            placeholder="John Doe" [class.border-red-500]="nameRef.invalid && nameRef.touched">
+          @if(nameRef.invalid && nameRef.touched) { <p class="text-red-500 text-[10px] mt-1 font-semibold italic">Name is required (min 3 chars).</p> }
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Email</label>
+            <input type="email" [ngModel]="email()" (ngModelChange)="email.set($event)" name="email" #emailRef="ngModel" required email
+              class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              placeholder="john@mail.com" [class.border-red-500]="emailRef.invalid && emailRef.touched">
+            @if(emailRef.invalid && emailRef.touched) { <p class="text-red-500 text-[10px] mt-1 font-semibold italic">Please enter a valid email.</p> }
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Phone</label>
+            <input type="text" [ngModel]="phone()" (ngModelChange)="phone.set($event)" name="phone" #phoneRef="ngModel" required pattern="^[0-9]{10}$" maxlength="10"
+              class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              placeholder="9876543210" [class.border-red-500]="phoneRef.invalid && phoneRef.touched">
+            @if(phoneRef.invalid && phoneRef.touched) { <p class="text-red-500 text-[10px] mt-1 font-semibold italic">Must be exactly 10 digits.</p> }
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">I am a</label>
+          <div class="relative">
+            <select [ngModel]="role()" (ngModelChange)="role.set($event)" name="role" class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer appearance-none">
+              <option value="student">Student</option>
+              <option value="teacher">Teacher</option>
+            </select>
+            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">▼</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Password</label>
+            <div class="relative">
+              <input [type]="showPassword() ? 'text' : 'password'" [ngModel]="password()" (ngModelChange)="password.set($event)" name="password" #passRef="ngModel" required [pattern]="passwordPattern"
+                class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all pr-10"
+                placeholder="••••••" [class.border-red-500]="passRef.invalid && passRef.touched">
+              <button type="button" (click)="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-lg focus:outline-none">
+                @if(showPassword()){ 🔓 } @else { 🔒 }
+              </button>
+            </div>
+            @if(passRef.invalid && passRef.touched) {
+              <p class="text-red-500 text-[9px] mt-1 font-semibold leading-tight italic">Min 8 chars, must include alphabet, digit & special char.</p>
+            }
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Confirm Password</label>
+            <div class="relative">
+              <input [type]="showConfirmPassword() ? 'text' : 'password'" [ngModel]="confirmPassword()" (ngModelChange)="confirmPassword.set($event)" name="confirmPassword" #confirmRef="ngModel" required
+                class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all pr-10"
+                placeholder="••••••" [class.border-red-500]="(confirmRef.touched && confirmPassword() !== password())">
+              <button type="button" (click)="toggleConfirmPassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-lg focus:outline-none">
+                @if(showConfirmPassword()){ 🔓 } @else { 🔒 }
+              </button>
+            </div>
+            @if(confirmRef.touched && confirmPassword() !== password()) {
+              <p class="text-red-500 text-[10px] mt-1 font-semibold italic">Passwords do not match.</p>
+            }
+          </div>
+        </div>
+
+        <button type="submit" [disabled]="regForm.invalid || password() !== confirmPassword()"
+          class="w-full py-3.5 mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg hover:shadow-blue-500/30 transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+          Sign Up Now
+        </button>
+
+      </form>
+
+      <div class="text-center text-sm">
+        <p class="text-slate-600 dark:text-slate-400">
+          Already have an account? <a routerLink="/login" class="text-blue-600 dark:text-blue-400 font-bold hover:underline">Login here</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hidden lg:block w-1/2 h-full relative">
+    <div class="absolute inset-0 bg-indigo-900/30 z-10"></div>
+    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1471&q=80" 
+         class="w-full h-full object-cover" alt="Group Study">
+    <div class="absolute bottom-10 left-10 right-10 z-20 text-white">
+      <h3 class="text-3xl font-bold mb-2 text-shadow-lg">Unlock Potential</h3>
+      <p class="text-blue-100 text-lg text-shadow">Connect with expert tutors and take your learning to the next level.</p>
+    </div>
+  </div>
+</div>

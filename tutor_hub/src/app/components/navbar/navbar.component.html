@@ -1,0 +1,177 @@
+<nav class="bg-[#1a1a2e] dark:bg-[#1a1a2e] text-white fixed top-0 w-full z-50 shadow-md h-16 border-b border-gray-800 transition-colors duration-300">
+  
+  <div class="container mx-auto px-6 h-full flex justify-between items-center">
+    
+    <div routerLink="/" class="text-2xl font-bold tracking-wide cursor-pointer flex items-center gap-2">
+      <span class="text-yellow-400 text-3xl">🎓</span>
+      <span class="hidden md:block">Tutor<span class="text-blue-400">Hub</span></span>
+    </div>
+
+    <div class="flex items-center gap-4"> 
+      <button (click)="toggleTheme()" 
+        class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-300 focus:outline-none">
+        @if(isDarkMode) {
+          <span class="text-xl">🔆</span>
+        } @else {
+          <span class="text-xl">🌙</span>
+        }
+      </button>
+
+      @if (user) {
+        <a [routerLink]="dashboardLink" class="hidden md:block text-gray-300 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition font-medium text-sm">
+          Dashboard
+        </a>
+      }
+
+      @if (user) {
+        <div class="relative group h-full flex items-center" (mouseenter)="showDropdown()" (mouseleave)="hideDropdown()">
+          
+          <div class="flex items-center gap-3 cursor-pointer py-2">
+            <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-blue-400 shadow-sm relative bg-gray-700">
+              <img [src]="(user?.role !== 'admin' && profileData?.profile_pic) ? 'http://localhost:3000/uploads/' + profileData.profile_pic : defaultPhoto" 
+                   class="w-full h-full object-cover" alt="User">
+            </div>
+            <div class="flex items-start leading-tight">
+              <span class="font-semibold text-[16px] text-gray-100">{{ user?.name }}</span>
+              <span class="text-[15px] ms-3 pt-0.5 uppercase font-bold text-blue-400 bg-blue-400/10 px-1 rounded">{{ user?.role }}</span>
+            </div>
+          </div>
+
+          @if (isDropdownOpen) {
+            <div class="absolute right-0 top-13 mt-1 w-56 bg-white dark:bg-slate-900 text-gray-800 dark:text-gray-200 rounded-xl shadow-2xl overflow-hidden animate-fade-in border border-gray-100 dark:border-gray-700">
+              
+              <button (click)="openSidebar()" class="w-full text-left px-4 py-3 border-b dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300 hover:text-blue-600 transition flex items-center gap-3">
+                <span>👤</span> View Profile
+              </button>
+              
+              <button (click)="logout()" class="w-full text-left px-4 py-3 hover:bg-red-50 dark:hover:bg-red-900/20 border-b dark:border-gray-700 text-red-600 hover:text-red-700 transition flex items-center gap-3 font-medium">
+                <span>🚪</span> Log Out
+              </button>
+              
+              <div class="px-4 py-3 bg-gray-50 dark:bg-slate-950">
+                <p class="text-sm font-bold text-gray-700 dark:text-gray-400">Signed in as</p>
+                <p class="text-sm text-gray-500 dark:text-gray-500 truncate" title="{{ profileData?.email || user?.email }}">
+                    {{ profileData?.email || user?.email }}
+                </p>
+              </div>
+            </div>
+          }
+        </div>
+      } 
+      
+      @else {
+        <a routerLink="/login" class="bg-blue-600 px-6 py-2 rounded-full font-bold hover:bg-blue-500 transition shadow-lg hover:shadow-blue-500/30">Login</a>
+      }
+    </div>
+  </div>
+</nav>
+
+<div class="h-16 bg-white dark:bg-slate-950 transition-colors"></div>
+
+@if (isSidebarOpen) {
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-1xl z-[60] transition-all duration-300" 
+       (click)="closeSidebar()">
+  </div>
+}
+
+<div class="fixed top-0 right-0 h-full w-80 md:w-[400px] bg-white dark:bg-slate-900 shadow-2xl z-[70] transform transition-transform duration-300 ease-out flex flex-col"
+     [class.translate-x-0]="isSidebarOpen"
+     [class.translate-x-full]="!isSidebarOpen">
+    
+    <button (click)="closeSidebar()" class="p-2 py-5 bg-gray-200 dark:bg-slate-800 transition duration-200 group">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6 text-gray-600 dark:text-gray-300 group-hover:text-gray-800 dark:group-hover:text-white">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  
+
+  <div class="flex-1 overflow-y-auto p-6 bg-gray-50 dark:bg-slate-950">
+    
+    @if (user) {
+      <div class="bg-gray-200 dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center mb-6 relative overflow-hidden">
+        
+        <div class="relative z-10 w-25 h-25 rounded-full p-1 bg-white dark:bg-slate-700 ring-4 ring-blue-100 dark:ring-slate-600 shadow-lg mb-3">
+          <img [src]="(user?.role !== 'admin' && profileData?.profile_pic) ? 'http://localhost:3000/uploads/' + profileData.profile_pic : defaultPhoto" 
+               class="w-full h-full rounded-full object-cover">
+        </div>
+        
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white">{{ user?.name }}</h3>
+        <span class="mt-1 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider 
+                {{ user?.role === 'teacher' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-200' : 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' }}">
+          {{ user?.role }}
+        </span>
+      </div>
+
+      <div class="space-y-4">
+        
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-start gap-4">
+          <div class="bg-blue-50 dark:bg-blue-900/30 p-2 rounded-lg text-blue-600 dark:text-blue-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Email</p>
+            <p class="text-sm font-semibold text-gray-700 dark:text-gray-200 break-all">{{ profileData?.email || user?.email }}</p>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-start gap-4">
+          <div class="bg-green-50 dark:bg-green-900/30 p-2 rounded-lg text-green-600 dark:text-green-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Phone</p>
+            <p class="text-sm font-semibold text-gray-700 dark:text-gray-200">{{ profileData?.phone || user?.phone || 'Not Added' }}</p>
+          </div>
+        </div>
+
+        @if (user?.role !== 'admin') {
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-start gap-4">
+            <div class="bg-red-50 dark:bg-red-900/30 p-2 rounded-lg text-red-500 dark:text-red-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Address</p>
+              <p class="text-sm font-semibold text-gray-700 dark:text-gray-200">{{ profileData?.address || 'Not Added' }}</p>
+            </div>
+          </div>
+        }
+
+        @if (user?.role === 'student') {
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
+            <div class="flex justify-between mb-2">
+               <span class="text-xs font-bold text-gray-400 uppercase">School</span>
+               <span class="text-xs font-bold text-gray-400 uppercase">Grade</span>
+            </div>
+            <div class="flex justify-between">
+               <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">{{ profileData?.school_name || '--' }}</span>
+               <span class="text-sm font-bold bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded">{{ profileData?.grade || '--' }}</span>
+            </div>
+          </div>
+        }
+
+        @if (user?.role === 'teacher') {
+           <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
+             <p class="text-xs font-bold text-gray-400 uppercase mb-1">Qualification</p>
+             <p class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">{{ profileData?.qualifications || 'Not Added' }}</p>
+             
+             <p class="text-xs font-bold text-gray-400 uppercase mb-1">Experience</p>
+             <p class="text-sm font-semibold text-gray-700 dark:text-gray-200">{{ profileData?.experience ? profileData.experience + ' Years' : 'Not Added' }}</p>
+           </div>
+           
+           @if (profileData?.bio) {
+              <div class="bg-yellow-100 dark:bg-yellow-900/20 p-4 rounded-xl border border-yellow-100 dark:border-yellow-900/50 text-sm italic text-gray-600 dark:text-gray-300 relative">
+                 <span class="absolute top-2 left-2 text-yellow-400 text-4xl leading-3 opacity-50">"</span>
+                 <p class="pl-4">{{ profileData.bio }}</p>
+              </div>
+           }
+        }
+      </div>
+      <div class="p-5 bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-slate-800">
+        <button (click)="goToEditProfile()" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30 flex justify-center items-center gap-2 active:scale-95 duration-150">
+          <span>Edit Full Profile</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+        </button>
+      </div>
+    }
+  </div>
+</div>

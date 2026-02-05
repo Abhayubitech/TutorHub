@@ -1,6 +1,12 @@
-module.exports = (req, res, next) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: "Access Denied: You are not an Admin!" });
+module.exports = function (req, res, next) {
+    
+    if (!req.user) {
+        return res.status(401).json({ message: "Authorization required" });
     }
-    next();
+    
+    if (req.user.role === 'admin') {
+        next(); 
+    } else {
+        return res.status(403).json({ message: "Access Denied! Admins only." });
+    }
 };

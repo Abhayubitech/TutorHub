@@ -1,0 +1,63 @@
+
+@keyframes scrollLeft {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+@keyframes scrollRight {
+    0% { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
+}
+
+.animate-marquee {
+    display: flex;
+    width: max-content;
+    animation: scrollLeft 40s linear infinite;
+}
+
+.animate-marquee-reverse {
+    display: flex;
+    width: max-content;
+    animation: scrollRight 40s linear infinite;
+}
+
+.group:hover .animate-marquee,
+.group:hover .animate-marquee-reverse {
+    animation-play-state: paused;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeLeft {
+    from { opacity: 0; transform: translateX(-60px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeRight {
+    from { opacity: 0; transform: translateX(60px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes zoomIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.animate-fade-up { animation: fadeUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.animate-fade-down { animation: fadeDown 1s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.animate-fade-left { animation: fadeLeft 1s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.animate-fade-right { animation: fadeRight 1s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.animate-zoom-in { animation: zoomIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-500 { animation-delay: 0.5s; }
