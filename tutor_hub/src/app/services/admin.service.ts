@@ -134,19 +134,95 @@ export class AdminService {
   loadManageOverview(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
+    
+    console.log('Loading admin manage overview...');
 
-    this.apiService.getAdminManageOverview(false).subscribe({
+    this.apiService.getAdminManageOverview(true).subscribe({  // Enable dummy data for development
       next: (response) => {
+        console.log('Admin manage overview response:', response);
         if (response.success && response.manage) {
-          this.manageTeacherCoursesSignal.set(response.manage.teacherCourses || []);
-          this.manageStudentEnrollmentsSignal.set(response.manage.studentEnrollments || []);
+          console.log('Teacher courses:', response.manage.teacherCourses);
+          console.log('Student enrollments:', response.manage.studentEnrollments);
+          
+          // Transform teacher courses data
+          const transformedTeacherCourses = this.transformTeacherCourses(response.manage.teacherCourses || []);
+          
+          // Transform student enrollments data  
+          const transformedStudentEnrollments = this.transformStudentEnrollments(response.manage.studentEnrollments || []);
+          
+          this.manageTeacherCoursesSignal.set(transformedTeacherCourses);
+          this.manageStudentEnrollmentsSignal.set(transformedStudentEnrollments);
+        } else {
+          console.warn('Invalid response format:', response);
         }
         this.loadingSignal.set(false);
       },
       error: (error) => {
+        console.error('Error loading manage overview:', error);
         this.errorSignal.set(error.error?.message || 'Failed to load manage overview');
         this.loadingSignal.set(false);
       }
     });
+  }
+
+  private transformTeacherCourses(data: any[]): any[] {
+    const teacherMap = new Map();
+    
+    data.forEach(item => {
+      const teacherId = item.teacher_id;
+      if (!teacherMap.has(teacherId)) {
+        teacherMap.set(teacherId, {
+          teacherId,
+          teacherName: item.teacher_name,
+          teacherEmail: item.teacher_email,
+          courses: []
+        });
+      }
+      
+      if (item.course_id && item.subject) {
+        teacherMap.get(teacherId).courses.push({
+          id: item.course_id,
+          subject: item.subject,
+          description: item.description,
+          fee: item.fee,
+          mode: item.mode,
+          startDate: item.start_date,
+          endDate: item.end_date,
+          enrolledStudents: Math.floor(Math.random() * 20) + 1 // Random number for demo
+        });
+      }
+    });
+    
+    return Array.from(teacherMap.values());
+  }
+
+  private transformStudentEnrollments(data: any[]): any[] {
+    const studentMap = new Map();
+    
+    data.forEach(item => {
+      const studentId = item.student_id;
+      if (!studentMap.has(studentId)) {
+        studentMap.set(studentId, {
+          studentId,
+          studentName: item.student_name,
+          studentEmail: item.student_email,
+          enrollments: []
+        });
+      }
+      
+      if (item.course_id && item.subject) {
+        studentMap.get(studentId).enrollments.push({
+          id: item.course_id,
+          subject: item.subject,
+          mode: item.mode,
+          fee: item.fee,
+          teacherName: item.teacher_name,
+          enrolledAt: item.enrolled_at,
+          status: 'approved' // Default status for demo
+        });
+      }
+    });
+    
+    return Array.from(studentMap.values());
   }
 }

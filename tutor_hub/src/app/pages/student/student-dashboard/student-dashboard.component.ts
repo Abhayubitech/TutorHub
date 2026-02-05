@@ -1,23 +1,24 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { StudentService } from '../../../services/student.service';
 import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
+import { ThemeService } from '../../../services/theme.service';
 import { ProfileFormComponent, ProfileData } from '../../../shared/components/profile-form/profile-form.component';
 import { HamburgerMenuComponent, MenuItem } from '../../../shared/components/hamburger-menu/hamburger-menu.component';
-import { ToastComponent } from '../../../shared/components/toast/toast.component';
 import { SweetAlertService } from '../../../services/sweetalert.service';
 
 @Component({
   selector: 'app-student-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProfileFormComponent, HamburgerMenuComponent, ToastComponent],
+  imports: [CommonModule, FormsModule, ProfileFormComponent, HamburgerMenuComponent],
   templateUrl: './student-dashboard.component.html',
-  styleUrl: './student-dashboard.component.css'
+  styleUrl: './student-dashboard.component.css',
+  encapsulation: ViewEncapsulation.None
 })
-export class StudentDashboardComponent implements OnInit {
+export class StudentDashboardComponent implements OnInit, AfterViewInit {
   currentTab = signal<string>('overview');
   searchQuery = signal<string>('');
   isEditingProfile = signal<boolean>(false);
@@ -29,6 +30,7 @@ export class StudentDashboardComponent implements OnInit {
     private studentService: StudentService,
     private authService: AuthService,
     private router: Router,
+    public themeService: ThemeService,
     public toastService: ToastService,
     public sweetAlert: SweetAlertService
   ) {
@@ -39,10 +41,18 @@ export class StudentDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Theme is automatically applied by ThemeService constructor
+    // No need to manually set it here as it might override stored preference
+    
     this.studentService.loadAllCourses();
     this.studentService.loadAllTeachers();
     this.studentService.loadMyEnrollments();
     this.studentService.loadMyRequests();
+  }
+
+  ngAfterViewInit(): void {
+    // Theme is automatically applied by ThemeService constructor
+    // No need to manually set it here as it might override stored preference
   }
 
   setTab(tab: string): void {
@@ -245,7 +255,14 @@ export class StudentDashboardComponent implements OnInit {
 
   // Settings functionality
   openAccountSettings(): void {
+    this.isEditingProfile.set(false); // Reset to view mode first
     this.currentTab.set('account-settings');
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+    const currentTheme = this.themeService.getCurrentTheme();
+    this.sweetAlert.showToast(`Switched to ${currentTheme} mode`, 'success', 'top-end', 3000);
   }
 
 }

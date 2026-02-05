@@ -17,8 +17,10 @@ export class ThemeService {
       this.applyTheme(this.currentTheme());
     });
     
-    // Apply initial theme
-    this.applyTheme(this.currentTheme());
+    // Apply initial theme with a slight delay to ensure DOM is ready
+    setTimeout(() => {
+      this.applyTheme(this.currentTheme());
+    }, 0);
   }
 
   toggleTheme(): void {
@@ -55,10 +57,7 @@ export class ThemeService {
     // Remove existing theme classes
     body.classList.remove('light-theme', 'dark-theme');
     
-    // Add new theme class
-    body.classList.add(`${theme}-theme`);
-    
-    // Update data attribute for CSS selectors
+    // Update data attribute for CSS selectors (this is what the CSS uses)
     body.setAttribute('data-theme', theme);
   }
 }

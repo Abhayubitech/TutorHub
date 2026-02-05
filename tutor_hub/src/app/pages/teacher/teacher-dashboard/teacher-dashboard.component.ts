@@ -1,22 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { TeacherService } from '../../../services/teacher.service';
 import { ToastService } from '../../../services/toast.service';
+import { ThemeService } from '../../../services/theme.service';
 import { SweetAlertService } from '../../../services/sweetalert.service';
 import { StatsGridComponent, StatItem } from '../../../shared/components/stats-grid/stats-grid.component';
 import { ProfileFormComponent, ProfileData } from '../../../shared/components/profile-form/profile-form.component';
 import { HamburgerMenuComponent, MenuItem } from '../../../shared/components/hamburger-menu/hamburger-menu.component';
-import { ToastComponent } from '../../../shared/components/toast/toast.component';
 
 @Component({
   selector: 'app-teacher-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, StatsGridComponent, ProfileFormComponent, HamburgerMenuComponent, ToastComponent],
+  imports: [CommonModule, FormsModule, StatsGridComponent, ProfileFormComponent, HamburgerMenuComponent],
   templateUrl: './teacher-dashboard.component.html',
-  styleUrl: './teacher-dashboard.component.css'
+  styleUrl: './teacher-dashboard.component.css',
+  encapsulation: ViewEncapsulation.None
 })
 export class TeacherDashboardComponent implements OnInit {
   // form fields
@@ -44,6 +45,7 @@ export class TeacherDashboardComponent implements OnInit {
     private teacherService: TeacherService,
     private authService: AuthService,
     private router: Router,
+    public themeService: ThemeService,
     public toastService: ToastService,
     public sweetAlert: SweetAlertService
   ) {
@@ -53,6 +55,9 @@ export class TeacherDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Theme is automatically applied by ThemeService constructor
+    // No need to manually set it here as it might override stored preference
+    
     this.teacherService.loadProfile();
     this.teacherService.loadCourses();
     this.teacherService.loadEnrollmentRequests();
@@ -334,19 +339,9 @@ export class TeacherDashboardComponent implements OnInit {
     this.currentSection = 'account-settings';
   }
 
-  openNotificationSettings(): void {
-    this.currentSection = 'notification-settings';
-  }
-
-  openPaymentSettings(): void {
-    this.currentSection = 'payment-settings';
-  }
-
-  openLearningSettings(): void {
-    this.currentSection = 'learning-settings';
-  }
-
-  openPlatformAnalytics(): void {
-    this.currentSection = 'platform-analytics';
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+    const currentTheme = this.themeService.getCurrentTheme();
+    this.sweetAlert.showToast(`Switched to ${currentTheme} mode`, 'success', 'top-end', 3000);
   }
 }

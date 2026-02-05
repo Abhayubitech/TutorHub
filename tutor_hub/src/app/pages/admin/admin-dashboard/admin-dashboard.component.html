@@ -100,7 +100,15 @@
                     }
                   </div>
                   <div class="user-actions">
-                    <button class="btn-edit" (click)="editUser(user.id)">Edit Profile</button>
+                    <button class="btn-view-courses" (click)="viewUserCourses(user.id)">
+                      @if (user.role === 'teacher') {
+                        View Courses
+                      } @else if (user.role === 'student') {
+                        View Enrollments
+                      } @else {
+                        View Details
+                      }
+                    </button>
                     <button class="btn-delete" (click)="deleteUser(user.id)" title="Delete user account">Delete Account</button>
                   </div>
                 </div>
@@ -120,26 +128,49 @@
           <h2>Teacher Courses</h2>
           <p class="section-description">View which teachers are teaching which courses and their enrollment statistics.</p>
           
+          <!-- Debug info -->
+          <div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; font-family: monospace; font-size: 12px;">
+            Debug: Loading: {{ loading }} | Teacher Courses Count: {{ manageTeacherCourses.length }}
+            @if (error) {
+              <br>Error: {{ error }}
+            }
+          </div>
+          
           @if (manageTeacherCourses.length > 0) {
-            <div class="teacher-courses-grid">
+            <div class="teacher-courses-accordion">
               @for (item of manageTeacherCourses; track item.teacherId) {
-                <div class="teacher-course-card">
-                  <div class="teacher-info">
-                    <h3>{{ item.teacherName }}</h3>
-                    <p class="teacher-email">{{ item.teacherEmail }}</p>
-                    <span class="teacher-role">TEACHER</span>
-                  </div>
-                  <div class="courses-info">
-                    <h4>Courses Teaching ({{ item.courses.length }})</h4>
-                    <div class="courses-list">
-                      @for (course of item.courses; track course.id) {
-                        <div class="course-item">
-                          <span class="course-name">{{ course.subject }}</span>
-                          <span class="course-details">
-                            💰 ₹{{ course.fee }} | 📍 {{ course.mode }} | 👥 {{ course.enrolledStudents || 0 }} students
-                          </span>
-                        </div>
-                      }
+                <div class="accordion-item">
+                  <button 
+                    class="accordion-header" 
+                    (click)="toggleTeacherAccordion(item.teacherId)"
+                    [class.expanded]="isTeacherAccordionExpanded(item.teacherId)"
+                  >
+                    <div class="accordion-header-content">
+                      <div class="teacher-info">
+                        <h3>{{ item.teacherName }}</h3>
+                        <p class="teacher-email">{{ item.teacherEmail }}</p>
+                        <span class="teacher-role">TEACHER</span>
+                      </div>
+                      <div class="accordion-toggle">
+                        <span class="toggle-icon">{{ isTeacherAccordionExpanded(item.teacherId) ? '−' : '+' }}</span>
+                        <span class="course-count">{{ item.courses.length }} courses</span>
+                      </div>
+                    </div>
+                  </button>
+                  
+                  <div class="accordion-content" [class.expanded]="isTeacherAccordionExpanded(item.teacherId)">
+                    <div class="courses-info">
+                      <h4>Courses Teaching</h4>
+                      <div class="courses-list">
+                        @for (course of item.courses; track course.id) {
+                          <div class="course-item">
+                            <span class="course-name">{{ course.subject }}</span>
+                            <span class="course-details">
+                              💰 ₹{{ course.fee }} | 📍 {{ course.mode }} | 👥 {{ course.enrolledStudents || 0 }} students
+                            </span>
+                          </div>
+                        }
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -160,28 +191,43 @@
           <p class="section-description">View which students are enrolled in which courses and their enrollment details.</p>
           
           @if (manageStudentEnrollments.length > 0) {
-            <div class="student-enrollments-grid">
+            <div class="student-enrollments-accordion">
               @for (item of manageStudentEnrollments; track item.studentId) {
-                <div class="student-enrollment-card">
-                  <div class="student-info">
-                    <h3>{{ item.studentName }}</h3>
-                    <p class="student-email">{{ item.studentEmail }}</p>
-                    <span class="student-role">STUDENT</span>
-                  </div>
-                  <div class="enrollments-info">
-                    <h4>Enrolled Courses ({{ item.enrollments.length }})</h4>
-                    <div class="enrollments-list">
-                      @for (enrollment of item.enrollments; track enrollment.id) {
-                        <div class="enrollment-item">
-                          <span class="course-name">{{ enrollment.subject }}</span>
-                          <span class="enrollment-details">
-                            👨‍🏫 {{ enrollment.teacherName }} | 💰 ₹{{ enrollment.fee }} | 📅 Enrolled: {{ enrollment.enrolledAt | date: 'mediumDate' }}
-                          </span>
-                          <span class="enrollment-status" [class]="enrollment.status">
-                            {{ enrollment.status | uppercase }}
-                          </span>
-                        </div>
-                      }
+                <div class="accordion-item">
+                  <button 
+                    class="accordion-header" 
+                    (click)="toggleStudentAccordion(item.studentId)"
+                    [class.expanded]="isStudentAccordionExpanded(item.studentId)"
+                  >
+                    <div class="accordion-header-content">
+                      <div class="student-info">
+                        <h3>{{ item.studentName }}</h3>
+                        <p class="student-email">{{ item.studentEmail }}</p>
+                        <span class="student-role">STUDENT</span>
+                      </div>
+                      <div class="accordion-toggle">
+                        <span class="toggle-icon">{{ isStudentAccordionExpanded(item.studentId) ? '−' : '+' }}</span>
+                        <span class="enrollment-count">{{ item.enrollments.length }} enrollments</span>
+                      </div>
+                    </div>
+                  </button>
+                  
+                  <div class="accordion-content" [class.expanded]="isStudentAccordionExpanded(item.studentId)">
+                    <div class="enrollments-info">
+                      <h4>Enrolled Courses</h4>
+                      <div class="enrollments-list">
+                        @for (enrollment of item.enrollments; track enrollment.id) {
+                          <div class="enrollment-item">
+                            <span class="course-name">{{ enrollment.subject }}</span>
+                            <span class="enrollment-details">
+                              👨‍🏫 {{ enrollment.teacherName }} | 💰 ₹{{ enrollment.fee }} | 📅 Enrolled: {{ enrollment.enrolledAt | date: 'mediumDate' }}
+                            </span>
+                            <span class="enrollment-status" [class]="enrollment.status">
+                              {{ enrollment.status | uppercase }}
+                            </span>
+                          </div>
+                        }
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -194,26 +240,72 @@
       </div>
     }
 
+    <!-- Account Settings Section -->
+    @if (currentNavSection() === 'account-settings') {
+      <div role="tabpanel" id="account-settings-panel">
+        <section class="section">
+          <h2>Account Settings</h2>
+          @if (isEditingProfile) {
+            <app-profile-form
+              [userName]="user?.name || ''"
+              [userEmail]="user?.email || ''"
+              [userPhone]="user?.phone"
+              [isLoading]="isProfileLoading"
+              submitButtonText="Save Settings"
+              cancelButtonText="Cancel"
+              (submit)="updateUser($event)"
+              (cancel)="cancelEditUser()"
+            />
+          } @else {
+            <div class="settings-content">
+              <div class="setting-item">
+                <h3>👤 Profile Information</h3>
+                <div class="profile-info">
+                  <p><strong>Full Name:</strong> {{ user?.name }}</p>
+                  <p><strong>Email Address:</strong> {{ user?.email }}</p>
+                  <p><strong>Phone Number:</strong> {{ user?.phone || 'Not provided' }}</p>
+                  <p><strong>Role:</strong> {{ user?.role | uppercase }}</p>
+                </div>
+                <div class="form-actions">
+                  <button class="btn-primary" (click)="editCurrentUser()">Edit Profile</button>
+                </div>
+              </div>
+              <div class="setting-item">
+                <h3>🔒 Security Settings</h3>
+                <p>Manage your password and security preferences.</p>
+                <button class="btn-secondary" (click)="currentNavSection.set('settings')">Back to Settings</button>
+              </div>
+            </div>
+          }
+        </section>
+      </div>
+    }
+
     <!-- Settings Section -->
     @if (currentNavSection() === 'settings') {
       <div role="tabpanel" id="settings-panel">
         <section class="section">
-          <h2>Settings</h2>
+          <h2>Admin Settings</h2>
           <div class="settings-content">
             <div class="setting-item">
-              <h3>Account Settings</h3>
+              <h3>🔐 Account Settings</h3>
               <p>Manage your admin account preferences and security settings.</p>
               <button class="btn-secondary" (click)="openAccountSettings()">Account Settings</button>
             </div>
             <div class="setting-item">
-              <h3>Platform Overview</h3>
-              <p>View basic platform statistics and user information.</p>
-              <button class="btn-secondary" (click)="currentNavSection.set('overview')">View Overview</button>
+              <h3>👥 User Management</h3>
+              <p>Manage user accounts, roles, and permissions.</p>
+              <button class="btn-secondary" (click)="currentNavSection.set('users')">Manage Users</button>
             </div>
             <div class="setting-item">
-              <h3>User Management</h3>
-              <p>Manage user accounts and roles.</p>
-              <button class="btn-secondary" (click)="currentNavSection.set('users')">Manage Users</button>
+              <h3>📊 System Overview</h3>
+              <p>View platform statistics and system health.</p>
+              <button class="btn-secondary" (click)="currentNavSection.set('overview')">View Dashboard</button>
+            </div>
+            <div class="setting-item">
+              <h3>🎨 Theme Settings</h3>
+              <p>Toggle between light and dark mode themes.</p>
+              <button class="btn-secondary" (click)="toggleTheme()">Toggle Theme</button>
             </div>
           </div>
         </section>

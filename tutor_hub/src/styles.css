@@ -27,7 +27,10 @@ body {
   --secondary-color: #f093fb;
   --accent-color: #4facfe;
   --success-color: #26de81;
+  --success-dark: #20c997;
   --danger-color: #fc5c65;
+  --error-color: #fc5c65;
+  --error-dark: #ee5a52;
   --warning-color: #fed330;
   --light-bg: #f8f9fa;
   --dark-text: #2c3e50;
@@ -40,6 +43,16 @@ body {
   --text-color: #333;
   --card-bg: #ffffff;
   --input-bg: #ffffff;
+  /* Role colors for light mode */
+  --role-student-bg: #e3f2fd;
+  --role-student-color: #1976d2;
+  --role-student-border: #1976d2;
+  --role-teacher-bg: #f3e5f5;
+  --role-teacher-color: #7b1fa2;
+  --role-teacher-border: #7b1fa2;
+  --role-admin-bg: #fff3e0;
+  --role-admin-color: #e65100;
+  --role-admin-border: #e65100;
 }
 
 /* Dark Theme Variables */
@@ -49,7 +62,10 @@ body {
   --secondary-color: #f093fb;
   --accent-color: #4facfe;
   --success-color: #26de81;
+  --success-dark: #20c997;
   --danger-color: #fc5c65;
+  --error-color: #fc5c65;
+  --error-dark: #ee5a52;
   --warning-color: #fed330;
   --light-bg: #1a1a2e;
   --dark-text: #e0e6ed;
@@ -62,6 +78,16 @@ body {
   --text-color: rgba(255, 255, 255, 0.95);
   --card-bg: #2c3e50;
   --input-bg: #34495e;
+  /* Role colors for dark mode */
+  --role-student-bg: rgba(25, 118, 210, 0.2);
+  --role-student-color: #90caf9;
+  --role-student-border: #1976d2;
+  --role-teacher-bg: rgba(123, 31, 162, 0.2);
+  --role-teacher-color: #ce93d8;
+  --role-teacher-border: #7b1fa2;
+  --role-admin-bg: rgba(230, 81, 0, 0.2);
+  --role-admin-color: #ffcc80;
+  --role-admin-border: #e65100;
 }
 
 /* Typography */
@@ -84,11 +110,28 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 800;
 }
 
+/* Light mode typography improvements */
+[data-theme="light"] h1, 
+[data-theme="light"] h2, 
+[data-theme="light"] h3, 
+[data-theme="light"] h4, 
+[data-theme="light"] h5, 
+[data-theme="light"] h6 {
+  color: #2c3e50;
+  font-weight: 700;
+}
+
 [data-theme="dark"] body {
   font-weight: 500;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Light mode body text */
+[data-theme="light"] body {
+  color: #333;
+  font-weight: 400;
 }
 
 h1 { font-size: 2.5rem; }

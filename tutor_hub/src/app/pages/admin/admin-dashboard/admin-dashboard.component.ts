@@ -1,14 +1,14 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { AdminService } from '../../../services/admin.service';
 import { ToastService } from '../../../services/toast.service';
+import { ThemeService } from '../../../services/theme.service';
 import { StatsGridComponent, StatItem } from '../../../shared/components/stats-grid/stats-grid.component';
 import { ProfileFormComponent, ProfileData } from '../../../shared/components/profile-form/profile-form.component';
 import { HamburgerMenuComponent, MenuItem } from '../../../shared/components/hamburger-menu/hamburger-menu.component';
-import { ToastComponent } from '../../../shared/components/toast/toast.component';
 import { SweetAlertService } from '../../../services/sweetalert.service';
 
 interface User {
@@ -22,9 +22,10 @@ interface User {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, StatsGridComponent, ProfileFormComponent, HamburgerMenuComponent, ToastComponent],
+  imports: [CommonModule, FormsModule, StatsGridComponent, ProfileFormComponent, HamburgerMenuComponent],
   templateUrl: './admin-dashboard.component.html',
-  styleUrl: './admin-dashboard.component.css'
+  styleUrl: './admin-dashboard.component.css',
+  encapsulation: ViewEncapsulation.None
 })
 export class AdminDashboardComponent implements OnInit {
   userFilter: 'all' | 'student' | 'teacher' = 'all';
@@ -33,11 +34,16 @@ export class AdminDashboardComponent implements OnInit {
   isProfileLoading = false;
   currentNavSection = signal<string>('overview');
   isMenuOpen: boolean = false;
+  
+  // Accordion state management
+  expandedTeacherAccordions: Set<string> = new Set();
+  expandedStudentAccordions: Set<string> = new Set();
 
   constructor(
     private authService: AuthService,
     private adminService: AdminService,
     private router: Router,
+    public themeService: ThemeService,
     private toastService: ToastService,
     private sweetAlert: SweetAlertService
   ) {
@@ -47,6 +53,9 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Theme is automatically applied by ThemeService constructor
+    // No need to manually set it here as it might override stored preference
+    
     this.adminService.loadAllUsers();
     this.adminService.loadCourses();
     this.adminService.loadRecentUsers(10);
@@ -74,6 +83,15 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
+  // Method to edit current user's profile
+  editCurrentUser(): void {
+    const currentUser = this.authService.user();
+    if (currentUser) {
+      this.editingUserId = String(currentUser.id);
+      this.isEditingProfile = true;
+    }
+  }
+
   updateUser(userData: ProfileData): void {
     if (this.editingUserId) {
       this.isProfileLoading = true;
@@ -86,9 +104,9 @@ export class AdminDashboardComponent implements OnInit {
             // Update the current user data in auth service immediately
             const updatedUser = { ...currentUser, ...userData };
             this.authService.updateCurrentUser(updatedUser);
-            this.toastService.success('Your profile has been updated successfully');
+            this.sweetAlert.showToast('Profile updated successfully', 'success', 'top-end', 3000);
           } else {
-            this.toastService.success('User profile updated successfully');
+            this.sweetAlert.showToast('User profile updated successfully', 'success', 'top-end', 3000);
           }
           
           // Refresh users list to show updated data
@@ -98,8 +116,9 @@ export class AdminDashboardComponent implements OnInit {
         },
         error: (error: any) => {
           this.isProfileLoading = false;
-          this.toastService.error('Failed to update profile: ' + (error.error?.message || 'Unknown error'));
+          this.sweetAlert.showToast('Failed to update profile: ' + (error.error?.message || 'Unknown error'), 'error', 'top-end', 3000);
           console.error('Profile update error:', error);
+          this.cancelEditUser();
         }
       });
     }
@@ -122,6 +141,23 @@ export class AdminDashboardComponent implements OnInit {
     if (confirmed) {
       this.adminService.deleteUser(String(userId));
       this.sweetAlert.showSuccess('Deleted!', 'User has been deleted.');
+    }
+  }
+
+  viewUserCourses(userId: string | number): void {
+    const user = this.adminService.users().find(u => u.id === userId);
+    if (user) {
+      if (user.role === 'teacher') {
+        // Navigate to teacher courses section filtered by this teacher
+        this.currentNavSection.set('teacher-courses');
+        // You could add a filter parameter to show only this teacher's courses
+        this.sweetAlert.showToast(`Viewing courses taught by ${user.name}`, 'info', 'top-end', 3000);
+      } else if (user.role === 'student') {
+        // Navigate to student enrollments section filtered by this student
+        this.currentNavSection.set('student-enrollments');
+        // You could add a filter parameter to show only this student's enrollments
+        this.sweetAlert.showToast(`Viewing enrollments for ${user.name}`, 'info', 'top-end', 3000);
+      }
     }
   }
 
@@ -187,11 +223,15 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   get manageTeacherCourses() {
-    return this.adminService.manageTeacherCourses();
+    const courses = this.adminService.manageTeacherCourses();
+    console.log('manageTeacherCourses getter called, courses:', courses);
+    return courses;
   }
 
   get manageStudentEnrollments() {
-    return this.adminService.manageStudentEnrollments();
+    const enrollments = this.adminService.manageStudentEnrollments();
+    console.log('manageStudentEnrollments getter called, enrollments:', enrollments);
+    return enrollments;
   }
 
   get loading() {
@@ -215,6 +255,8 @@ export class AdminDashboardComponent implements OnInit {
     return [
       { id: 'overview', label: 'Dashboard', icon: '📊', active: this.currentNavSection() === 'overview' },
       { id: 'users', label: 'Manage Users', icon: '👥', active: this.currentNavSection() === 'users' },
+      { id: 'teacher-courses', label: 'Teacher Courses', icon: '👨‍🏫', active: this.currentNavSection() === 'teacher-courses' },
+      { id: 'student-enrollments', label: 'Student Enrollments', icon: '🎓', active: this.currentNavSection() === 'student-enrollments' },
       { id: 'settings', label: 'Settings', icon: '⚙️', active: this.currentNavSection() === 'settings' },
       { id: 'logout', label: 'Logout', icon: '🚪' }
     ];
@@ -248,8 +290,39 @@ export class AdminDashboardComponent implements OnInit {
     this.currentNavSection.set('account-settings');
   }
 
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+    const currentTheme = this.themeService.getCurrentTheme();
+    this.sweetAlert.showToast(`Switched to ${currentTheme} mode`, 'success', 'top-end', 3000);
+  }
+
   setNavSection(section: string): void {
     this.currentNavSection.set(section);
+  }
+
+  // Accordion toggle methods
+  toggleTeacherAccordion(teacherId: string): void {
+    if (this.expandedTeacherAccordions.has(teacherId)) {
+      this.expandedTeacherAccordions.delete(teacherId);
+    } else {
+      this.expandedTeacherAccordions.add(teacherId);
+    }
+  }
+
+  toggleStudentAccordion(studentId: string): void {
+    if (this.expandedStudentAccordions.has(studentId)) {
+      this.expandedStudentAccordions.delete(studentId);
+    } else {
+      this.expandedStudentAccordions.add(studentId);
+    }
+  }
+
+  isTeacherAccordionExpanded(teacherId: string): boolean {
+    return this.expandedTeacherAccordions.has(teacherId);
+  }
+
+  isStudentAccordionExpanded(studentId: string): boolean {
+    return this.expandedStudentAccordions.has(studentId);
   }
 
 }
