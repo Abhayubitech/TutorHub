@@ -1,6 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
+import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
-import { ToastService } from './toast.service';
+import { SweetAlertService } from './sweetalert.service';
 import { ConfirmationService } from '../shared/services/confirmation.service';
 
 @Injectable({
@@ -19,7 +20,7 @@ export class AuthService {
   loading = computed(() => this.loadingSignal());
   error = computed(() => this.errorSignal());
 
-  constructor(private apiService: ApiService, private toastService: ToastService, private confirmationService: ConfirmationService) {
+  constructor(private apiService: ApiService, private sweetAlertService: SweetAlertService, private confirmationService: ConfirmationService) {
     this.checkAuthStatus();
   }
 
@@ -94,14 +95,14 @@ export class AuthService {
       
       console.log('Reset auth signals');
       
-      this.toastService.info('You have been logged out successfully', 5000);
+      this.sweetAlertService.showToast('You have been logged out successfully', 'success', 'top-end', 3000);
       console.log('Logout completed successfully');
     } catch (error) {
       console.error('Logout error:', error);
       // Force logout even if there's an error
       this.userSignal.set(null);
       this.isAuthenticatedSignal.set(false);
-      this.toastService.warning('Logged out with some issues');
+      this.sweetAlertService.showToast('Logged out with some issues', 'warning', 'top-end', 3000);
     }
   }
 
@@ -145,7 +146,7 @@ export class AuthService {
       sessionStorage.clear();
       this.userSignal.set(null);
       this.isAuthenticatedSignal.set(false);
-      this.toastService.warning('Logged out and all local data cleared');
+      this.sweetAlertService.showToast('Logged out and all local data cleared', 'warning', 'top-end', 3000);
     }
   }
 
@@ -161,11 +162,11 @@ export class AuthService {
     if (confirmed) {
       this.logout();
       // Additional logic for role switching can be added here
-      this.toastService.info(`Logged out. You can now login as ${role}`);
+      this.sweetAlertService.showToast(`Logged out. You can now login as ${role}`, 'info', 'top-end', 3000);
     }
   }
 
-  updateUserProfile(profileData: any): void {
+  updateUserProfile(profileData: any): Observable<any> {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
@@ -173,26 +174,13 @@ export class AuthService {
     if (!userId) {
       this.errorSignal.set('User not found');
       this.loadingSignal.set(false);
-      return;
+      return new Observable(observer => {
+        observer.error({ error: { message: 'User not found' } });
+        observer.complete();
+      });
     }
 
-    this.apiService.updateUserProfile(userId, profileData).subscribe({
-      next: (response) => {
-        if (response.success && response.user) {
-          // Update localStorage immediately
-          localStorage.setItem('user', JSON.stringify(response.user));
-          // Update the user signal to trigger UI updates
-          this.userSignal.set(response.user);
-          this.toastService.success('Profile updated successfully');
-        }
-        this.loadingSignal.set(false);
-      },
-      error: (error) => {
-        this.errorSignal.set(error.error?.message || 'Failed to update profile');
-        this.toastService.error('Error: ' + (error.error?.message || 'Failed to update profile'));
-        this.loadingSignal.set(false);
-      }
-    });
+    return this.apiService.updateUserProfile(userId, profileData);
   }
 
   getRole(): string | null {

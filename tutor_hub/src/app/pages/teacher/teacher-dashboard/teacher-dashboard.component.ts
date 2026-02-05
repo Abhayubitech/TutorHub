@@ -45,7 +45,7 @@ export class TeacherDashboardComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     public toastService: ToastService,
-    private sweetAlert: SweetAlertService
+    public sweetAlert: SweetAlertService
   ) {
     if (!this.authService.isAuthenticated() || this.authService.user()?.role !== 'teacher') {
       this.router.navigate(['/login']);
@@ -76,14 +76,14 @@ export class TeacherDashboardComponent implements OnInit {
 
     if (this.editingCourseId) {
       this.teacherService.updateCourse(this.editingCourseId, courseData);
-      this.toastService.success('Course updated successfully');
+      this.sweetAlert.showToast('Course updated successfully', 'success', 'top-end', 3000);
       // Redirect back to My Courses after update
       setTimeout(() => {
         this.currentSection = 'my-courses';
       }, 1000);
     } else {
       this.teacherService.createCourse(courseData);
-      this.toastService.success('Course created successfully');
+      this.sweetAlert.showToast('Course created successfully', 'success', 'top-end', 3000);
       // Redirect back to My Courses after creation
       setTimeout(() => {
         this.currentSection = 'my-courses';
@@ -116,15 +116,32 @@ export class TeacherDashboardComponent implements OnInit {
   updateProfile(profileData: ProfileData): void {
     this.isProfileLoading = true;
     
-    this.authService.updateUserProfile(profileData);
-    
-    // Simulate API call delay
-    setTimeout(() => {
-      this.isProfileLoading = false;
-      this.cancelEditProfile();
-      // Navigate back to settings to see updated data
-      this.currentSection = 'settings';
-    }, 1000);
+    this.authService.updateUserProfile(profileData).subscribe({
+      next: (response: any) => {
+        if (response.success && response.user) {
+          // Update the user data in auth service
+          this.authService.updateCurrentUser(response.user);
+          this.sweetAlert.showToast('Profile updated successfully', 'success', 'top-end', 3000);
+          
+          // Force change detection by navigating to settings after a short delay
+          setTimeout(() => {
+            this.currentSection = 'settings';
+            this.isProfileLoading = false;
+            this.cancelEditProfile();
+          }, 500);
+        } else {
+          this.sweetAlert.showToast('Failed to update profile', 'error', 'top-end', 3000);
+          this.isProfileLoading = false;
+          this.cancelEditProfile();
+        }
+      },
+      error: (error: any) => {
+        this.isProfileLoading = false;
+        this.sweetAlert.showToast('Failed to update profile: ' + (error.error?.message || 'Unknown error'), 'error', 'top-end', 3000);
+        console.error('Profile update error:', error);
+        this.cancelEditProfile();
+      }
+    });
   }
 
   cancelEditProfile(): void {
@@ -218,14 +235,14 @@ export class TeacherDashboardComponent implements OnInit {
       }
     }, 100);
     
-    this.toastService.info(`Editing course: ${course.subject}`);
+    this.sweetAlert.showToast(`Editing course: ${course.subject}`, 'info', 'top-end', 3000);
   }
 
   async deleteCourse(courseId: string | number): Promise<void> {
     const confirmed = await this.sweetAlert.confirmDelete('this course');
     if (confirmed) {
       this.teacherService.deleteCourse(String(courseId));
-      this.toastService.success('Course deleted successfully');
+      this.sweetAlert.showToast('Course deleted successfully', 'success', 'top-end', 3000);
       this.sweetAlert.showSuccess('Deleted!', 'Course has been deleted successfully.');
     }
   }
@@ -253,7 +270,7 @@ export class TeacherDashboardComponent implements OnInit {
     const confirmed = await this.sweetAlert.confirmRemove('this student from the course');
     if (confirmed) {
       this.enrolledStudents = this.enrolledStudents.filter(student => student.id !== studentId);
-      this.toastService.success('Student removed from course');
+      this.sweetAlert.showToast('Student removed from course', 'success', 'top-end', 3000);
       this.sweetAlert.showSuccess('Removed!', 'Student has been removed from the course.');
     }
   }

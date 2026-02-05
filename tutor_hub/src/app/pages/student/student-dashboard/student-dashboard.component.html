@@ -1,5 +1,4 @@
 <div class="student-dashboard">
-  <app-toast />
   <div class="dashboard-header-container">
     <div class="header-left">
       <app-hamburger-menu 
@@ -118,8 +117,8 @@
             class="search-input"
           />
           <button (click)="search()" class="search-btn" [disabled]="searchQuery().trim().length < 2">Search</button>
-          <button (click)="clearSearch(); toastService.info('Search cleared')" class="clear-btn" title="Clear search" [disabled]="!searchQuery().trim()">✖ Clear</button>
-          <button (click)="refreshCourses(); toastService.success('Courses refreshed')" class="refresh-btn" title="Refresh courses list">🔄 Refresh</button>
+          <button (click)="clearSearch(); sweetAlert.showToast('Search cleared', 'info', 'top-end', 3000)" class="clear-btn" title="Clear search" [disabled]="!searchQuery().trim()">✖ Clear</button>
+          <button (click)="refreshCourses(); sweetAlert.showToast('Courses refreshed', 'success', 'top-end', 3000)" class="refresh-btn" title="Refresh courses list">🔄 Refresh</button>
         </div>
 
         @if (searchQuery().trim().length > 0 && searchQuery().trim().length < 2) {
@@ -385,7 +384,7 @@
           </div>
           
           <div class="form-actions">
-            <button class="btn-primary" (click)="toastService.success('Account settings saved')">Save Changes</button>
+            <button class="btn-primary" (click)="sweetAlert.showToast('Account settings saved', 'success', 'top-end', 3000)">Save Changes</button>
             <button class="btn-secondary" (click)="currentTab.set('settings')">Back to Settings</button>
           </div>
         </div>

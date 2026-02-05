@@ -1,6 +1,7 @@
 import { Injectable, signal, computed, isDevMode } from '@angular/core';
 import { ApiService } from './api.service';
 import { ToastService } from './toast.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -105,24 +106,11 @@ export class AdminService {
     });
   }
 
-  updateUser(userId: string, userData: any): void {
+  updateUser(userId: string, userData: any): Observable<any> {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
-    this.apiService.updateUserAdmin(userId, userData).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.loadAllUsers();
-          this.toastService.success('User updated successfully');
-        }
-        this.loadingSignal.set(false);
-      },
-      error: (error) => {
-        this.errorSignal.set(error.error?.message || 'Failed to update user');
-        this.toastService.error('Error: ' + (error.error?.message || 'Failed to update user'));
-        this.loadingSignal.set(false);
-      }
-    });
+    return this.apiService.updateUserAdmin(userId, userData);
   }
 
   loadCourses(): void {

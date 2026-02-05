@@ -30,7 +30,7 @@ export class StudentDashboardComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     public toastService: ToastService,
-    private sweetAlert: SweetAlertService
+    public sweetAlert: SweetAlertService
   ) {
     // Check if user is authenticated
     if (!this.authService.isAuthenticated()) {
@@ -101,15 +101,32 @@ export class StudentDashboardComponent implements OnInit {
   updateProfile(profileData: ProfileData): void {
     this.isProfileLoading.set(true);
     
-    this.authService.updateUserProfile(profileData);
-    
-    // Wait for the auth service to complete the update
-    setTimeout(() => {
-      this.isProfileLoading.set(false);
-      this.cancelEditProfile();
-      // Navigate back to profile tab to see updated data
-      this.currentTab.set('profile');
-    }, 1000);
+    this.authService.updateUserProfile(profileData).subscribe({
+      next: (response: any) => {
+        if (response.success && response.user) {
+          // Update the user data in auth service
+          this.authService.updateCurrentUser(response.user);
+          this.sweetAlert.showToast('Profile updated successfully', 'success', 'top-end', 3000);
+          
+          // Force change detection by navigating to profile after a short delay
+          setTimeout(() => {
+            this.currentTab.set('profile');
+            this.isProfileLoading.set(false);
+            this.cancelEditProfile();
+          }, 500);
+        } else {
+          this.sweetAlert.showToast('Failed to update profile', 'error', 'top-end', 3000);
+          this.isProfileLoading.set(false);
+          this.cancelEditProfile();
+        }
+      },
+      error: (error: any) => {
+        this.isProfileLoading.set(false);
+        this.sweetAlert.showToast('Failed to update profile: ' + (error.error?.message || 'Unknown error'), 'error', 'top-end', 3000);
+        console.error('Profile update error:', error);
+        this.cancelEditProfile();
+      }
+    });
   }
 
   cancelEditProfile(): void {

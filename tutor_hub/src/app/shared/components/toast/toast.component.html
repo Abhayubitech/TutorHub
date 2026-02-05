@@ -2,7 +2,7 @@
   @for (toast of toasts(); track toast.id) {
     <div class="toast toast-{{ toast.type }}" [attr.aria-label]="toast.type + ': ' + toast.message">
       <div class="toast-icon">{{ getToastIcon(toast.type) }}</div>
-      <div class="toast-message">{{ toast.message }}</div>
+      <div class="toast-message" [innerHTML]="sanitizeMessage(toast.message)"></div>
       <button class="toast-close" (click)="remove(toast.id)" aria-label="Close notification">×</button>
     </div>
   }

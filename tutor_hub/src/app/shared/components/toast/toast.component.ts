@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ToastService, Toast } from '../../../services/toast.service';
 
 @Component({
@@ -8,7 +9,7 @@ import { ToastService, Toast } from '../../../services/toast.service';
   styleUrl: './toast.component.css'
 })
 export class ToastComponent {
-  constructor(private toastService: ToastService) {}
+  constructor(private toastService: ToastService, private sanitizer: DomSanitizer) {}
 
   get toasts() {
     return this.toastService.getToasts();
@@ -31,5 +32,9 @@ export class ToastComponent {
       default:
         return 'ℹ';
     }
+  }
+
+  sanitizeMessage(message: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(message);
   }
 }

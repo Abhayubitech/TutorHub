@@ -78,23 +78,30 @@ export class AdminDashboardComponent implements OnInit {
     if (this.editingUserId) {
       this.isProfileLoading = true;
       
-      this.adminService.updateUser(this.editingUserId, userData);
-      
-      // Check if the edited user is the current logged-in user
-      const currentUser = this.authService.user();
-      if (currentUser && String(currentUser.id) === this.editingUserId) {
-        // Update the current user data in auth service immediately
-        const updatedUser = { ...currentUser, ...userData };
-        this.authService.updateCurrentUser(updatedUser);
-      }
-      
-      // Simulate API call delay
-      setTimeout(() => {
-        this.isProfileLoading = false;
-        this.cancelEditUser();
-        // Refresh users list to show updated data
-        this.adminService.loadAllUsers();
-      }, 1000);
+      this.adminService.updateUser(this.editingUserId, userData).subscribe({
+        next: (response: any) => {
+          // Check if the edited user is the current logged-in user
+          const currentUser = this.authService.user();
+          if (currentUser && String(currentUser.id) === this.editingUserId) {
+            // Update the current user data in auth service immediately
+            const updatedUser = { ...currentUser, ...userData };
+            this.authService.updateCurrentUser(updatedUser);
+            this.toastService.success('Your profile has been updated successfully');
+          } else {
+            this.toastService.success('User profile updated successfully');
+          }
+          
+          // Refresh users list to show updated data
+          this.adminService.loadAllUsers();
+          this.isProfileLoading = false;
+          this.cancelEditUser();
+        },
+        error: (error: any) => {
+          this.isProfileLoading = false;
+          this.toastService.error('Failed to update profile: ' + (error.error?.message || 'Unknown error'));
+          console.error('Profile update error:', error);
+        }
+      });
     }
   }
 
