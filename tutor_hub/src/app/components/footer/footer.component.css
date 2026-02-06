@@ -9,6 +9,20 @@
   border-top: 1px solid var(--border-color);
 }
 
+/* Dark mode footer enhancements */
+[data-theme="dark"] .footer {
+  background: #1a1a2e;
+  color: #e2e8f0;
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Light mode footer enhancements */
+[data-theme="light"] .footer {
+  background: #f8fafc;
+  color: #334155;
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+
 .footer::before {
   content: '';
   position: absolute;
@@ -48,6 +62,16 @@
   color: var(--dark-text);
   position: relative;
   padding-bottom: 10px;
+}
+
+/* Dark mode heading colors */
+[data-theme="dark"] .footer-section h4 {
+  color: #f1f5f9;
+}
+
+/* Light mode heading colors */
+[data-theme="light"] .footer-section h4 {
+  color: #1e293b;
 }
 
 .footer-section h4::after {
@@ -116,6 +140,28 @@
   opacity: 0.8;
 }
 
+/* Dark mode link colors */
+[data-theme="dark"] .footer-links a {
+  color: #cbd5e1;
+  opacity: 0.9;
+}
+
+[data-theme="dark"] .footer-links a:hover {
+  color: #60a5fa;
+  opacity: 1;
+}
+
+/* Light mode link colors */
+[data-theme="light"] .footer-links a {
+  color: #64748b;
+  opacity: 0.8;
+}
+
+[data-theme="light"] .footer-links a:hover {
+  color: #3b82f6;
+  opacity: 1;
+}
+
 .footer-links a::before {
   content: '';
   position: absolute;
@@ -157,6 +203,32 @@
   border: 1px solid var(--border-color);
 }
 
+/* Dark mode social icons */
+[data-theme="dark"] .social-icon {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .social-icon:hover {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+/* Light mode social icons */
+[data-theme="light"] .social-icon {
+  background: rgba(0, 0, 0, 0.05);
+  color: #64748b;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .social-icon:hover {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
 .social-icon:hover {
   background: var(--primary-color);
   color: white;
@@ -183,10 +255,48 @@
   color: var(--dark-text);
 }
 
+/* Dark mode contact info */
+[data-theme="dark"] .contact-info {
+  color: #cbd5e1;
+  opacity: 0.9;
+}
+
+[data-theme="dark"] .contact-info strong {
+  color: #f1f5f9;
+}
+
+/* Light mode contact info */
+[data-theme="light"] .contact-info {
+  color: #64748b;
+  opacity: 0.8;
+}
+
+[data-theme="light"] .contact-info strong {
+  color: #334155;
+}
+
 .contact-info a {
   color: var(--primary-color);
   text-decoration: none;
   transition: all 0.3s;
+}
+
+/* Dark mode contact links */
+[data-theme="dark"] .contact-info a {
+  color: #60a5fa;
+}
+
+[data-theme="dark"] .contact-info a:hover {
+  color: #93c5fd;
+}
+
+/* Light mode contact links */
+[data-theme="light"] .contact-info a {
+  color: #3b82f6;
+}
+
+[data-theme="light"] .contact-info a:hover {
+  color: #2563eb;
 }
 
 .contact-info a:hover {
@@ -201,6 +311,18 @@
   border-top: 1px solid var(--border-color);
 }
 
+/* Dark mode footer bottom */
+[data-theme="dark"] .footer-bottom {
+  background: #0f172a;
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Light mode footer bottom */
+[data-theme="light"] .footer-bottom {
+  background: #f1f5f9;
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+
 .footer-bottom-content {
   display: flex;
   justify-content: space-between;
@@ -212,6 +334,18 @@
 .copyright {
   font-size: 0.9rem;
   color: var(--text-color);
+  opacity: 0.8;
+}
+
+/* Dark mode copyright */
+[data-theme="dark"] .copyright {
+  color: #94a3b8;
+  opacity: 0.9;
+}
+
+/* Light mode copyright */
+[data-theme="light"] .copyright {
+  color: #64748b;
   opacity: 0.8;
 }
 
@@ -233,12 +367,46 @@
   opacity: 0.8;
 }
 
+/* Dark mode policy links */
+[data-theme="dark"] .footer-policies a {
+  color: #94a3b8;
+  opacity: 0.9;
+}
+
+[data-theme="dark"] .footer-policies a:hover {
+  color: #60a5fa;
+  opacity: 1;
+}
+
+/* Light mode policy links */
+[data-theme="light"] .footer-policies a {
+  color: #64748b;
+  opacity: 0.8;
+}
+
+[data-theme="light"] .footer-policies a:hover {
+  color: #3b82f6;
+  opacity: 1;
+}
+
 .footer-policies a:hover {
   color: var(--primary-color);
   opacity: 1;
 }
 
 .separator {
+  opacity: 0.5;
+}
+
+/* Dark mode separator */
+[data-theme="dark"] .separator {
+  color: #64748b;
+  opacity: 0.6;
+}
+
+/* Light mode separator */
+[data-theme="light"] .separator {
+  color: #94a3b8;
   opacity: 0.5;
 }
 

@@ -21,12 +21,15 @@
           [(ngModel)]="email"
           [ngModelOptions]="{ updateOn: 'blur' }"
           name="email"
-          maxlength="100"
+          maxlength="33"
           pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
           required
           title="Please enter a valid email address"
         />
         <small>Example: user&#64;example.com</small>
+        @if (emailError()) {
+          <div class="validation-error">{{ emailError() }}</div>
+        }
       </div>
 
       <div class="form-group">
@@ -38,16 +41,18 @@
             [(ngModel)]="password"
             [ngModelOptions]="{ updateOn: 'blur' }"
             name="password"
-            minlength="6"
-            maxlength="100"
+            maxlength="11"
             required
-            title="Password must be at least 6 characters long"
+            title="Password must be 11 characters or less"
           />
           <button type="button" (click)="togglePasswordVisibility()" class="toggle-btn">
             {{ showPassword() ? 'Hide' : 'Show' }}
           </button>
         </div>
-        <small>Minimum 6 characters</small>
+        <small>Max 11 characters</small>
+        @if (passwordError()) {
+          <div class="validation-error">{{ passwordError() }}</div>
+        }
       </div>
 
       <button

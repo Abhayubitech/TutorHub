@@ -1,4 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
+import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
 
 @Injectable({
@@ -77,40 +78,22 @@ export class TeacherService {
     });
   }
 
-  createCourse(courseData: any): void {
+  createCourse(courseData: any): Observable<any> {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
-    this.apiService.createCourse(courseData).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.loadCourses();
-        }
-        this.loadingSignal.set(false);
-      },
-      error: (error) => {
-        this.errorSignal.set(error.error?.message || 'Failed to create course');
-        this.loadingSignal.set(false);
-      }
-    });
+    return this.apiService.createCourse(courseData);
   }
 
-  updateCourse(courseId: string, courseData: any): void {
+  updateCourse(courseId: string, courseData: any): Observable<any> {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
-    this.apiService.updateCourse(courseId, courseData).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.loadCourses();
-        }
-        this.loadingSignal.set(false);
-      },
-      error: (error) => {
-        this.errorSignal.set(error.error?.message || 'Failed to update course');
-        this.loadingSignal.set(false);
-      }
-    });
+    return this.apiService.updateCourse(courseId, courseData);
+  }
+
+  getCourseById(courseId: string): Observable<any> {
+    return this.apiService.get(`/teacher/courses/${courseId}`);
   }
 
   deleteCourse(courseId: string): void {
@@ -169,5 +152,45 @@ export class TeacherService {
 
   handleEnrollmentRequest(requestId: string, action: 'approve' | 'reject'): void {
     this.handleRequest(requestId, action);
+  }
+
+  // WhatsApp group methods
+  createWhatsAppGroup(groupData: any): Observable<any> {
+    return this.apiService.createWhatsAppGroup(groupData);
+  }
+
+  updateWhatsAppGroup(courseId: string, groupType: 'demo' | 'approved', groupData: any): Observable<any> {
+    return this.apiService.put(`/courses/whatsapp-groups/${courseId}/${groupType}`, groupData);
+  }
+
+  getWhatsAppGroups(courseId: string) {
+    return this.apiService.get(`/courses/whatsapp-groups/${courseId}`);
+  }
+
+  // Payment verification methods
+  loadEnrolledStudents(courseId: string): Observable<any> {
+    return this.apiService.getEnrolledStudents(courseId);
+  }
+
+  getPaymentVerifications(courseId: string): Observable<any> {
+    return this.apiService.getPaymentVerifications(courseId);
+  }
+
+  updatePaymentVerification(verificationId: string, status: string, teacherNotes: string) {
+    return this.apiService.put(`/courses/payment/verify/${verificationId}`, {
+      status,
+      teacherNotes
+    });
+  }
+
+  uploadPaymentScreenshot(courseId: string, file: File, paymentData: any) {
+    const formData = new FormData();
+    formData.append('screenshot', file);
+    formData.append('courseId', courseId);
+    formData.append('paymentAmount', paymentData.paymentAmount || '');
+    formData.append('paymentDate', paymentData.paymentDate || '');
+    formData.append('upiTransactionId', paymentData.upiTransactionId || '');
+    
+    return this.apiService.uploadPaymentScreenshot(courseId, formData);
   }
 }

@@ -247,4 +247,47 @@ export class SweetAlertService {
   custom(options: any): Promise<SweetAlertResult> {
     return Swal.fire(options);
   }
+
+  // WhatsApp link alert
+  showWhatsAppLink(title: string, text: string, whatsappLink: string): Promise<SweetAlertResult> {
+    return Swal.fire({
+      ...this.getDefaultConfig(),
+      title,
+      html: `
+        <div class="whatsapp-modal">
+          <p>${text}</p>
+          <div class="whatsapp-link-container">
+            <input 
+              type="text" 
+              value="${whatsappLink}" 
+              readonly 
+              class="whatsapp-link-input"
+              id="whatsapp-link"
+            />
+            <button 
+              class="copy-btn" 
+              onclick="navigator.clipboard.writeText('${whatsappLink}').then(() => {
+                this.textContent = 'Copied!';
+                setTimeout(() => this.textContent = 'Copy', 2000);
+              })"
+            >
+              Copy
+            </button>
+          </div>
+          <div class="whatsapp-actions">
+            <a href="${whatsappLink}" target="_blank" class="whatsapp-btn">
+              📱 Join WhatsApp Group
+            </a>
+          </div>
+        </div>
+      `,
+      icon: 'info',
+      iconHtml: '<div class="whatsapp-icon">📱</div>',
+      confirmButtonText: 'Got it!',
+      confirmButtonColor: '#25d366',
+      didOpen: (popup) => {
+        popup.classList.add('whatsapp-modal-popup');
+      }
+    });
+  }
 }

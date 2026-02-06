@@ -50,6 +50,24 @@ async function getMyCourses(req, res) {
   }
 }
 
+// Get single course by ID
+async function getCourseById(req, res) {
+  try {
+    const { courseId } = req.params;
+    const teacherId = req.user.id;
+    const course = await teacherService.getCourseById(courseId, teacherId);
+    res.json({
+      success: true,
+      course,
+    });
+  } catch (err) {
+    res.status(404).json({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
 // Create course
 async function createCourse(req, res) {
   try {
@@ -227,6 +245,7 @@ module.exports = {
   getProfile,
   updateProfile,
   getMyCourses,
+  getCourseById,
   createCourse,
   updateCourse,
   deleteCourse,

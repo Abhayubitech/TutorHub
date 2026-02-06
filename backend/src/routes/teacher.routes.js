@@ -12,6 +12,7 @@ router.put("/profile", teacherController.updateProfile);
 
 // Course routes
 router.get("/courses", teacherController.getMyCourses);
+router.get("/courses/:courseId", teacherController.getCourseById);
 router.post("/courses", teacherController.createCourse);
 router.put("/courses/:courseId", teacherController.updateCourse);
 router.delete("/courses/:courseId", teacherController.deleteCourse);

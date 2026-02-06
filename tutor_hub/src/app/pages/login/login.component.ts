@@ -15,6 +15,10 @@ export class LoginComponent implements OnInit, OnDestroy {
   email = signal<string>('');
   password = signal<string>('');
   showPassword = signal<boolean>(false);
+  
+  // Validation errors
+  emailError = signal<string>('');
+  passwordError = signal<string>('');
 
   constructor(
     private authService: AuthService,
@@ -22,26 +26,68 @@ export class LoginComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    document.body.classList.add('hide-footer');
+    // No need to hide footer anymore since we have auth footer
   }
 
   ngOnDestroy(): void {
-    document.body.classList.remove('hide-footer');
+    // No need to remove hide-footer class anymore
   }
 
   login(): void {
-    if (this.email() && this.password()) {
-      this.authService.login(this.email(), this.password());
-
-      // Redirect after successful login
-      setTimeout(() => {
-        const user = this.authService.user();
-        if (user) {
-          const route = user.role === 'teacher' ? '/teacher' : user.role === 'admin' ? '/admin' : '/student';
-          this.router.navigate([route]);
-        }
-      }, 1000);
+    // Clear previous errors
+    this.emailError.set('');
+    this.passwordError.set('');
+    
+    // Validate email
+    if (!this.email()) {
+      this.emailError.set('Email is required');
+      return;
     }
+    
+    if (this.email().length > 33) {
+      this.emailError.set('Email must be 33 characters or less');
+      return;
+    }
+    
+    // Additional email validation
+    if (this.email().includes('..') || this.email().startsWith('.') || this.email().endsWith('.')) {
+      this.emailError.set('Please enter a valid email address');
+      return;
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.email())) {
+      this.emailError.set('Please enter a valid email address');
+      return;
+    }
+    
+    // Validate password
+    if (!this.password()) {
+      this.passwordError.set('Password is required');
+      return;
+    }
+    
+    if (this.password().length > 11) {
+      this.passwordError.set('Password must be 11 characters or less');
+      return;
+    }
+    
+    if (this.password().length < 1) {
+      this.passwordError.set('Password cannot be empty');
+      return;
+    }
+    
+    // All validations passed, proceed with login
+    this.authService.login(this.email(), this.password());
+
+    // Redirect after successful login
+    setTimeout(() => {
+      const user = this.authService.user();
+      if (user) {
+        const route = user.role === 'teacher' ? '/teacher' : user.role === 'admin' ? '/admin' : '/student';
+        this.router.navigate([route]);
+      }
+    }, 1000);
   }
 
   togglePasswordVisibility(): void {

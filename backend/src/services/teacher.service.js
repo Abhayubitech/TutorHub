@@ -105,11 +105,49 @@ async function updateTeacherProfile(teacherId, profileData) {
 async function getTeacherCourses(teacherId) {
   try {
     const [courses] = await db.query(
-      "SELECT * FROM courses WHERE teacher_id = ?",
+      `SELECT c.*, 
+              GROUP_CONCAT(
+                CONCAT(cs.day, ' ', cs.start_time, '-', cs.end_time) 
+                SEPARATOR ', '
+              ) as schedule
+       FROM courses c
+       LEFT JOIN course_schedules cs ON c.id = cs.course_id
+       WHERE c.teacher_id = ?
+       GROUP BY c.id
+       ORDER BY c.created_at DESC`,
       [teacherId]
     );
 
     return courses;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}
+
+// Get single course by ID with full details for editing
+async function getCourseById(courseId, teacherId) {
+  try {
+    // Get basic course info with schedule
+    const [courses] = await db.query(
+      `SELECT c.*, 
+              GROUP_CONCAT(
+                CONCAT(cs.day, ' ', cs.start_time, '-', cs.end_time) 
+                SEPARATOR ', '
+              ) as schedule,
+              GROUP_CONCAT(cs.day SEPARATOR ', ') as schedule_days,
+              GROUP_CONCAT(CONCAT(cs.start_time, '-', cs.end_time) SEPARATOR ', ') as schedule_time
+       FROM courses c
+       LEFT JOIN course_schedules cs ON c.id = cs.course_id
+       WHERE c.id = ? AND c.teacher_id = ?
+       GROUP BY c.id`,
+      [courseId, teacherId]
+    );
+
+    if (courses.length === 0) {
+      throw new Error("Course not found or unauthorized");
+    }
+
+    return courses[0];
   } catch (err) {
     throw new Error(err.message);
   }
@@ -156,7 +194,18 @@ async function createCourse(teacherId, courseData) {
 // Update a course
 async function updateCourse(courseId, teacherId, courseData) {
   try {
-    const { subject, description, fee, mode, start_date, end_date, max_students } = courseData;
+    const { 
+      subject, 
+      description, 
+      fee, 
+      mode, 
+      start_date, 
+      end_date, 
+      max_students,
+      schedule_days,
+      schedule_time,
+      duration_per_class
+    } = courseData;
 
     const [course] = await db.query(
       "SELECT teacher_id FROM courses WHERE id = ?",
@@ -171,10 +220,59 @@ async function updateCourse(courseId, teacherId, courseData) {
       throw new Error("Unauthorized: You can only update your own courses");
     }
 
+    // Update basic course info
     await db.query(
       "UPDATE courses SET subject = ?, description = ?, fee = ?, mode = ?, start_date = ?, end_date = ?, max_students = ? WHERE id = ?",
       [subject, description, fee, mode, start_date, end_date, max_students || 30, courseId]
     );
+
+    // Update schedule if provided
+    if (schedule_days || schedule_time) {
+      // First, delete existing schedules for this course
+      await db.query("DELETE FROM course_schedules WHERE course_id = ?", [courseId]);
+      
+      // If schedule data is provided, add new schedule
+      if (schedule_days && schedule_time) {
+        const days = schedule_days.split(',').map(day => day.trim());
+        const [startTime, endTime] = schedule_time.split('-').map(time => time.trim());
+        
+        for (const day of days) {
+          if (day && startTime && endTime) {
+            await db.query(
+              "INSERT INTO course_schedules (course_id, day, start_time, end_time) VALUES (?, ?, ?, ?)",
+              [courseId, day, startTime, endTime]
+            );
+          }
+        }
+      }
+    }
+
+    // Update duration per class if provided
+    if (duration_per_class !== undefined) {
+      // Check if course_metadata table exists, if not create it
+      try {
+        await db.query(`
+          CREATE TABLE IF NOT EXISTS course_metadata (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            course_id INT NOT NULL,
+            duration_per_class INT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+            UNIQUE KEY unique_course_metadata (course_id)
+          )
+        `);
+      } catch (err) {
+        // Table might already exist, ignore error
+      }
+      
+      // Update or insert duration per class
+      await db.query(`
+        INSERT INTO course_metadata (course_id, duration_per_class) 
+        VALUES (?, ?) 
+        ON DUPLICATE KEY UPDATE duration_per_class = ?, updated_at = CURRENT_TIMESTAMP
+      `, [courseId, duration_per_class, duration_per_class]);
+    }
 
     return {
       success: true,
@@ -345,6 +443,7 @@ module.exports = {
   getTeacherProfile,
   updateTeacherProfile,
   getTeacherCourses,
+  getCourseById,
   createCourse,
   updateCourse,
   deleteCourse,

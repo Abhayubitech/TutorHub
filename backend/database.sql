@@ -111,6 +111,44 @@ CREATE TABLE whatsapp_group_members (
     UNIQUE KEY unique_group_member (group_id, user_id)
 );
 
+-- 8️⃣ Payment Verifications Table
+CREATE TABLE payment_verifications (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    student_id INT NOT NULL,
+    course_id INT NOT NULL,
+    screenshot_path VARCHAR(500) NOT NULL,
+    payment_amount DECIMAL(10,2),
+    payment_date DATE,
+    upi_transaction_id VARCHAR(100),
+    status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+    teacher_notes TEXT,
+    verified_by INT, -- Teacher who verified
+    verified_at TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (verified_by) REFERENCES users(id) ON DELETE SET NULL,
+    UNIQUE KEY unique_payment_request (student_id, course_id)
+);
+
+-- 9️⃣ Enhanced WhatsApp Groups Table (updated)
+ALTER TABLE whatsapp_groups ADD COLUMN group_type ENUM('demo', 'approved') DEFAULT 'demo';
+ALTER TABLE whatsapp_groups ADD COLUMN description TEXT;
+
+-- 1️⃣0️⃣ WhatsApp Group Members Table (updated from existing)
+CREATE TABLE whatsapp_group_members (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    group_id INT NOT NULL,
+    user_id INT NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    role ENUM('admin', 'member') DEFAULT 'member',
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (group_id) REFERENCES whatsapp_groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_group_member (group_id, user_id)
+);
+
 -- Create indexes for better query performance
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_role ON users(role);
@@ -124,3 +162,6 @@ CREATE INDEX idx_enrollments_course_id ON course_enrollments(course_id);
 CREATE INDEX idx_whatsapp_groups_course_id ON whatsapp_groups(course_id);
 CREATE INDEX idx_whatsapp_group_members_group_id ON whatsapp_group_members(group_id);
 CREATE INDEX idx_whatsapp_group_members_user_id ON whatsapp_group_members(user_id);
+CREATE INDEX idx_payment_verifications_student_id ON payment_verifications(student_id);
+CREATE INDEX idx_payment_verifications_course_id ON payment_verifications(course_id);
+CREATE INDEX idx_payment_verifications_status ON payment_verifications(status);

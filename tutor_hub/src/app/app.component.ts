@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { FooterComponent } from './components/footer/footer.component';
+import { AuthFooterComponent } from './components/auth-footer/auth-footer.component';
+import { DashboardFooterComponent } from './components/dashboard-footer/dashboard-footer.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { CommonModule } from '@angular/common';
 import { ThemeService } from './services/theme.service';
@@ -10,7 +12,7 @@ import { ToastComponent } from './shared/components/toast/toast.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, FooterComponent, CommonModule, ConfirmationDialogContainerComponent, ToastComponent],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent, AuthFooterComponent, DashboardFooterComponent, CommonModule, ConfirmationDialogContainerComponent, ToastComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -25,6 +27,16 @@ export class AppComponent {
   shouldShowFooter(): boolean {
     const currentUrl = this.router.url;
     return !currentUrl.includes('/login') && !currentUrl.includes('/signup');
+  }
+  
+  shouldShowAuthFooter(): boolean {
+    const currentUrl = this.router.url;
+    return currentUrl.includes('/login') || currentUrl.includes('/signup');
+  }
+  
+  shouldShowDashboardFooter(): boolean {
+    const currentUrl = this.router.url;
+    return currentUrl.includes('/teacher') || currentUrl.includes('/student') || currentUrl.includes('/admin');
   }
   
   shouldShowNavbar(): boolean {

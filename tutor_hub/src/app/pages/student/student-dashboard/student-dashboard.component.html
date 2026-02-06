@@ -177,8 +177,84 @@
     @if (currentTab() === 'teachers') {
       <div class="tab-content" role="tabpanel" id="teachers-panel">
         <h2>Our Teachers</h2>
+        
+        <div class="search-bar">
+          <input
+            type="text"
+            placeholder="Search teachers by name, qualification, or bio..."
+            [(ngModel)]="teacherSearchQuery"
+            (keyup.enter)="searchTeachers()"
+            (input)="onTeacherSearchInput()"
+            class="search-input"
+          />
+          <button (click)="searchTeachers()" class="search-btn" [disabled]="teacherSearchQuery().trim().length < 2">Search</button>
+          <button (click)="clearTeacherSearch(); sweetAlert.showToast('Search cleared', 'info', 'top-end', 3000)" class="clear-btn" title="Clear search" [disabled]="!teacherSearchQuery().trim()">✖ Clear</button>
+          <button (click)="refreshTeachers(); sweetAlert.showToast('Teachers refreshed', 'success', 'top-end', 3000)" class="refresh-btn" title="Refresh teachers list">🔄 Refresh</button>
+        </div>
+
+        @if (teacherSearchQuery().trim().length > 0 && teacherSearchQuery().trim().length < 2) {
+          <p class="search-hint">Please enter at least 2 characters to search.</p>
+        }
+        
         @if (loading) {
           <p class="loading">Loading teachers...</p>
+        } @else if (teacherSearchResults.length > 0) {
+          <div class="teachers-list">
+            @for (teacher of teacherSearchResults; track teacher.id) {
+              <div class="teacher-item">
+                <div class="teacher-header" (click)="toggleTeacherCourses(teacher.id)">
+                  <div class="teacher-basic-info">
+                    <h3>{{ teacher.name }}</h3>
+                    <p class="qualification">{{ teacher.qualification || 'Qualification not specified' }}</p>
+                    <p class="bio">{{ teacher.bio }}</p>
+                    <div class="teacher-meta">
+                      <span>📧 {{ teacher.email }}</span>
+                      @if (teacher.hourly_rate) {
+                        <span>💵 ₹{{ teacher.hourly_rate }}/hour</span>
+                      }
+                    </div>
+                  </div>
+                  <div class="teacher-actions">
+                    <button class="toggle-courses-btn" [class.expanded]="expandedTeachers.has(teacher.id)">
+                      <span class="toggle-icon">{{ expandedTeachers.has(teacher.id) ? '▼' : '▶' }}</span>
+                      {{ expandedTeachers.has(teacher.id) ? 'Hide Courses' : 'View Courses' }}
+                      @if (teacher.courses && teacher.courses.length > 0) {
+                        <span class="course-count">({{ teacher.courses.length }})</span>
+                      }
+                    </button>
+                    @if (teacher.is_verified) {
+                      <div class="verified-badge">✓ Verified</div>
+                    }
+                  </div>
+                </div>
+                
+                @if (expandedTeachers.has(teacher.id) && teacher.courses && teacher.courses.length > 0) {
+                  <div class="teacher-courses-expanded">
+                    <h4>📚 Courses by {{ teacher.name }}:</h4>
+                    <div class="courses-grid">
+                      @for (course of teacher.courses; track course.id) {
+                        <div class="course-card">
+                          <h5>{{ course.subject }}</h5>
+                          <p>{{ course.description }}</p>
+                          <div class="course-meta">
+                            <span>💰 ₹{{ course.fee }}</span>
+                            <span>📍 {{ course.mode }}</span>
+                          </div>
+                          <button class="btn-enroll" (click)="requestEnrollment(course.id)">Request Enrollment</button>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                } @else if (expandedTeachers.has(teacher.id)) {
+                  <div class="no-courses-expanded">
+                    <p>No courses launched yet by this teacher.</p>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        } @else if (teacherSearchQuery()) {
+          <p class="no-results">No teachers found matching your search.</p>
         } @else {
           <div class="teachers-list">
             @for (teacher of allTeachers; track teacher.id) {
@@ -300,11 +376,21 @@
                     </div>
                   }
                 </div>
-                @if (request.status === 'pending') {
-                  <button (click)="cancelRequest(request.id)" class="btn-cancel">
-                    Cancel Request
-                  </button>
-                }
+                <div class="request-actions">
+                  @if (request.status === 'pending') {
+                    <button (click)="cancelRequest(request.id)" class="btn-cancel">
+                      Cancel Request
+                    </button>
+                    <button (click)="openPaymentUploadModal(request.course_id)" class="btn-payment">
+                      📸 Upload Payment Screenshot
+                    </button>
+                  }
+                  @if (request.status === 'approved') {
+                    <button (click)="getApprovedWhatsAppLink(request.course_id)" class="btn-whatsapp">
+                      📱 Get Class WhatsApp Group
+                    </button>
+                  }
+                </div>
               </div>
             }
           </div>
@@ -406,4 +492,74 @@
     }
 
     </div>
+
+    <!-- Payment Upload Modal -->
+    @if (showPaymentUploadModal) {
+      <div class="modal-overlay" (click)="closePaymentUploadModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h3>📸 Upload Payment Screenshot</h3>
+            <button class="close-btn" (click)="closePaymentUploadModal()">×</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="paymentAmount">Payment Amount (₹)</label>
+              <input 
+                type="number" 
+                id="paymentAmount" 
+                [(ngModel)]="paymentAmount" 
+                class="form-input"
+                placeholder="Enter amount paid"
+              />
+            </div>
+            <div class="form-group">
+              <label for="paymentDate">Payment Date</label>
+              <input 
+                type="date" 
+                id="paymentDate" 
+                [(ngModel)]="paymentDate" 
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label for="upiTransactionId">UPI Transaction ID (Optional)</label>
+              <input 
+                type="text" 
+                id="upiTransactionId" 
+                [(ngModel)]="upiTransactionId" 
+                class="form-input"
+                placeholder="Enter UPI transaction ID"
+              />
+            </div>
+            <div class="form-group">
+              <label for="paymentScreenshot">Payment Screenshot</label>
+              <input 
+                type="file" 
+                id="paymentScreenshot" 
+                (change)="onFileSelected($event)" 
+                accept="image/*"
+                class="form-input"
+              />
+              @if (selectedFile) {
+                <div class="file-preview">
+                  <p>Selected file: {{ selectedFile.name }}</p>
+                  <small>Size: {{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB</small>
+                </div>
+              }
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-secondary" (click)="closePaymentUploadModal()">Cancel</button>
+            <button 
+              class="btn-primary" 
+              (click)="uploadPaymentScreenshot()"
+              [disabled]="!selectedFile || !paymentAmount || !paymentDate"
+            >
+              Upload Screenshot
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
 </div>

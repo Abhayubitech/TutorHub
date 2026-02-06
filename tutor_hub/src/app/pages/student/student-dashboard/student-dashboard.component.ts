@@ -21,10 +21,34 @@ import { SweetAlertService } from '../../../services/sweetalert.service';
 export class StudentDashboardComponent implements OnInit, AfterViewInit {
   currentTab = signal<string>('overview');
   searchQuery = signal<string>('');
+  teacherSearchQuery = signal<string>('');
   isEditingProfile = signal<boolean>(false);
   isProfileLoading = signal<boolean>(false);
   isMenuOpen: boolean = false;
   expandedTeachers = new Set<string>();
+
+  // WhatsApp group fields
+  demoGroupName: string = '';
+  demoGroupLink: string = '';
+  demoGroupDescription: string = '';
+  approvedGroupName: string = '';
+  approvedGroupLink: string = '';
+  approvedGroupDescription: string = '';
+  teacherPhone: string = '';
+
+  // Payment verification fields
+  paymentVerifications: any[] = [];
+  selectedVerification: any = null;
+  showPaymentModal = false;
+
+  // Student payment fields
+  paymentAmount: number | null = null;
+  paymentDate: string = '';
+  upiTransactionId: string = '';
+  selectedFile: File | null = null;
+  showPaymentUploadModal = false;
+  demoWhatsAppLink: string = '';
+  approvedWhatsAppLink: string = '';
 
   constructor(
     private studentService: StudentService,
@@ -84,6 +108,29 @@ export class StudentDashboardComponent implements OnInit, AfterViewInit {
     this.studentService.refreshCourses();
   }
 
+  // Teacher search methods
+  searchTeachers(): void {
+    if (this.teacherSearchQuery().trim().length < 2) {
+      return;
+    }
+    this.studentService.searchTeachers(this.teacherSearchQuery());
+  }
+
+  onTeacherSearchInput(): void {
+    if (this.teacherSearchQuery().trim().length >= 2) {
+      this.searchTeachers();
+    }
+  }
+
+  clearTeacherSearch(): void {
+    this.teacherSearchQuery.set('');
+    this.studentService.clearTeacherSearchResults();
+  }
+
+  refreshTeachers(): void {
+    this.studentService.refreshTeachers();
+  }
+
   toggleTeacherCourses(teacherId: string): void {
     if (this.expandedTeachers.has(teacherId)) {
       this.expandedTeachers.delete(teacherId);
@@ -93,7 +140,29 @@ export class StudentDashboardComponent implements OnInit, AfterViewInit {
   }
 
   requestEnrollment(courseId: string): void {
-    this.studentService.requestEnrollment(courseId);
+    // First get the demo WhatsApp group link
+    this.getDemoWhatsAppLink(courseId);
+    
+    // Also create the enrollment request
+    this.studentService.requestEnrollment(courseId).subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          this.sweetAlert.showSuccess('Request Sent!', 'Your enrollment request has been sent successfully.');
+          // Refresh the requests list after successful enrollment
+          this.studentService.loadMyRequests();
+        } else {
+          this.sweetAlert.showError('Error', response.message || 'Failed to send enrollment request');
+        }
+      },
+      error: (error: any) => {
+        console.error('Enrollment request error:', error);
+        let errorMessage = 'Failed to send enrollment request';
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        }
+        this.sweetAlert.showError('Error', errorMessage);
+      }
+    });
   }
 
   async cancelRequest(requestId: string): Promise<void> {
@@ -196,6 +265,10 @@ export class StudentDashboardComponent implements OnInit, AfterViewInit {
     return this.studentService.searchResults();
   }
 
+  get teacherSearchResults() {
+    return this.studentService.teacherSearchResults();
+  }
+
   get loading() {
     return this.studentService.loading();
   }
@@ -263,6 +336,140 @@ export class StudentDashboardComponent implements OnInit, AfterViewInit {
     this.themeService.toggleTheme();
     const currentTheme = this.themeService.getCurrentTheme();
     this.sweetAlert.showToast(`Switched to ${currentTheme} mode`, 'success', 'top-end', 3000);
+  }
+
+  // WhatsApp group access methods
+  getDemoWhatsAppLink(courseId: string): void {
+    console.log('Getting demo WhatsApp group for course:', courseId);
+    
+    this.studentService.getWhatsAppGroup(courseId, 'demo').subscribe({
+      next: (response: any) => {
+        console.log('Demo WhatsApp group response:', response);
+        if (response.success && response.group) {
+          this.demoWhatsAppLink = response.group.invite_link;
+          // Show the WhatsApp link in a modal or alert
+          this.sweetAlert.showWhatsAppLink('Demo WhatsApp Group', 'Join this group for demo class and payment information:', this.demoWhatsAppLink);
+        } else {
+          this.sweetAlert.showToast('Demo group not available - Teacher may not have created it yet', 'warning', 'top-end', 3000);
+        }
+      },
+      error: (error: any) => {
+        console.error('Error getting demo group:', error);
+        let errorMessage = 'Unknown error';
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        } else if (error.status) {
+          errorMessage = `Server error: ${error.status}`;
+        }
+        this.sweetAlert.showToast('Error getting demo group: ' + errorMessage, 'error', 'top-end', 3000);
+      }
+    });
+  }
+
+  getApprovedWhatsAppLink(courseId: string): void {
+    console.log('Getting approved WhatsApp group for course:', courseId);
+    
+    this.studentService.getWhatsAppGroup(courseId, 'approved').subscribe({
+      next: (response: any) => {
+        console.log('Approved WhatsApp group response:', response);
+        if (response.success && response.group) {
+          this.approvedWhatsAppLink = response.group.invite_link;
+          // Show approved WhatsApp link in a modal
+          this.sweetAlert.showWhatsAppLink('Class WhatsApp Group', 'Join this group for live classes and course materials:', this.approvedWhatsAppLink);
+        } else {
+          this.sweetAlert.showToast('You need to complete payment verification first, or teacher may not have created the approved group yet', 'warning', 'top-end', 3000);
+        }
+      },
+      error: (error: any) => {
+        console.error('Error getting approved group:', error);
+        let errorMessage = 'Unknown error';
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        } else if (error.status) {
+          errorMessage = `Server error: ${error.status}`;
+        }
+        this.sweetAlert.showToast('Error getting approved group: ' + errorMessage, 'error', 'top-end', 3000);
+      }
+    });
+  }
+
+  // Payment upload methods
+  openPaymentUploadModal(courseId: string): void {
+    this.selectedVerification = { course_id: courseId };
+    this.showPaymentUploadModal = true;
+    this.paymentAmount = null;
+    this.paymentDate = '';
+    this.upiTransactionId = '';
+    this.selectedFile = null;
+  }
+
+  closePaymentUploadModal(): void {
+    this.showPaymentUploadModal = false;
+    this.selectedVerification = null;
+    this.paymentAmount = null;
+    this.paymentDate = '';
+    this.upiTransactionId = '';
+    this.selectedFile = null;
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      if (file.type.startsWith('image/')) {
+        this.selectedFile = file;
+      } else {
+        this.sweetAlert.showToast('Please select an image file', 'error', 'top-end', 3000);
+      }
+    }
+  }
+
+  uploadPaymentScreenshot(): void {
+    if (!this.selectedFile || !this.selectedVerification?.course_id) {
+      this.sweetAlert.showToast('Please select a file and course', 'error', 'top-end', 3000);
+      return;
+    }
+
+    const paymentData = {
+      paymentAmount: this.paymentAmount,
+      paymentDate: this.paymentDate,
+      upiTransactionId: this.upiTransactionId
+    };
+
+    console.log('Uploading payment screenshot:', {
+      courseId: this.selectedVerification.course_id,
+      file: this.selectedFile.name,
+      paymentData
+    });
+
+    this.studentService.uploadPaymentScreenshot(this.selectedVerification.course_id, this.selectedFile, paymentData).subscribe({
+      next: (response: any) => {
+        console.log('Payment upload response:', response);
+        if (response.success) {
+          this.sweetAlert.showToast('Payment screenshot uploaded successfully', 'success', 'top-end', 3000);
+          this.closePaymentUploadModal();
+          // Refresh requests to show updated status
+          this.studentService.loadMyRequests();
+        } else {
+          this.sweetAlert.showToast('Failed to upload payment screenshot: ' + (response.message || 'Unknown error'), 'error', 'top-end', 3000);
+        }
+      },
+      error: (error: any) => {
+        console.error('Payment upload error:', error);
+        let errorMessage = 'Unknown error';
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        } else if (error.status) {
+          errorMessage = `Server error: ${error.status}`;
+        }
+        this.sweetAlert.showToast('Error uploading payment screenshot: ' + errorMessage, 'error', 'top-end', 3000);
+      }
+    });
   }
 
 }

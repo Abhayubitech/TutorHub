@@ -253,7 +253,7 @@ async function getTeacherDetails(teacherId) {
     }
 
     const [courses] = await db.query(
-      "SELECT id, subject, description, fee, mode FROM courses WHERE teacher_id = ? AND start_date > CURDATE()",
+      "SELECT id, subject, description, fee, mode, start_date, end_date FROM courses WHERE teacher_id = ? AND (end_date >= CURDATE() OR end_date IS NULL)",
       [teacherId]
     );
 

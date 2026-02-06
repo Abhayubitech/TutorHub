@@ -1,4 +1,5 @@
 const userService = require("../services/user.service");
+const otpService = require("../services/otp.service");
 
 async function authenticateUser(req, res) {
   try {
@@ -120,10 +121,85 @@ async function deleteUser(req, res) {
   }
 }
 
+async function sendOTP(req, res) {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email format",
+      });
+    }
+
+    // Generate and store OTP
+    const otp = otpService.generateOTP();
+    otpService.storeOTP(email, otp);
+
+    // Send OTP (in development, just return it)
+    const result = otpService.sendOTP(email, otp);
+    
+    res.json({
+      success: true,
+      message: "OTP sent successfully",
+      // In production, don't return the OTP
+      otp: process.env.NODE_ENV === 'development' ? otp : undefined
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
+async function verifyOTP(req, res) {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and OTP are required",
+      });
+    }
+
+    const result = otpService.verifyOTP(email, otp);
+    
+    if (result.valid) {
+      res.json({
+        success: true,
+        message: result.message,
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: result.message,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
 module.exports = {
   authenticateUser,
   createUser,
   getUserById,
   updateUser,
   deleteUser,
+  sendOTP,
+  verifyOTP,
 };

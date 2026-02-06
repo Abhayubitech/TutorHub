@@ -7,6 +7,10 @@ const auth = require("../middleware/auth.middleware");
 router.post("/login", userController.authenticateUser);
 router.post("/signup", userController.createUser);
 
+// OTP routes
+router.post("/send-otp", userController.sendOTP);
+router.post("/verify-otp", userController.verifyOTP);
+
 // Protected routes
 router.get("/:id", auth, userController.getUserById);
 router.put("/:id", auth, userController.updateUser);

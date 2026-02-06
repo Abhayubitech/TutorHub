@@ -5,8 +5,8 @@ const auth = require("../middleware/auth.middleware");
 
 // Public routes (no auth required)
 router.get("/courses", studentController.getAllCourses);
-router.get("/courses/:courseId", studentController.getCourseDetails);
 router.get("/courses/search", studentController.searchCourses);
+router.get("/courses/:courseId", studentController.getCourseDetails);
 router.get("/teachers", studentController.getAllTeachers);
 router.get("/teachers/:teacherId", studentController.getTeacherDetails);
 

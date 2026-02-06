@@ -1,5 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { ApiService } from './api.service';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,21 +12,23 @@ export class StudentService {
   private myEnrollmentsSignal = signal<any[]>([]);
   private myRequestsSignal = signal<any[]>([]);
   private allTeachersSignal = signal<any[]>([]);
+  private searchResultsSignal = signal<any[]>([]);
+  private teacherSearchResultsSignal = signal<any[]>([]);
   private loadingSignal = signal<boolean>(false);
   private errorSignal = signal<string | null>(null);
-  private searchResultsSignal = signal<any[]>([]);
 
   // Computed signals
   allCourses = computed(() => this.allCoursesSignal());
   myEnrollments = computed(() => this.myEnrollmentsSignal());
   myRequests = computed(() => this.myRequestsSignal());
   allTeachers = computed(() => this.allTeachersSignal());
+  searchResults = computed(() => this.searchResultsSignal());
+  teacherSearchResults = computed(() => this.teacherSearchResultsSignal());
   loading = computed(() => this.loadingSignal());
   error = computed(() => this.errorSignal());
-  searchResults = computed(() => this.searchResultsSignal());
   enrollmentCount = computed(() => this.myEnrollmentsSignal().length);
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private http: HttpClient) {}
 
   loadAllCourses(): void {
     this.loadingSignal.set(true);
@@ -98,22 +102,8 @@ export class StudentService {
     });
   }
 
-  requestEnrollment(courseId: string): void {
-    this.loadingSignal.set(true);
-    this.errorSignal.set(null);
-
-    this.apiService.requestEnrollment(courseId).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.loadMyRequests();
-        }
-        this.loadingSignal.set(false);
-      },
-      error: (error) => {
-        this.errorSignal.set(error.error?.message || 'Failed to request enrollment');
-        this.loadingSignal.set(false);
-      }
-    });
+  requestEnrollment(courseId: string): Observable<any> {
+    return this.apiService.requestEnrollment(courseId);
   }
 
   cancelRequest(requestId: string): void {
@@ -180,5 +170,59 @@ export class StudentService {
 
   clearSearchResults(): void {
     this.searchResultsSignal.set([]);
+  }
+
+  // Teacher search methods
+  searchTeachers(query: string): void {
+    if (query.trim().length < 2) {
+      this.teacherSearchResultsSignal.set([]);
+      return;
+    }
+
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+
+    // Perform client-side search for teachers
+    this.performTeacherClientSideSearch(query);
+    this.loadingSignal.set(false);
+  }
+
+  private performTeacherClientSideSearch(query: string): void {
+    const allTeachers = this.allTeachersSignal();
+    const filteredTeachers = allTeachers.filter(teacher => 
+      teacher.name?.toLowerCase().includes(query.toLowerCase()) ||
+      teacher.qualification?.toLowerCase().includes(query.toLowerCase()) ||
+      teacher.bio?.toLowerCase().includes(query.toLowerCase()) ||
+      teacher.email?.toLowerCase().includes(query.toLowerCase())
+    );
+    this.teacherSearchResultsSignal.set(filteredTeachers);
+  }
+
+  clearTeacherSearchResults(): void {
+    this.teacherSearchResultsSignal.set([]);
+  }
+
+  refreshTeachers(): void {
+    this.loadAllTeachers();
+  }
+
+  // WhatsApp and payment methods
+  getWhatsAppGroup(courseId: string, groupType: 'demo' | 'approved' = 'demo'): Observable<any> {
+    return this.apiService.get(`/courses/whatsapp-group/${courseId}?groupType=${groupType}`);
+  }
+
+  uploadPaymentScreenshot(courseId: string, file: File, paymentData: any): Observable<any> {
+    const formData = new FormData();
+    formData.append('screenshot', file);
+    formData.append('courseId', courseId);
+    formData.append('paymentAmount', paymentData.paymentAmount || '');
+    formData.append('paymentDate', paymentData.paymentDate || '');
+    formData.append('upiTransactionId', paymentData.upiTransactionId || '');
+    
+    return this.apiService.uploadPaymentScreenshot(courseId, formData);
+  }
+
+  getPaymentStatus(courseId: string): Observable<any> {
+    return this.apiService.getStudentPaymentStatus(courseId);
   }
 }

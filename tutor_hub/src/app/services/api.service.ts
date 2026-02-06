@@ -156,4 +156,51 @@ export class ApiService {
     const qs = includeDummy ? '?includeDummy=true' : '';
     return this.http.get(`${this.apiUrl}/admin/manage${qs}`, { headers: this.getHeaders() });
   }
+
+  // Generic HTTP methods
+  get(endpoint: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}${endpoint}`, { headers: this.getHeaders() });
+  }
+
+  post(endpoint: string, data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}${endpoint}`, data, { headers: this.getHeaders() });
+  }
+
+  put(endpoint: string, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}${endpoint}`, data, { headers: this.getHeaders() });
+  }
+
+  delete(endpoint: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}${endpoint}`, { headers: this.getHeaders() });
+  }
+
+  // WhatsApp and payment endpoints
+  uploadPaymentScreenshot(courseId: string, formData: FormData): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      ...(token && { 'Authorization': `Bearer ${token}` })
+    });
+    return this.http.post(`${this.apiUrl}/courses/payment/upload`, formData, { headers });
+  }
+
+  getStudentPaymentStatus(courseId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/courses/payment/status/${courseId}`, { headers: this.getHeaders() });
+  }
+
+  // WhatsApp group endpoints
+  getWhatsAppGroup(courseId: string, groupType: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/courses/whatsapp-group/${courseId}?groupType=${groupType}`, { headers: this.getHeaders() });
+  }
+
+  createWhatsAppGroup(groupData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/courses/whatsapp-group`, groupData, { headers: this.getHeaders() });
+  }
+
+  getPaymentVerifications(courseId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/courses/payment/verifications/${courseId}`, { headers: this.getHeaders() });
+  }
+
+  updatePaymentVerification(verificationId: string, status: string, teacherNotes: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/courses/payment/verify/${verificationId}`, { status, teacherNotes }, { headers: this.getHeaders() });
+  }
 }
