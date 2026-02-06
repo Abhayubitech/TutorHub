@@ -155,8 +155,13 @@ async function getCourseById(courseId, teacherId) {
 
 // Create a course
 async function createCourse(teacherId, courseData) {
+  const connection = await db.getConnection();
   try {
-    const { subject, description, fee, mode, start_date, end_date, max_students } = courseData;
+    await connection.beginTransaction();
+    
+    const { subject, description, fee, mode, start_date, end_date, max_students, schedule_days, schedule_time, duration_per_class } = courseData;
+
+    console.log('Creating course with data:', { teacherId, subject, description, fee, mode, start_date, end_date, max_students });
 
     // ✅ Validate all inputs
     validateString(subject, 'Subject', 2, 100);
@@ -176,24 +181,81 @@ async function createCourse(teacherId, courseData) {
     
     if (max_students) validateNumber(max_students, 'Max students', 1, 500);
 
-    const [result] = await db.query(
+    // Insert course
+    const [result] = await connection.execute(
       "INSERT INTO courses (teacher_id, subject, description, fee, mode, start_date, end_date, max_students) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
       [teacherId, subject, description, fee, mode, start_date, end_date, max_students || 30]
     );
 
+    const courseId = result.insertId;
+    console.log('Course created with ID:', courseId);
+
+    // Add schedule if provided
+    if (schedule_days && schedule_time) {
+      const days = schedule_days.split(',').map(day => day.trim());
+      const [startTime, endTime] = schedule_time.split('-').map(time => time.trim());
+      
+      for (const day of days) {
+        if (day && startTime && endTime) {
+          await connection.execute(
+            "INSERT INTO course_schedules (course_id, day, start_time, end_time) VALUES (?, ?, ?, ?)",
+            [courseId, day, startTime, endTime]
+          );
+          console.log('Added schedule for day:', day);
+        }
+      }
+    }
+
+    // Add duration per class if provided
+    if (duration_per_class !== undefined) {
+      // Check if course_metadata table exists, if not create it
+      try {
+        await connection.execute(`
+          CREATE TABLE IF NOT EXISTS course_metadata (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            course_id INT NOT NULL,
+            duration_per_class INT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+            UNIQUE KEY unique_course_metadata (course_id)
+          )
+        `);
+      } catch (err) {
+        console.log('Course metadata table might already exist:', err.message);
+      }
+      
+      await connection.execute(`
+        INSERT INTO course_metadata (course_id, duration_per_class) 
+        VALUES (?, ?) 
+        ON DUPLICATE KEY UPDATE duration_per_class = ?, updated_at = CURRENT_TIMESTAMP
+      `, [courseId, duration_per_class, duration_per_class]);
+      
+      console.log('Added duration per class:', duration_per_class);
+    }
+
+    await connection.commit();
+    
     return {
       success: true,
       message: "Course created successfully",
-      courseId: result.insertId,
+      courseId: courseId,
     };
   } catch (err) {
+    await connection.rollback();
+    console.error('Course creation error:', err);
     throw new Error(err.message);
+  } finally {
+    connection.release();
   }
 }
 
 // Update a course
 async function updateCourse(courseId, teacherId, courseData) {
+  const connection = await db.getConnection();
   try {
+    await connection.beginTransaction();
+    
     const { 
       subject, 
       description, 
@@ -207,7 +269,10 @@ async function updateCourse(courseId, teacherId, courseData) {
       duration_per_class
     } = courseData;
 
-    const [course] = await db.query(
+    console.log('Updating course with data:', { courseId, teacherId, subject, description, fee, mode, start_date, end_date, max_students });
+
+    // Verify course ownership
+    const [course] = await connection.execute(
       "SELECT teacher_id FROM courses WHERE id = ?",
       [courseId]
     );
@@ -221,15 +286,18 @@ async function updateCourse(courseId, teacherId, courseData) {
     }
 
     // Update basic course info
-    await db.query(
-      "UPDATE courses SET subject = ?, description = ?, fee = ?, mode = ?, start_date = ?, end_date = ?, max_students = ? WHERE id = ?",
+    await connection.execute(
+      "UPDATE courses SET subject = ?, description = ?, fee = ?, mode = ?, start_date = ?, end_date = ?, max_students = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
       [subject, description, fee, mode, start_date, end_date, max_students || 30, courseId]
     );
 
+    console.log('Course basic info updated');
+
     // Update schedule if provided
-    if (schedule_days || schedule_time) {
-      // First, delete existing schedules for this course
-      await db.query("DELETE FROM course_schedules WHERE course_id = ?", [courseId]);
+    if (schedule_days !== undefined || schedule_time !== undefined) {
+      // Delete existing schedules for this course
+      await connection.execute("DELETE FROM course_schedules WHERE course_id = ?", [courseId]);
+      console.log('Existing schedules deleted');
       
       // If schedule data is provided, add new schedule
       if (schedule_days && schedule_time) {
@@ -238,10 +306,11 @@ async function updateCourse(courseId, teacherId, courseData) {
         
         for (const day of days) {
           if (day && startTime && endTime) {
-            await db.query(
+            await connection.execute(
               "INSERT INTO course_schedules (course_id, day, start_time, end_time) VALUES (?, ?, ?, ?)",
               [courseId, day, startTime, endTime]
             );
+            console.log('Added schedule for day:', day);
           }
         }
       }
@@ -251,7 +320,7 @@ async function updateCourse(courseId, teacherId, courseData) {
     if (duration_per_class !== undefined) {
       // Check if course_metadata table exists, if not create it
       try {
-        await db.query(`
+        await connection.execute(`
           CREATE TABLE IF NOT EXISTS course_metadata (
             id INT PRIMARY KEY AUTO_INCREMENT,
             course_id INT NOT NULL,
@@ -263,23 +332,30 @@ async function updateCourse(courseId, teacherId, courseData) {
           )
         `);
       } catch (err) {
-        // Table might already exist, ignore error
+        console.log('Course metadata table might already exist:', err.message);
       }
       
-      // Update or insert duration per class
-      await db.query(`
+      await connection.execute(`
         INSERT INTO course_metadata (course_id, duration_per_class) 
         VALUES (?, ?) 
         ON DUPLICATE KEY UPDATE duration_per_class = ?, updated_at = CURRENT_TIMESTAMP
       `, [courseId, duration_per_class, duration_per_class]);
+      
+      console.log('Updated duration per class:', duration_per_class);
     }
 
+    await connection.commit();
+    
     return {
       success: true,
       message: "Course updated successfully",
     };
   } catch (err) {
+    await connection.rollback();
+    console.error('Course update error:', err);
     throw new Error(err.message);
+  } finally {
+    connection.release();
   }
 }
 

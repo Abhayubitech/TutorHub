@@ -1,5 +1,6 @@
 const userService = require("../services/user.service");
 const otpService = require("../services/otp.service");
+const emailService = require("../services/email.service");
 
 async function authenticateUser(req, res) {
   try {
@@ -24,7 +25,7 @@ async function authenticateUser(req, res) {
 
 async function createUser(req, res) {
   try {
-    const { name, email, password, role, phone } = req.body;
+    const { name, email, password, role, phone, otp } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({
@@ -33,7 +34,29 @@ async function createUser(req, res) {
       });
     }
 
+    // If OTP is provided, verify it first
+    if (otp) {
+      const otpResult = otpService.verifyOTP(email, otp);
+      if (!otpResult.valid) {
+        return res.status(400).json({
+          success: false,
+          message: otpResult.message,
+        });
+      }
+    }
+
     const result = await userService.createUser(req.body);
+    
+    // Send welcome email after successful registration
+    if (result.success && result.user) {
+      try {
+        await emailService.sendWelcomeEmail(email, name);
+      } catch (emailError) {
+        console.error('Welcome email failed:', emailError);
+        // Don't fail the registration if welcome email fails
+      }
+    }
+    
     res.status(201).json(result);
   } catch (err) {
     res.status(400).json({
@@ -145,14 +168,14 @@ async function sendOTP(req, res) {
     const otp = otpService.generateOTP();
     otpService.storeOTP(email, otp);
 
-    // Send OTP (in development, just return it)
-    const result = otpService.sendOTP(email, otp);
+    // Send OTP via email (async)
+    const result = await otpService.sendOTP(email, otp);
     
     res.json({
       success: true,
-      message: "OTP sent successfully",
-      // In production, don't return the OTP
-      otp: process.env.NODE_ENV === 'development' ? otp : undefined
+      message: result.message,
+      // In development, return the OTP for testing
+      otp: process.env.NODE_ENV === 'development' ? result.otp : undefined
     });
   } catch (err) {
     res.status(500).json({

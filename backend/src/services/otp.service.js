@@ -1,4 +1,6 @@
 const crypto = require('crypto');
+const emailService = require('./email.service');
+const universalEmailService = require('./email.service.universal');
 
 // In-memory OTP store (in production, use Redis or database)
 const otpStore = new Map();
@@ -59,16 +61,53 @@ class OTPService {
     }
   }
 
-  // For development/testing - send OTP to console
-  sendOTP(email, otp) {
-    console.log(`OTP for ${email}: ${otp}`);
-    // In production, integrate with email service like Nodemailer, SendGrid, etc.
-    // For now, we'll just log it to console for development
-    return {
-      success: true,
-      message: 'OTP sent successfully (check console for development)',
-      otp: otp // Only for development, remove in production
-    };
+  // Send OTP via email
+  async sendOTP(email, otp) {
+    try {
+      // Try universal email service first (supports multiple providers)
+      const universalResult = await universalEmailService.sendOTPEmail(email, otp);
+      
+      if (universalResult.success && !universalResult.message.includes('console fallback')) {
+        console.log(`OTP sent successfully to ${email} via universal service`);
+        return {
+          success: true,
+          message: 'OTP sent successfully via email',
+          provider: universalResult.provider,
+          // Only return OTP in development for testing
+          otp: process.env.NODE_ENV === 'development' ? otp : undefined
+        };
+      }
+      
+      // Fallback to original email service
+      const result = await emailService.sendOTPEmail(email, otp);
+      
+      if (result.success) {
+        console.log(`OTP sent successfully to ${email} via fallback service`);
+        return {
+          success: true,
+          message: 'OTP sent successfully via email',
+          // Only return OTP in development for testing
+          otp: process.env.NODE_ENV === 'development' ? otp : undefined
+        };
+      } else {
+        // Final fallback to console
+        console.log(`OTP for ${email}: ${otp} (all email services failed, console fallback)`);
+        return {
+          success: true,
+          message: 'OTP sent (console fallback)',
+          otp: otp // Return OTP for development/testing
+        };
+      }
+    } catch (error) {
+      console.error('OTP sending error:', error);
+      // Always fallback to console
+      console.log(`OTP for ${email}: ${otp} (error fallback)`);
+      return {
+        success: true,
+        message: 'OTP sent (console fallback)',
+        otp: otp // Return OTP for development/testing
+      };
+    }
   }
 }
 

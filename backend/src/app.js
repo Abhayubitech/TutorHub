@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const db = require("./config/db");
 const userRoutes = require("./routes/user.routes");
 const teacherRoutes = require("./routes/teacher.routes");
 const studentRoutes = require("./routes/student.routes");
