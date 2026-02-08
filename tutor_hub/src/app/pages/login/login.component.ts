@@ -34,46 +34,12 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   login(): void {
-    // Clear previous errors
-    this.emailError.set('');
-    this.passwordError.set('');
-    
-    // Validate email
-    if (!this.email()) {
-      this.emailError.set('Email is required');
+    // Simple validation like contact page
+    if (!this.email() || !this.isValidEmail(this.email())) {
       return;
     }
     
-    if (this.email().length > 33) {
-      this.emailError.set('Email must be 33 characters or less');
-      return;
-    }
-    
-    // Additional email validation
-    if (this.email().includes('..') || this.email().startsWith('.') || this.email().endsWith('.')) {
-      this.emailError.set('Please enter a valid email address');
-      return;
-    }
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.email())) {
-      this.emailError.set('Please enter a valid email address');
-      return;
-    }
-    
-    // Validate password
     if (!this.password()) {
-      this.passwordError.set('Password is required');
-      return;
-    }
-    
-    if (this.password().length > 11) {
-      this.passwordError.set('Password must be 11 characters or less');
-      return;
-    }
-    
-    if (this.password().length < 1) {
-      this.passwordError.set('Password cannot be empty');
       return;
     }
     
@@ -121,7 +87,13 @@ export class LoginComponent implements OnInit, OnDestroy {
     return this.authService.loading();
   }
 
+  
   get error() {
     return this.authService.error();
+  }
+
+  isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 }

@@ -84,16 +84,16 @@ export class StudentDashboardComponent implements OnInit, AfterViewInit {
   }
 
   search(): void {
-    if (this.searchQuery().trim().length < 2) {
-      // If search query is too short, show all courses
+    if (!this.searchQuery().trim()) {
+      // If search query is empty, show all courses
       return;
     }
     this.studentService.searchCourses(this.searchQuery());
   }
 
   onSearchInput(): void {
-    // Auto-search when user types (with debouncing could be added)
-    if (this.searchQuery().trim().length >= 2) {
+    // Auto-search when user types
+    if (this.searchQuery().trim()) {
       this.search();
     }
   }
@@ -110,14 +110,14 @@ export class StudentDashboardComponent implements OnInit, AfterViewInit {
 
   // Teacher search methods
   searchTeachers(): void {
-    if (this.teacherSearchQuery().trim().length < 2) {
+    if (!this.teacherSearchQuery().trim()) {
       return;
     }
     this.studentService.searchTeachers(this.teacherSearchQuery());
   }
 
   onTeacherSearchInput(): void {
-    if (this.teacherSearchQuery().trim().length >= 2) {
+    if (this.teacherSearchQuery().trim()) {
       this.searchTeachers();
     }
   }

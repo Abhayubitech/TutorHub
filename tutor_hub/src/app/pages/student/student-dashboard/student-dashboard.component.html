@@ -110,20 +110,16 @@
         <div class="search-bar">
           <input
             type="text"
-            placeholder="Search courses (min. 2 characters)..."
+            placeholder="Search courses..."
             [(ngModel)]="searchQuery"
             (keyup.enter)="search()"
             (input)="onSearchInput()"
             class="search-input"
           />
-          <button (click)="search()" class="search-btn" [disabled]="searchQuery().trim().length < 2">Search</button>
+          <button (click)="search()" class="search-btn" [disabled]="!searchQuery().trim()">Search</button>
           <button (click)="clearSearch(); sweetAlert.showToast('Search cleared', 'info', 'top-end', 3000)" class="clear-btn" title="Clear search" [disabled]="!searchQuery().trim()">✖ Clear</button>
           <button (click)="refreshCourses(); sweetAlert.showToast('Courses refreshed', 'success', 'top-end', 3000)" class="refresh-btn" title="Refresh courses list">🔄 Refresh</button>
         </div>
-
-        @if (searchQuery().trim().length > 0 && searchQuery().trim().length < 2) {
-          <p class="search-hint">Please enter at least 2 characters to search.</p>
-        }
 
         @if (loading) {
           <p class="loading">Loading courses...</p>
@@ -187,14 +183,10 @@
             (input)="onTeacherSearchInput()"
             class="search-input"
           />
-          <button (click)="searchTeachers()" class="search-btn" [disabled]="teacherSearchQuery().trim().length < 2">Search</button>
+          <button (click)="searchTeachers()" class="search-btn" [disabled]="!teacherSearchQuery().trim()">Search</button>
           <button (click)="clearTeacherSearch(); sweetAlert.showToast('Search cleared', 'info', 'top-end', 3000)" class="clear-btn" title="Clear search" [disabled]="!teacherSearchQuery().trim()">✖ Clear</button>
           <button (click)="refreshTeachers(); sweetAlert.showToast('Teachers refreshed', 'success', 'top-end', 3000)" class="refresh-btn" title="Refresh teachers list">🔄 Refresh</button>
         </div>
-
-        @if (teacherSearchQuery().trim().length > 0 && teacherSearchQuery().trim().length < 2) {
-          <p class="search-hint">Please enter at least 2 characters to search.</p>
-        }
         
         @if (loading) {
           <p class="loading">Loading teachers...</p>

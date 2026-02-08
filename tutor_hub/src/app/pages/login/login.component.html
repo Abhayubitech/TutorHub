@@ -14,6 +14,16 @@
 
     <form (ngSubmit)="login()">
       <div class="form-group">
+        <label>Quick Demo Access</label>
+        <select (change)="onDemoChange($event)" class="demo-select">
+          <option value="">Choose demo account...</option>
+          <option value="admin">Admin Demo</option>
+          <option value="teacher">Teacher Demo</option>
+          <option value="student">Student Demo</option>
+        </select>
+      </div>
+
+      <div class="form-group">
         <label>Email</label>
         <input
           type="email"
@@ -25,11 +35,9 @@
           pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
           required
           title="Please enter a valid email address"
-        />
+        >
         <small>Example: user&#64;example.com</small>
-        @if (emailError()) {
-          <div class="validation-error">{{ emailError() }}</div>
-        }
+        <small *ngIf="email() && !isValidEmail(email())" class="error">Valid email is required</small>
       </div>
 
       <div class="form-group">
@@ -44,15 +52,13 @@
             maxlength="11"
             required
             title="Password must be 11 characters or less"
-          />
+          >
           <button type="button" (click)="togglePasswordVisibility()" class="toggle-btn">
             {{ showPassword() ? 'Hide' : 'Show' }}
           </button>
         </div>
         <small>Max 11 characters</small>
-        @if (passwordError()) {
-          <div class="validation-error">{{ passwordError() }}</div>
-        }
+        <small *ngIf="password() && password().length === 0" class="error">Password is required</small>
       </div>
 
       <button

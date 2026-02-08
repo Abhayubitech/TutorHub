@@ -47,72 +47,21 @@ export class SignupComponent implements OnInit, OnDestroy {
   }
 
   signup(): void {
-    // Clear previous errors
-    this.nameError.set('');
-    this.emailError.set('');
-    this.passwordError.set('');
-    this.otpError.set('');
-    
-    // Validate name
-    if (!this.name()) {
-      this.nameError.set('Name is required');
+    // Simple validation like contact page
+    if (!this.name() || !this.isValidName(this.name())) {
       return;
     }
     
-    if (this.name().length > 33) {
-      this.nameError.set('Name must be 33 characters or less');
+    if (!this.email() || !this.isValidEmail(this.email())) {
       return;
     }
     
-    // Check for special characters and numbers in name (only letters, spaces, hyphens, and apostrophes allowed)
-    const nameRegex = /^[a-zA-Z\s'-]+$/;
-    if (!nameRegex.test(this.name())) {
-      this.nameError.set('Name can only contain letters, spaces, hyphens, and apostrophes');
+    if (!this.password() || this.password().length < 6 || this.password().length > 11) {
       return;
     }
     
-    // Validate email
-    if (!this.email()) {
-      this.emailError.set('Email is required');
-      return;
-    }
-    
-    if (this.email().length > 33) {
-      this.emailError.set('Email must be 33 characters or less');
-      return;
-    }
-    
-    // Additional email validation
-    if (this.email().includes('..') || this.email().startsWith('.') || this.email().endsWith('.')) {
-      this.emailError.set('Please enter a valid email address');
-      return;
-    }
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.email())) {
-      this.emailError.set('Please enter a valid email address');
-      return;
-    }
-    
-    // Validate password
-    if (!this.password()) {
-      this.passwordError.set('Password is required');
-      return;
-    }
-    
-    if (this.password().length > 11) {
-      this.passwordError.set('Password must be 11 characters or less');
-      return;
-    }
-    
-    if (this.password().length < 6) {
-      this.passwordError.set('Password must be at least 6 characters long');
-      return;
-    }
-    
-    // Check if OTP is verified
-    if (!this.isOtpVerified()) {
-      this.otpError.set('Please verify your email with OTP first');
+    // Check OTP verification if OTP was sent
+    if (this.isOtpSent() && !this.isOtpVerified()) {
       return;
     }
     
@@ -148,19 +97,6 @@ export class SignupComponent implements OnInit, OnDestroy {
     // Allow control keys and valid characters
     if (!allowedControlKeys.includes(char) && !allowedChars.test(char)) {
       event.preventDefault();
-    }
-  }
-
-  validateName(): void {
-    const nameValue = this.name();
-    this.nameError.set('');
-    
-    if (nameValue && nameValue.length > 0) {
-      // Check for numbers and special characters (only letters, spaces, hyphens, and apostrophes allowed)
-      const nameRegex = /^[a-zA-Z\s'-]+$/;
-      if (!nameRegex.test(nameValue)) {
-        this.nameError.set('Name can only contain letters, spaces, hyphens, and apostrophes');
-      }
     }
   }
 
@@ -229,11 +165,42 @@ export class SignupComponent implements OnInit, OnDestroy {
     this.router.navigate(['/home']);
   }
 
+  onDemoChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    // Quick demo credentials
+    if (value === 'student') {
+      this.name.set('Student Demo');
+      this.email.set('student1@example.com');
+      this.password.set('studentpass');
+      this.role.set('student');
+    } else if (value === 'teacher') {
+      this.name.set('Teacher Demo');
+      this.email.set('teacher1@example.com');
+      this.password.set('teacherpass');
+      this.role.set('teacher');
+    }
+  }
+
   get isLoading() {
     return this.authService.loading();
   }
 
   get error() {
     return this.authService.error();
+  }
+
+  isValidName(name: string): boolean {
+    const nameRegex = /^[a-zA-Z\s'-]*$/;
+    return nameRegex.test(name) && name.length <= 33;
+  }
+
+  isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  isValidPhone(phone: string): boolean {
+    const phoneRegex = /^[\d+\-\s()]*$/;
+    return phoneRegex.test(phone) && phone.length <= 20;
   }
 }

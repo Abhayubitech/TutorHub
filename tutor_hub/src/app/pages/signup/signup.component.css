@@ -19,6 +19,63 @@
   animation: slideIn 0.3s ease-out;
 }
 
+/* Dark mode validation error fixes */
+[data-theme="dark"] .validation-error {
+  color: #ffffff !important;
+  background: rgba(231, 76, 60, 0.8) !important;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(231, 76, 60, 0.9);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode validation-error-message fixes */
+[data-theme="dark"] .validation-error-message {
+  color: #ffffff !important;
+  background: rgba(231, 76, 60, 0.8) !important;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(231, 76, 60, 0.9);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* Dark mode hint text fixes */
+[data-theme="dark"] small {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 0.875rem;
+}
+
+.error {
+  color: var(--danger-color);
+  font-size: 12px;
+}
+
+/* Dark mode error fixes */
+[data-theme="dark"] .error {
+  color: #ffffff !important;
+  background: rgba(231, 76, 60, 0.8) !important;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(231, 76, 60, 0.9);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode OTP button fixes */
+[data-theme="dark"] .otp-btn {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+[data-theme="dark"] .otp-btn:disabled {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -28,6 +85,38 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.demo-select {
+  margin-bottom: 25px;
+}
+
+.demo-select label {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-color);
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.demo-select select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--text-color);
+  background: var(--input-bg);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.demo-select select:hover,
+.demo-select select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  outline: none;
 }
 
 .logo-header {
@@ -159,7 +248,7 @@ select {
   font-size: 14px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: var(--input-bg);
-  color: var(--text-color);
+  color: var(--text-color) !important;
   font-family: inherit;
 }
 
@@ -169,10 +258,128 @@ select::placeholder {
   opacity: 0.6;
 }
 
+/* Dark mode placeholder fixes */
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] select::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  opacity: 1;
+}
+
+/* Dark mode input text fixes - MOST SPECIFIC */
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] .email-input-group input,
+[data-theme="dark"] .otp-input-group input,
+[data-theme="dark"] input:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] .email-input-group input:focus,
+[data-theme="dark"] .otp-input-group input:focus,
+[data-theme="dark"] input:hover,
+[data-theme="dark"] select:hover,
+[data-theme="dark"] .email-input-group input:hover,
+[data-theme="dark"] .otp-input-group input:hover,
+[data-theme="dark"] input.validation-invalid,
+[data-theme="dark"] input.validation-valid,
+[data-theme="dark"] .email-input-group input.validation-invalid,
+[data-theme="dark"] .email-input-group input.validation-valid {
+  color: rgba(255, 255, 255, 0.95) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.95) !important;
+  background-color: var(--input-bg) !important;
+}
+
+/* Force text color for all input states including autofill */
+[data-theme="dark"] input::selection,
+[data-theme="dark"] select::selection,
+[data-theme="dark"] .email-input-group input::selection,
+[data-theme="dark"] .otp-input-group input::selection {
+  background: rgba(102, 126, 234, 0.3) !important;
+  color: #ffffff !important;
+}
+
+/* Autofill styling for dark mode - MOST SPECIFIC */
+[data-theme="dark"] input:-webkit-autofill,
+[data-theme="dark"] input:-webkit-autofill:hover,
+[data-theme="dark"] input:-webkit-autofill:focus,
+[data-theme="dark"] input:-webkit-autofill:active,
+[data-theme="dark"] .email-input-group input:-webkit-autofill,
+[data-theme="dark"] .email-input-group input:-webkit-autofill:hover,
+[data-theme="dark"] .email-input-group input:-webkit-autofill:focus,
+[data-theme="dark"] .email-input-group input:-webkit-autofill:active,
+[data-theme="dark"] .otp-input-group input:-webkit-autofill,
+[data-theme="dark"] .otp-input-group input:-webkit-autofill:hover,
+[data-theme="dark"] .otp-input-group input:-webkit-autofill:focus,
+[data-theme="dark"] .otp-input-group input:-webkit-autofill:active {
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.95) !important;
+  -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+  color: rgba(255, 255, 255, 0.95) !important;
+  background-color: var(--input-bg) !important;
+}
+
+/* MOST AGGRESSIVE DARK MODE TEXT FIX - HIGHEST SPECIFICITY */
+[data-theme="dark"] .signup-container input,
+[data-theme="dark"] .signup-container select,
+[data-theme="dark"] .signup-container input:focus,
+[data-theme="dark"] .signup-container select:focus,
+[data-theme="dark"] .signup-container input:hover,
+[data-theme="dark"] .signup-container select:hover,
+[data-theme="dark"] .signup-container .email-input-group input,
+[data-theme="dark"] .signup-container .otp-input-group input,
+[data-theme="dark"] .signup-container .email-input-group input:focus,
+[data-theme="dark"] .signup-container .otp-input-group input:focus,
+[data-theme="dark"] .signup-container .email-input-group input:hover,
+[data-theme="dark"] .signup-container .otp-input-group input:hover,
+[data-theme="dark"] .signup-container input.validation-invalid,
+[data-theme="dark"] .signup-container select.validation-invalid,
+[data-theme="dark"] .signup-container input.validation-valid,
+[data-theme="dark"] .signup-container select.validation-valid,
+[data-theme="dark"] .signup-container input.ng-invalid.ng-touched,
+[data-theme="dark"] .signup-container select.ng-invalid.ng-touched,
+[data-theme="dark"] .signup-container input.ng-valid.ng-touched,
+[data-theme="dark"] .signup-container select.ng-valid.ng-touched {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background-color: var(--input-bg) !important;
+  caret-color: #ffffff !important;
+}
+
+/* Force text selection color */
+[data-theme="dark"] .signup-container input::selection,
+[data-theme="dark"] .signup-container select::selection {
+  background-color: #667eea !important;
+  color: #ffffff !important;
+}
+
+/* Dark mode valid input styling */
+[data-theme="dark"] input.validation-valid,
+[data-theme="dark"] select.validation-valid {
+  background: rgba(40, 167, 69, 0.1) !important;
+  border-color: #28a745 !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Dark mode invalid input styling */
+[data-theme="dark"] input.ng-invalid.ng-touched,
+[data-theme="dark"] select.ng-invalid.ng-touched,
+[data-theme="dark"] input.validation-invalid,
+[data-theme="dark"] select.validation-invalid {
+  background: rgba(231, 76, 60, 0.2) !important;
+  border-color: #e74c3c !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+[data-theme="dark"] input.ng-invalid.ng-touched::placeholder,
+[data-theme="dark"] select.ng-invalid.ng-touched::placeholder,
+[data-theme="dark"] input.validation-invalid::placeholder,
+[data-theme="dark"] select.validation-invalid::placeholder {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
 input:hover,
 select:hover {
   border-color: var(--primary-color);
   background: var(--card-bg);
+  color: var(--text-color) !important;
 }
 
 input:focus,
@@ -181,6 +388,7 @@ select:focus {
   border-color: var(--primary-color);
   background: var(--card-bg);
   box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+  color: var(--text-color) !important;
 }
 
 .password-input {

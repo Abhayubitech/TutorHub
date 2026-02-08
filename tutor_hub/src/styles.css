@@ -212,6 +212,62 @@ input, textarea, select {
   color: var(--text-color);
 }
 
+/* Dark mode placeholder fixes for all inputs */
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder,
+[data-theme="dark"] select::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important;
+  opacity: 1 !important;
+}
+
+/* Dark mode input text fixes for all inputs - MAXIMUM SPECIFICITY */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select,
+[data-theme="dark"] input:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] input:hover,
+[data-theme="dark"] textarea:hover,
+[data-theme="dark"] select:hover,
+[data-theme="dark"] input.validation-invalid,
+[data-theme="dark"] input.validation-valid,
+[data-theme="dark"] textarea.validation-invalid,
+[data-theme="dark"] textarea.validation-valid {
+  color: rgba(255, 255, 255, 0.95) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Force text color for all input states globally */
+[data-theme="dark"] input::selection,
+[data-theme="dark"] textarea::selection,
+[data-theme="dark"] select::selection {
+  background: rgba(102, 126, 234, 0.3);
+  color: #ffffff !important;
+}
+
+/* Global autofill styling for dark mode - MAXIMUM SPECIFICITY */
+[data-theme="dark"] input:-webkit-autofill,
+[data-theme="dark"] input:-webkit-autofill:hover,
+[data-theme="dark"] input:-webkit-autofill:focus,
+[data-theme="dark"] input:-webkit-autofill:active,
+[data-theme="dark"] textarea:-webkit-autofill,
+[data-theme="dark"] textarea:-webkit-autofill:hover,
+[data-theme="dark"] textarea:-webkit-autofill:focus,
+[data-theme="dark"] textarea:-webkit-autofill:active {
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.95) !important;
+  -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Universal override for any input elements */
+[data-theme="dark"] * input,
+[data-theme="dark"] * textarea,
+[data-theme="dark"] * select {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--primary-color);

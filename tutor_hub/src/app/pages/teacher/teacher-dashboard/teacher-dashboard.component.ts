@@ -154,23 +154,23 @@ export class TeacherDashboardComponent implements OnInit {
       this.teacherService.updateCourse(this.editingCourseId, courseData).subscribe({
         next: (response: any) => {
           if (response.success) {
-            // Update WhatsApp groups after course update
+            // Create or update WhatsApp groups after course update
             const courseId = this.editingCourseId;
             
-            // Update demo WhatsApp group if data provided
+            // Handle demo WhatsApp group if data provided
             if (this.demoGroupName && this.demoGroupLink) {
-              this.updateWhatsAppGroup(courseId!, 'demo');
+              this.createOrUpdateWhatsAppGroup(courseId!, 'demo');
             }
             
-            // Update approved WhatsApp group if data provided
+            // Handle approved WhatsApp group if data provided
             if (this.approvedGroupName && this.approvedGroupLink) {
-              this.updateWhatsAppGroup(courseId!, 'approved');
+              this.createOrUpdateWhatsAppGroup(courseId!, 'approved');
             }
             
             // Reload courses to get updated list
             this.teacherService.loadCourses();
             
-            this.sweetAlert.showToast('Course updated successfully', 'success', 'top-end', 3000);
+            this.sweetAlert.showSuccess('Course Updated!', 'Your course has been updated successfully.');
             // Redirect back to My Courses after update
             setTimeout(() => {
               this.currentSection = 'my-courses';
@@ -202,7 +202,7 @@ export class TeacherDashboardComponent implements OnInit {
             // Reload courses to get updated list
             this.teacherService.loadCourses();
             
-            this.sweetAlert.showToast('Course created successfully', 'success', 'top-end', 3000);
+            this.sweetAlert.showSuccess('Course Created!', 'Your course has been created successfully.');
             // Redirect back to My Courses after creation
             setTimeout(() => {
               this.currentSection = 'my-courses';
@@ -221,6 +221,41 @@ export class TeacherDashboardComponent implements OnInit {
   }
 
   // WhatsApp group management
+  createOrUpdateWhatsAppGroup(courseId: string, groupType: 'demo' | 'approved'): void {
+    const groupName = groupType === 'demo' ? this.demoGroupName : this.approvedGroupName;
+    const inviteLink = groupType === 'demo' ? this.demoGroupLink : this.approvedGroupLink;
+    const description = groupType === 'demo' ? this.demoGroupDescription : this.approvedGroupDescription;
+
+    if (!groupName || !inviteLink) {
+      return; // Skip if no data provided
+    }
+
+    // First check if WhatsApp group exists
+    this.teacherService.getWhatsAppGroups(courseId).subscribe({
+      next: (response: any) => {
+        if (response.success && response.groups) {
+          const existingGroup = response.groups.find((g: any) => g.group_type === groupType);
+          
+          if (existingGroup) {
+            // Update existing group
+            this.updateWhatsAppGroup(courseId, groupType);
+          } else {
+            // Create new group
+            this.createWhatsAppGroup(courseId, groupType);
+          }
+        } else {
+          // Create new group if no groups found
+          this.createWhatsAppGroup(courseId, groupType);
+        }
+      },
+      error: (error: any) => {
+        console.error('Error checking WhatsApp groups:', error);
+        // Try to create group as fallback
+        this.createWhatsAppGroup(courseId, groupType);
+      }
+    });
+  }
+
   createWhatsAppGroup(courseId: string, groupType: 'demo' | 'approved'): void {
     const groupName = groupType === 'demo' ? this.demoGroupName : this.approvedGroupName;
     const inviteLink = groupType === 'demo' ? this.demoGroupLink : this.approvedGroupLink;

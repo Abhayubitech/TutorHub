@@ -136,19 +136,6 @@ CREATE TABLE payment_verifications (
 ALTER TABLE whatsapp_groups ADD COLUMN group_type ENUM('demo', 'approved') DEFAULT 'demo';
 ALTER TABLE whatsapp_groups ADD COLUMN description TEXT;
 
--- 1️⃣0️⃣ WhatsApp Group Members Table (updated from existing)
-CREATE TABLE whatsapp_group_members (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    group_id INT NOT NULL,
-    user_id INT NOT NULL,
-    phone VARCHAR(20) NOT NULL,
-    role ENUM('admin', 'member') DEFAULT 'member',
-    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (group_id) REFERENCES whatsapp_groups(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_group_member (group_id, user_id)
-);
-
 -- Create indexes for better query performance
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_role ON users(role);

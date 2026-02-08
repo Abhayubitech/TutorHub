@@ -31,7 +31,7 @@ export class AppComponent {
   
   shouldShowAuthFooter(): boolean {
     const currentUrl = this.router.url;
-    return currentUrl.includes('/login') || currentUrl.includes('/signup');
+    return false; // Hide footer from login and signup pages
   }
   
   shouldShowDashboardFooter(): boolean {

@@ -128,14 +128,6 @@
           <h2>Teacher Courses</h2>
           <p class="section-description">View which teachers are teaching which courses and their enrollment statistics.</p>
           
-          <!-- Debug info -->
-          <div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; font-family: monospace; font-size: 12px;">
-            Debug: Loading: {{ loading }} | Teacher Courses Count: {{ manageTeacherCourses.length }}
-            @if (error) {
-              <br>Error: {{ error }}
-            }
-          </div>
-          
           @if (manageTeacherCourses.length > 0) {
             <div class="teacher-courses-accordion">
               @for (item of manageTeacherCourses; track item.teacherId) {

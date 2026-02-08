@@ -19,6 +19,34 @@
   animation: slideIn 0.3s ease-out;
 }
 
+/* Dark mode validation error fixes */
+[data-theme="dark"] .validation-error,
+[data-theme="dark"] .validation-error-message {
+  color: #ffffff !important;
+  background: rgba(231, 76, 60, 0.8) !important;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(231, 76, 60, 0.9);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.error {
+  color: var(--danger-color);
+  font-size: 12px;
+}
+
+/* Dark mode error fixes */
+[data-theme="dark"] .error {
+  color: #ffffff !important;
+  background: rgba(231, 76, 60, 0.8) !important;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(231, 76, 60, 0.9);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -122,7 +150,7 @@
 
 h1 {
   text-align: center;
-  color: #667eea;
+  color: var(--primary-color);
   margin-bottom: 10px;
   font-size: 28px;
   font-weight: 800;
@@ -139,10 +167,6 @@ h2 {
 
 .demo-select {
   margin-bottom: 25px;
-  padding: 15px;
-  background: var(--input-bg);
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
 }
 
 .demo-select label {
@@ -156,9 +180,9 @@ h2 {
 
 .demo-select select {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
   font-size: 14px;
   color: var(--text-color);
   background: var(--input-bg);
@@ -168,8 +192,9 @@ h2 {
 
 .demo-select select:hover,
 .demo-select select:focus {
-  border-color: #667eea;
+  border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  outline: none;
 }
 
 .form-group {
@@ -193,7 +218,7 @@ input {
   font-size: 14px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: var(--input-bg);
-  color: var(--text-color);
+  color: var(--text-color) !important;
 }
 
 input::placeholder {
@@ -201,9 +226,72 @@ input::placeholder {
   opacity: 0.6;
 }
 
+/* Dark mode placeholder fixes */
+[data-theme="dark"] input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  opacity: 1;
+}
+
+/* Dark mode input text fixes - Enhanced for better visibility */
+[data-theme="dark"] input,
+[data-theme="dark"] input:focus,
+[data-theme="dark"] input:hover,
+[data-theme="dark"] .login-container input,
+[data-theme="dark"] .login-container input:focus,
+[data-theme="dark"] .login-container input:hover,
+[data-theme="dark"] .login-container input.validation-invalid,
+[data-theme="dark"] .login-container input.validation-valid,
+[data-theme="dark"] .login-container input.ng-invalid.ng-touched,
+[data-theme="dark"] .login-container input.ng-valid.ng-touched,
+[data-theme="dark"] input[appRealTimeValidation] {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background-color: var(--input-bg) !important;
+  caret-color: #ffffff !important;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Force text selection color */
+[data-theme="dark"] .login-container input::selection {
+  background-color: #667eea !important;
+  background: rgba(102, 126, 234, 0.3) !important;
+  color: #ffffff !important;
+}
+
+/* Autofill styling for dark mode */
+[data-theme="dark"] input:-webkit-autofill,
+[data-theme="dark"] input:-webkit-autofill:hover,
+[data-theme="dark"] input:-webkit-autofill:focus,
+[data-theme="dark"] input:-webkit-autofill:active {
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.95) !important;
+  -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+  color: rgba(255, 255, 255, 0.95) !important;
+  background-color: var(--input-bg) !important;
+}
+
+/* Dark mode valid input styling */
+[data-theme="dark"] input.validation-valid {
+  background: rgba(40, 167, 69, 0.1) !important;
+  border-color: #28a745 !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Error state fixes for dark mode */
+[data-theme="dark"] input.ng-invalid.ng-touched {
+  background: rgba(231, 76, 60, 0.1) !important;
+  border-color: #e74c3c !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+[data-theme="dark"] input.ng-invalid.ng-touched::placeholder {
+  color: rgba(255, 255, 255, 0.8);
+}
+
 input:hover {
   border-color: var(--primary-color);
   background: var(--card-bg);
+  color: var(--text-color) !important;
 }
 
 input:focus {
@@ -211,6 +299,7 @@ input:focus {
   border-color: var(--primary-color);
   background: var(--card-bg);
   box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+  color: var(--text-color) !important;
 }
 
 small {
@@ -219,6 +308,12 @@ small {
   color: var(--text-color);
   font-size: 12px;
   opacity: 0.7;
+}
+
+/* Dark mode small text fixes */
+[data-theme="dark"] small {
+  color: rgba(255, 255, 255, 0.7);
+  opacity: 1;
 }
 
 .password-input {
@@ -299,6 +394,12 @@ small {
   color: var(--text-color);
   font-size: 14px;
   opacity: 0.8;
+}
+
+/* Dark mode signup link fixes */
+[data-theme="dark"] .signup-link {
+  color: rgba(255, 255, 255, 0.8);
+  opacity: 1;
 }
 
 .signup-link a {
@@ -423,6 +524,63 @@ small {
     font-size: 12px;
     margin-top: 16px;
   }
+}
+
+/* Enhanced validation styles for real-time feedback */
+input[appRealTimeValidation].validation-invalid {
+  border-color: #e74c3c !important;
+  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2) !important;
+  background-color: rgba(231, 76, 60, 0.05) !important;
+  animation: validationPulse 0.3s ease-in-out;
+}
+
+input[appRealTimeValidation].validation-valid {
+  border-color: #28a745 !important;
+  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2) !important;
+  background-color: rgba(40, 167, 69, 0.05) !important;
+  animation: validationSuccess 0.3s ease-in-out;
+}
+
+/* Dark mode enhanced validation styles */
+[data-theme="dark"] input[appRealTimeValidation].validation-invalid {
+  border-color: #ff6b6b !important;
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.3) !important;
+  background-color: rgba(231, 76, 60, 0.1) !important;
+  color: #ffffff !important;
+  animation: validationPulseDark 0.3s ease-in-out;
+}
+
+[data-theme="dark"] input[appRealTimeValidation].validation-valid {
+  border-color: #4ade80 !important;
+  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.3) !important;
+  background-color: rgba(40, 167, 69, 0.1) !important;
+  color: #ffffff !important;
+  animation: validationSuccessDark 0.3s ease-in-out;
+}
+
+/* Validation animations */
+@keyframes validationPulse {
+  0% { box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2); }
+  50% { box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.4); }
+  100% { box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2); }
+}
+
+@keyframes validationPulseDark {
+  0% { box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.3); }
+  50% { box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.5); }
+  100% { box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.3); }
+}
+
+@keyframes validationSuccess {
+  0% { box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2); }
+  50% { box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.4); }
+  100% { box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2); }
+}
+
+@keyframes validationSuccessDark {
+  0% { box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.3); }
+  50% { box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.5); }
+  100% { box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.3); }
 }
 
 /* Theme toggle styling for login page */

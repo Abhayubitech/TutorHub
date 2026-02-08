@@ -92,8 +92,71 @@
   font-size: 14px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: var(--input-bg);
-  color: var(--text-color);
+  color: var(--text-color) !important;
   font-family: inherit;
+}
+
+/* Dark mode placeholder fixes */
+[data-theme="dark"] .form-group input::placeholder,
+[data-theme="dark"] .form-group textarea::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  opacity: 1;
+}
+
+/* Dark mode input text fixes */
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group textarea,
+[data-theme="dark"] .form-group input:focus,
+[data-theme="dark"] .form-group textarea:focus,
+[data-theme="dark"] .form-group input:hover,
+[data-theme="dark"] .form-group textarea:hover,
+[data-theme="dark"] .form-group input.validation-invalid,
+[data-theme="dark"] .form-group textarea.validation-invalid,
+[data-theme="dark"] .form-group input.validation-valid,
+[data-theme="dark"] .form-group textarea.validation-valid {
+  color: rgba(255, 255, 255, 0.95) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.95) !important;
+  background-color: var(--input-bg) !important;
+}
+
+/* Force text color for all input states */
+[data-theme="dark"] .form-group input::selection,
+[data-theme="dark"] .form-group textarea::selection {
+  background: rgba(102, 126, 234, 0.3) !important;
+  color: #ffffff !important;
+}
+
+/* Autofill styling for dark mode */
+[data-theme="dark"] .form-group input:-webkit-autofill,
+[data-theme="dark"] .form-group input:-webkit-autofill:hover,
+[data-theme="dark"] .form-group input:-webkit-autofill:focus,
+[data-theme="dark"] .form-group input:-webkit-autofill:active {
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.95) !important;
+  -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+  color: rgba(255, 255, 255, 0.95) !important;
+  background-color: var(--input-bg) !important;
+}
+
+/* Dark mode valid input styling */
+[data-theme="dark"] .form-group input.validation-valid,
+[data-theme="dark"] .form-group textarea.validation-valid {
+  background: rgba(40, 167, 69, 0.1) !important;
+  border-color: #28a745 !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Error state fixes for dark mode */
+[data-theme="dark"] .form-group input.ng-invalid.ng-touched,
+[data-theme="dark"] .form-group textarea.ng-invalid.ng-touched {
+  background: rgba(231, 76, 60, 0.1) !important;
+  border-color: #e74c3c !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+[data-theme="dark"] .form-group input.ng-invalid.ng-touched::placeholder,
+[data-theme="dark"] .form-group textarea.ng-invalid.ng-touched::placeholder {
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .form-group input:focus,
@@ -102,11 +165,64 @@
   border-color: var(--primary-color);
   background: var(--card-bg);
   box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+  color: var(--text-color) !important;
 }
 
 .error {
   color: var(--danger-color);
   font-size: 12px;
+}
+
+/* Dark mode error fixes */
+[data-theme="dark"] .error {
+  color: #ffffff !important;
+  background: rgba(231, 76, 60, 0.8) !important;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(231, 76, 60, 0.9);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode validation-error-message fixes */
+[data-theme="dark"] .validation-error-message {
+  color: #ffffff !important;
+  background: rgba(231, 76, 60, 0.8) !important;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(231, 76, 60, 0.9);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* MOST AGGRESSIVE DARK MODE TEXT FIX - HIGHEST SPECIFICITY */
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group textarea,
+[data-theme="dark"] .form-group input:focus,
+[data-theme="dark"] .form-group textarea:focus,
+[data-theme="dark"] .form-group input:hover,
+[data-theme="dark"] .form-group textarea:hover,
+[data-theme="dark"] .form-group input.validation-invalid,
+[data-theme="dark"] .form-group textarea.validation-invalid,
+[data-theme="dark"] .form-group input.validation-valid,
+[data-theme="dark"] .form-group textarea.validation-valid,
+[data-theme="dark"] .form-group input.ng-invalid.ng-touched,
+[data-theme="dark"] .form-group textarea.ng-invalid.ng-touched,
+[data-theme="dark"] .form-group input.ng-valid.ng-touched,
+[data-theme="dark"] .form-group textarea.ng-valid.ng-touched {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background-color: var(--input-bg) !important;
+  caret-color: #ffffff !important;
+}
+
+/* Force text selection color */
+[data-theme="dark"] .form-group input::selection,
+[data-theme="dark"] .form-group textarea::selection {
+  background-color: #667eea !important;
+  color: #ffffff !important;
 }
 
 .btn-submit {

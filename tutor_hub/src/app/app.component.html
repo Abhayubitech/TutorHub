@@ -1,7 +1,3 @@
  <app-navbar *ngIf="shouldShowNavbar()" />
  <router-outlet />
- <app-footer *ngIf="shouldShowFooter() && !shouldShowDashboardFooter()" />
- <app-auth-footer *ngIf="shouldShowAuthFooter()" />
- <app-dashboard-footer *ngIf="shouldShowDashboardFooter()" />
- <app-confirmation-dialog-container />
- <app-toast />
+ <app-footer *ngIf="shouldShowFooter()" />
