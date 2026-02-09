@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const db = require("./config/db");
@@ -7,6 +8,7 @@ const studentRoutes = require("./routes/student.routes");
 const courseRoutes = require("./routes/course.routes");
 const adminRoutes = require("./routes/admin.routes");
 const whatsappRoutes = require("./routes/whatsapp.routes");
+const contactRoutes = require("./routes/contact.routes");
 
 const app = express();
 
@@ -24,6 +26,7 @@ app.use("/api/student", studentRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/whatsapp", whatsappRoutes);
+app.use("/api", contactRoutes);
 
 // Health check
 app.get("/", (req, res) => {

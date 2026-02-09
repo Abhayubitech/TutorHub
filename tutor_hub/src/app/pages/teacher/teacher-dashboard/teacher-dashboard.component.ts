@@ -58,6 +58,7 @@ export class TeacherDashboardComponent implements OnInit {
   paymentVerifications: any[] = [];
   selectedVerification: any = null;
   showPaymentModal = false;
+  isProcessingPayment: boolean = false;
   
   // Student payment fields
   paymentAmount: number | null = null;
@@ -167,14 +168,14 @@ export class TeacherDashboardComponent implements OnInit {
               this.createOrUpdateWhatsAppGroup(courseId!, 'approved');
             }
             
-            // Reload courses to get updated list
-            this.teacherService.loadCourses();
+            // Show both toast and success modal for better visibility
+            this.sweetAlert.showToast('Course updated successfully!', 'success', 'top-end', 3000);
+            this.sweetAlert.showSuccess('Course Updated!', `Your course "${courseData.subject}" has been updated successfully.`);
             
-            this.sweetAlert.showSuccess('Course Updated!', 'Your course has been updated successfully.');
             // Redirect back to My Courses after update
             setTimeout(() => {
               this.currentSection = 'my-courses';
-            }, 1000);
+            }, 1500);
           }
         },
         error: (error: any) => {
@@ -199,14 +200,14 @@ export class TeacherDashboardComponent implements OnInit {
               this.createWhatsAppGroup(courseId, 'approved');
             }
             
-            // Reload courses to get updated list
-            this.teacherService.loadCourses();
+            // Show both toast and success modal for better visibility
+            this.sweetAlert.showToast('Course created successfully!', 'success', 'top-end', 3000);
+            this.sweetAlert.showSuccess('Course Created!', `Your course "${courseData.subject}" has been created successfully.`);
             
-            this.sweetAlert.showSuccess('Course Created!', 'Your course has been created successfully.');
-            // Redirect back to My Courses after creation
+            // Redirect to My Courses after success modal closes
             setTimeout(() => {
               this.currentSection = 'my-courses';
-            }, 1000);
+            }, 1500);
           }
         },
         error: (error: any) => {
@@ -350,29 +351,45 @@ export class TeacherDashboardComponent implements OnInit {
   }
 
   approvePayment(verificationId: string): void {
+    if (this.isProcessingPayment) return;
+    
+    this.isProcessingPayment = true;
     this.teacherService.updatePaymentVerification(verificationId, 'approved', 'Payment verified and approved').subscribe({
       next: (response: any) => {
         if (response.success) {
           this.sweetAlert.showToast('Payment approved successfully', 'success', 'top-end', 3000);
-          this.loadPaymentVerifications(this.selectedVerification?.course_id);
+          // Reload payment verifications with the current managing course ID
+          if (this.managingCourseId) {
+            this.loadPaymentVerifications(this.managingCourseId);
+          }
         }
+        this.isProcessingPayment = false;
       },
       error: (error: any) => {
         this.sweetAlert.showToast('Error approving payment: ' + (error.error?.message || 'Unknown error'), 'error', 'top-end', 3000);
+        this.isProcessingPayment = false;
       }
     });
   }
 
   rejectPayment(verificationId: string): void {
+    if (this.isProcessingPayment) return;
+    
+    this.isProcessingPayment = true;
     this.teacherService.updatePaymentVerification(verificationId, 'rejected', 'Payment rejected').subscribe({
       next: (response: any) => {
         if (response.success) {
           this.sweetAlert.showToast('Payment rejected successfully', 'success', 'top-end', 3000);
-          this.loadPaymentVerifications(this.selectedVerification?.course_id);
+          // Reload payment verifications with the current managing course ID
+          if (this.managingCourseId) {
+            this.loadPaymentVerifications(this.managingCourseId);
+          }
         }
+        this.isProcessingPayment = false;
       },
       error: (error: any) => {
         this.sweetAlert.showToast('Error rejecting payment: ' + (error.error?.message || 'Unknown error'), 'error', 'top-end', 3000);
+        this.isProcessingPayment = false;
       }
     });
   }
@@ -818,7 +835,8 @@ export class TeacherDashboardComponent implements OnInit {
 
   // Settings functionality
   openAccountSettings(): void {
-    this.currentSection = 'account-settings';
+    // Navigate to the dedicated settings page
+    this.router.navigate(['/settings']);
   }
 
   toggleTheme(): void {

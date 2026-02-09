@@ -22,6 +22,16 @@ export const routes: Routes = [
     canActivate: [NoAuthGuard]
   },
   {
+    path: 'forgot-password',
+    loadComponent: () => import('./pages/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent),
+    canActivate: [NoAuthGuard]
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./pages/reset-password/reset-password.component').then(m => m.ResetPasswordComponent),
+    canActivate: [NoAuthGuard]
+  },
+  {
     path: 'home',
     loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent)
   },
@@ -83,6 +93,11 @@ export const routes: Routes = [
   {
     path: 'cookies',
     loadComponent: () => import('./pages/cookies/cookies.component').then(m => m.CookiesComponent)
+  },
+  {
+    path: 'settings',
+    loadComponent: () => import('./pages/settings/settings.component').then(m => m.SettingsComponent),
+    canActivate: [AuthGuard]
   },
   {
     path: '**',

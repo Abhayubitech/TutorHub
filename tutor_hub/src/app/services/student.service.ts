@@ -208,7 +208,7 @@ export class StudentService {
 
   // WhatsApp and payment methods
   getWhatsAppGroup(courseId: string, groupType: 'demo' | 'approved' = 'demo'): Observable<any> {
-    return this.apiService.get(`/courses/whatsapp-group/${courseId}?groupType=${groupType}`);
+    return this.apiService.get(`/whatsapp/groups/course/${courseId}?groupType=${groupType}`);
   }
 
   uploadPaymentScreenshot(courseId: string, file: File, paymentData: any): Observable<any> {

@@ -287,7 +287,8 @@ export class AdminDashboardComponent implements OnInit {
 
   // Settings functionality
   openAccountSettings(): void {
-    this.currentNavSection.set('account-settings');
+    // Navigate to the dedicated settings page
+    this.router.navigate(['/settings']);
   }
 
   toggleTheme(): void {

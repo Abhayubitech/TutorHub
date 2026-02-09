@@ -1,5 +1,4 @@
 <section class="page">
-  <app-toast />
   <div class="container">
     <header class="hero">
       <h2>Contact</h2>
@@ -10,7 +9,7 @@
       <div class="info">
         <div class="info-card">
           <div class="label">Email</div>
-          <div class="value">support&#64;tutorhub.com</div>
+          <div class="value">ayushgoyal6&#64;zohomail.in</div>
         </div>
         <div class="info-card">
           <div class="label">Phone</div>
@@ -33,9 +32,10 @@
             maxlength="33"
             pattern="[a-zA-Z\s'-]*"
             title="Name can only contain letters, spaces, hyphens, and apostrophes (max 33 characters)"
+            (input)="onNameChange()"
             required
           />
-          <small *ngIf="contactName && !isValidName(contactName)" class="error">Name must contain letters only (max 33 characters)</small>
+          <small *ngIf="nameError" class="error">{{ nameError }}</small>
         </div>
 
         <div class="form-group">
@@ -47,9 +47,24 @@
             name="contactEmail"
             pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
             title="Please enter a valid email address"
+            (input)="onEmailChange()"
             required
           />
-          <small *ngIf="contactEmail && !isValidEmail(contactEmail)" class="error">Valid email is required</small>
+          <small *ngIf="emailError" class="error">{{ emailError }}</small>
+        </div>
+
+        <div class="form-group">
+          <label>Subject</label>
+          <input
+            type="text"
+            placeholder="Subject"
+            [(ngModel)]="contactSubject"
+            name="contactSubject"
+            maxlength="100"
+            (input)="onSubjectChange()"
+            required
+          />
+          <small *ngIf="subjectError" class="error">{{ subjectError }}</small>
         </div>
 
         <div class="form-group">
@@ -60,8 +75,10 @@
             [(ngModel)]="contactMessage"
             name="contactMessage"
             maxlength="1000"
+            (input)="onMessageChange()"
             required
           ></textarea>
+          <small *ngIf="messageError" class="error">{{ messageError }}</small>
         </div>
 
         <button type="submit" class="btn-submit">Send Message</button>

@@ -1,6 +1,7 @@
 const db = require("../config/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const crypto = require('crypto');
 
 // ✅ VALIDATION FUNCTIONS
 const validateEmail = (email) => {
@@ -181,7 +182,7 @@ async function getUserById(userId) {
 
 async function updateUser(userId, userData) {
   try {
-    const { name, phone, profile_pic } = userData;
+    const { name, email, phone, profile_pic, current_password, new_password } = userData;
 
     const [existingUsers] = await db.query(
       'SELECT id, name, email, role, phone, profile_pic FROM users WHERE id = ?',
@@ -196,17 +197,74 @@ async function updateUser(userId, userData) {
     const nextName = name !== undefined ? name : existing.name;
     const nextPhone = phone !== undefined ? phone : existing.phone;
     const nextProfilePic = profile_pic !== undefined ? profile_pic : existing.profile_pic;
+    let nextEmail = email !== undefined ? email : existing.email;
 
+    // Validate name if provided
     if (name !== undefined) validateName(nextName);
+    
+    // Validate phone if provided
     if (phone !== undefined) validatePhone(nextPhone);
+    
+    // Validate profile pic if provided
     if (profile_pic !== undefined && nextProfilePic && String(nextProfilePic).length > 255) {
       throw new Error('Profile picture URL must not exceed 255 characters');
     }
 
-    await db.query(
-      'UPDATE users SET name = ?, phone = ?, profile_pic = ? WHERE id = ?',
-      [nextName, nextPhone, nextProfilePic, userId]
-    );
+    // Handle email update
+    if (email !== undefined && email !== existing.email) {
+      validateEmail(email);
+      
+      // Check if email is already taken by another user
+      const [emailCheck] = await db.query(
+        'SELECT id FROM users WHERE email = ? AND id != ?',
+        [email, userId]
+      );
+      
+      if (emailCheck.length > 0) {
+        throw new Error('Email is already taken by another user');
+      }
+      
+      nextEmail = email;
+    }
+
+    // Handle password update
+    if (new_password !== undefined) {
+      if (!current_password) {
+        throw new Error('Current password is required to update password');
+      }
+      
+      validatePassword(new_password);
+      
+      // Verify current password
+      const [userWithPassword] = await db.query(
+        'SELECT password FROM users WHERE id = ?',
+        [userId]
+      );
+      
+      const isValidCurrentPassword = await bcrypt.compare(
+        current_password,
+        userWithPassword[0].password
+      );
+      
+      if (!isValidCurrentPassword) {
+        throw new Error('Current password is incorrect');
+      }
+      
+      // Hash new password
+      const hashedNewPassword = await bcrypt.hash(new_password, 10);
+      
+      // Update user with new password
+      await db.query(
+        'UPDATE users SET name = ?, email = ?, phone = ?, profile_pic = ?, password = ? WHERE id = ?',
+        [nextName, nextEmail, nextPhone, nextProfilePic, hashedNewPassword, userId]
+      );
+    } else {
+      // Update user without password change
+      await db.query(
+        'UPDATE users SET name = ?, email = ?, phone = ?, profile_pic = ? WHERE id = ?',
+        [nextName, nextEmail, nextPhone, nextProfilePic, userId]
+      );
+    }
 
     const [updatedUsers] = await db.query(
       'SELECT id, name, email, role, phone, profile_pic, created_at FROM users WHERE id = ?',
@@ -225,12 +283,83 @@ async function updateUser(userId, userData) {
 
 async function deleteUser(userId) {
   try {
-    await db.query("DELETE FROM users WHERE id = ?", [userId]);
+    const [existingUsers] = await db.query(
+      'SELECT id FROM users WHERE id = ?',
+      [userId]
+    );
+    if (existingUsers.length === 0) {
+      throw new Error('User not found');
+    }
+
+    await db.query('DELETE FROM users WHERE id = ?', [userId]);
 
     return {
       success: true,
-      message: "User deleted successfully",
+      message: 'User deleted successfully'
     };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}
+
+async function getUserByEmail(email) {
+  try {
+    validateEmail(email);
+    
+    const [users] = await db.query(
+      "SELECT id, name, email, role FROM users WHERE email = ?",
+      [email]
+    );
+
+    if (users.length === 0) {
+      return { success: false, message: "User not found" };
+    }
+
+    return { success: true, user: users[0] };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}
+
+async function storePasswordResetToken(email, resetToken, expiryDate) {
+  try {
+    // Store token in a separate table or add to users table
+    // For now, we'll add it to the users table (you may want to create a separate table)
+    await db.query(
+      "UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE email = ?",
+      [resetToken, expiryDate, email]
+    );
+
+    return { success: true, message: "Reset token stored" };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}
+
+async function resetPassword(token, newPassword) {
+  try {
+    validatePassword(newPassword);
+
+    // Find user with valid reset token
+    const [users] = await db.query(
+      "SELECT id, email FROM users WHERE reset_token = ? AND reset_token_expiry > NOW()",
+      [token]
+    );
+
+    if (users.length === 0) {
+      return { success: false, message: "Invalid or expired reset token" };
+    }
+
+    const user = users[0];
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password and clear reset token
+    await db.query(
+      "UPDATE users SET password = ?, reset_token = NULL, reset_token_expiry = NULL WHERE id = ?",
+      [hashedPassword, user.id]
+    );
+
+    return { success: true, message: "Password reset successful" };
   } catch (err) {
     throw new Error(err.message);
   }
@@ -242,4 +371,7 @@ module.exports = {
   getUserById,
   updateUser,
   deleteUser,
+  getUserByEmail,
+  storePasswordResetToken,
+  resetPassword,
 };

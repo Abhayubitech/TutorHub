@@ -15,29 +15,29 @@ export class SupportComponent {
       title: 'Technical Issues',
       description: 'Problems with platform functionality, login issues, or technical errors',
       icon: 'fas fa-cog',
-      responseTime: '2-4 hours',
-      availability: '24/7'
+      responseTime: '24-48 hours',
+      availability: 'Mon-Fri 9AM-6PM IST'
     },
     {
       title: 'Account & Billing',
       description: 'Questions about payments, refunds, subscriptions, and account management',
       icon: 'fas fa-credit-card',
       responseTime: '1-2 business days',
-      availability: 'Mon-Fri 9AM-6PM'
+      availability: 'Mon-Fri 9AM-6PM IST'
     },
     {
       title: 'Tutor Related',
       description: 'Issues with tutors, session scheduling, or quality concerns',
       icon: 'fas fa-chalkboard-teacher',
-      responseTime: '4-6 hours',
-      availability: 'Mon-Sat 8AM-8PM'
+      responseTime: '24-48 hours',
+      availability: 'Mon-Sat 10AM-7PM IST'
     },
     {
       title: 'General Inquiries',
       description: 'Other questions about our services, policies, or features',
       icon: 'fas fa-info-circle',
-      responseTime: '24 hours',
-      availability: 'Mon-Fri 9AM-6PM'
+      responseTime: '2-3 business days',
+      availability: 'Mon-Fri 9AM-6PM IST'
     }
   ];
 

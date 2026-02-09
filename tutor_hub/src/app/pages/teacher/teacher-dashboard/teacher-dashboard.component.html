@@ -236,7 +236,7 @@
                 }
               </div>
               <div class="course-stats">
-                <span class="enrolled-count">👥 {{ course.enrolledStudents || 0 }} students enrolled</span>
+                <span class="enrolled-count">👥 {{ course.enrolled_count || 0 }} students enrolled</span>
               </div>
               <div class="course-actions">
                 <button class="btn-edit" (click)="editCourse(course)">Edit Course</button>
@@ -384,8 +384,20 @@
                           <button class="btn-view" (click)="viewPaymentScreenshot(verification.screenshot_path)">View Screenshot</button>
                         }
                         @if (verification.status === 'pending') {
-                          <button class="btn-approve" (click)="approvePayment(verification.id)">Approve</button>
-                          <button class="btn-reject" (click)="rejectPayment(verification.id)">Reject</button>
+                          <button class="btn-approve" (click)="approvePayment(verification.id)" [disabled]="isProcessingPayment">
+                            @if (isProcessingPayment) {
+                              <span>Processing...</span>
+                            } @else {
+                              <span>Approve</span>
+                            }
+                          </button>
+                          <button class="btn-reject" (click)="rejectPayment(verification.id)" [disabled]="isProcessingPayment">
+                            @if (isProcessingPayment) {
+                              <span>Processing...</span>
+                            } @else {
+                              <span>Reject</span>
+                            }
+                          </button>
                         }
                       </div>
                     </div>

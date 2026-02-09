@@ -17,7 +17,7 @@ export class ToastService {
     return this.toasts;
   }
 
-  show(message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info', duration: number = 3000) {
+  show(message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info', duration: number = 5000) {
     const toast: Toast = {
       id: Math.random().toString(36).substr(2, 9),
       message,
@@ -41,7 +41,7 @@ export class ToastService {
   }
 
   error(message: string, duration?: number) {
-    return this.show(message, 'error', duration);
+    return this.show(message, 'error', duration || 8000);
   }
 
   warning(message: string, duration?: number) {

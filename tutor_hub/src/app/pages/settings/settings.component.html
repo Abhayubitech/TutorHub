@@ -1,0 +1,221 @@
+<div class="settings-container">
+  <div class="settings-header">
+    <h2>Account Settings</h2>
+    <p class="text-muted">Manage your account information and security</p>
+  </div>
+
+  <div class="settings-content">
+    <!-- Basic Information Section -->
+    <div class="settings-section">
+      <div class="section-header">
+        <h3>Basic Information</h3>
+        <p>Update your personal details</p>
+      </div>
+
+      <div class="section-content">
+        <!-- Success/Error Messages -->
+        <div *ngIf="basicInfoSuccess()" class="alert alert-success alert-dismissible fade show" role="alert">
+          {{ basicInfoSuccess() }}
+          <button type="button" class="btn-close" (click)="basicInfoSuccess.set('')"></button>
+        </div>
+
+        <div *ngIf="basicInfoErrors().length > 0" class="alert alert-danger alert-dismissible fade show" role="alert">
+          <div *ngFor="let error of basicInfoErrors()" class="error-item">
+            {{ error }}
+          </div>
+          <button type="button" class="btn-close" (click)="clearBasicInfoErrors()"></button>
+        </div>
+
+        <form (ngSubmit)="updateBasicInfo()" class="settings-form">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input 
+              type="text" 
+              id="name" 
+              class="form-control" 
+              [(ngModel)]="name" 
+              name="name"
+              (input)="clearBasicInfoErrors()"
+              placeholder="Enter your full name"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input 
+              type="email" 
+              id="email" 
+              class="form-control" 
+              [(ngModel)]="email" 
+              name="email"
+              (input)="clearBasicInfoErrors()"
+              placeholder="Enter your email address"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number (Optional)</label>
+            <input 
+              type="tel" 
+              id="phone" 
+              class="form-control" 
+              [(ngModel)]="phone" 
+              name="phone"
+              (input)="clearBasicInfoErrors()"
+              placeholder="Enter your phone number"
+            >
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="isLoadingBasicInfo">
+              <span *ngIf="isLoadingBasicInfo" class="spinner-border spinner-border-sm me-2"></span>
+              {{ isLoadingBasicInfo ? 'Updating...' : 'Update Information' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Password Change Section -->
+    <div class="settings-section">
+      <div class="section-header">
+        <h3>Change Password</h3>
+        <p>Update your password to keep your account secure</p>
+      </div>
+
+      <div class="section-content">
+        <!-- Toggle Password Form Button -->
+        <button 
+          *ngIf="!showPasswordForm()" 
+          class="btn btn-outline-primary mb-3" 
+          (click)="togglePasswordForm()"
+        >
+          Change Password
+        </button>
+
+        <!-- Password Form -->
+        <div *ngIf="showPasswordForm()" class="password-form-container">
+          <!-- Success/Error Messages -->
+          <div *ngIf="passwordSuccess()" class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ passwordSuccess() }}
+            <button type="button" class="btn-close" (click)="passwordSuccess.set('')"></button>
+          </div>
+
+          <div *ngIf="passwordErrors().length > 0" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div *ngFor="let error of passwordErrors()" class="error-item">
+              {{ error }}
+            </div>
+            <button type="button" class="btn-close" (click)="clearPasswordErrors()"></button>
+          </div>
+
+          <form (ngSubmit)="updatePassword()" class="settings-form">
+            <div class="form-group">
+              <label for="currentPassword">Current Password</label>
+              <div class="input-group">
+                <input 
+                  [type]="showCurrentPassword() ? 'text' : 'password'" 
+                  id="currentPassword" 
+                  class="form-control" 
+                  [(ngModel)]="currentPassword" 
+                  name="currentPassword"
+                  (input)="clearPasswordErrors()"
+                  placeholder="Enter your current password"
+                  required
+                >
+                <button 
+                  type="button" 
+                  class="btn btn-outline-secondary" 
+                  (click)="togglePasswordVisibility('current')"
+                >
+                  <i class="bi" [ngClass]="showCurrentPassword() ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="newPassword">New Password</label>
+              <div class="input-group">
+                <input 
+                  [type]="showNewPassword() ? 'text' : 'password'" 
+                  id="newPassword" 
+                  class="form-control" 
+                  [(ngModel)]="newPassword" 
+                  name="newPassword"
+                  (input)="clearPasswordErrors()"
+                  placeholder="Enter your new password"
+                  required
+                >
+                <button 
+                  type="button" 
+                  class="btn btn-outline-secondary" 
+                  (click)="togglePasswordVisibility('new')"
+                >
+                  <i class="bi" [ngClass]="showNewPassword() ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
+              <small class="form-text text-muted">
+                Password must be at least 6 characters long
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="confirmPassword">Confirm New Password</label>
+              <div class="input-group">
+                <input 
+                  [type]="showConfirmPassword() ? 'text' : 'password'" 
+                  id="confirmPassword" 
+                  class="form-control" 
+                  [(ngModel)]="confirmPassword" 
+                  name="confirmPassword"
+                  (input)="clearPasswordErrors()"
+                  placeholder="Confirm your new password"
+                  required
+                >
+                <button 
+                  type="button" 
+                  class="btn btn-outline-secondary" 
+                  (click)="togglePasswordVisibility('confirm')"
+                >
+                  <i class="bi" [ngClass]="showConfirmPassword() ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary me-2" [disabled]="isLoadingPassword">
+                <span *ngIf="isLoadingPassword" class="spinner-border spinner-border-sm me-2"></span>
+                {{ isLoadingPassword ? 'Updating...' : 'Update Password' }}
+              </button>
+              <button type="button" class="btn btn-secondary" (click)="togglePasswordForm()">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Information -->
+    <div class="settings-section">
+      <div class="section-header">
+        <h3>Account Information</h3>
+        <p>Your current account details</p>
+      </div>
+
+      <div class="section-content">
+        <div class="account-info">
+          <div class="info-item">
+            <label>Account Type:</label>
+            <span class="badge bg-primary">{{ user?.role || 'Unknown' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Member Since:</label>
+            <span>{{ memberSince }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

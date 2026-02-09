@@ -527,9 +527,18 @@
   box-shadow: 0 4px 12px rgba(252, 92, 101, 0.2);
 }
 
-.btn-reject:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(252, 92, 101, 0.3);
+.btn-approve:disabled,
+.btn-reject:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-approve:disabled:hover,
+.btn-reject:disabled:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 .no-data {
@@ -961,12 +970,14 @@
 .modal-content {
   background: var(--card-bg);
   border-radius: 16px;
-  max-width: 800px;
-  width: 90%;
+  max-width: 900px;
+  width: 95%;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: modalSlideIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes modalSlideIn {
@@ -1019,10 +1030,16 @@
 
 .modal-body {
   padding: 28px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .course-info {
   margin-bottom: 32px;
+  padding: 20px;
+  background: var(--input-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
 }
 
 .course-info h3 {
@@ -1059,11 +1076,12 @@
   font-weight: 600;
 }
 
-.enrolled-students h3 {
-  margin: 0 0 20px 0;
-  color: var(--dark-text);
-  font-size: 18px;
-  font-weight: 700;
+.enrolled-students {
+  margin-bottom: 32px;
+  padding: 20px;
+  background: var(--input-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
 }
 
 .students-list {
@@ -1073,7 +1091,7 @@
 }
 
 .student-card {
-  background: var(--input-bg);
+  background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 20px;
@@ -1311,6 +1329,198 @@
   color: var(--text-color);
   font-size: 12px;
   opacity: 0.7;
+}
+
+/* Payment Verification Styles */
+.enrolled-students h3 {
+  margin: 0 0 20px 0;
+  color: var(--dark-text);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.payment-verifications {
+  margin-bottom: 32px;
+  padding: 20px;
+  background: var(--input-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.payment-verifications h3 {
+  margin: 0 0 20px 0;
+  color: var(--dark-text);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.verifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.verification-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.verification-card:hover {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-md);
+}
+
+.verification-info {
+  margin-bottom: 16px;
+}
+
+.verification-info h4 {
+  margin: 0 0 8px 0;
+  color: var(--dark-text);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.verification-info p {
+  margin: 4px 0;
+  color: var(--text-color);
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-pending {
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+.status-approved {
+  background: rgba(38, 222, 129, 0.1);
+  color: var(--success-color);
+  border: 1px solid rgba(38, 222, 129, 0.2);
+}
+
+.status-rejected {
+  background: rgba(252, 92, 101, 0.1);
+  color: #fc5c65;
+  border: 1px solid rgba(252, 92, 101, 0.2);
+}
+
+.verification-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-view {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-view:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.no-verifications {
+  text-align: center;
+  color: var(--text-color);
+  opacity: 0.6;
+  padding: 40px 20px;
+  background: var(--card-bg);
+  border-radius: 12px;
+  border: 1px dashed var(--border-color);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Dark theme for payment verification */
+[data-theme="dark"] .payment-verifications h3 {
+  color: var(--dark-text);
+}
+
+[data-theme="dark"] .payment-verifications {
+  background: var(--hover-bg);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .verification-card {
+  background: var(--hover-bg);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .verification-info h4 {
+  color: var(--dark-text);
+}
+
+[data-theme="dark"] .verification-info p {
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .no-verifications {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .enrolled-students {
+  background: var(--hover-bg);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .enrolled-students h3 {
+  color: var(--dark-text);
+}
+
+[data-theme="dark"] .student-card {
+  background: var(--hover-bg);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .course-info {
+  background: var(--hover-bg);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .course-info h3 {
+  color: var(--dark-text);
+}
+
+/* Responsive design for payment verification */
+@media (max-width: 768px) {
+  .verification-card {
+    padding: 16px;
+  }
+  
+  .verification-actions {
+    flex-direction: column;
+  }
+  
+  .btn-view,
+  .btn-approve,
+  .btn-reject {
+    width: 100%;
+  }
 }
 
 /* Dark theme for WhatsApp section */

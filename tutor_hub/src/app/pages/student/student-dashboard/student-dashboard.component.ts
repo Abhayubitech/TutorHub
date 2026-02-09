@@ -328,8 +328,8 @@ export class StudentDashboardComponent implements OnInit, AfterViewInit {
 
   // Settings functionality
   openAccountSettings(): void {
-    this.isEditingProfile.set(false); // Reset to view mode first
-    this.currentTab.set('account-settings');
+    // Navigate to the dedicated settings page
+    this.router.navigate(['/settings']);
   }
 
   toggleTheme(): void {

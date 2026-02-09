@@ -27,4 +27,14 @@ router.put("/enrollment-requests/:requestId", teacherController.handleEnrollment
 // Enrolled students route
 router.get("/courses/:courseId/students", teacherController.getEnrolledStudents);
 
+// WhatsApp group routes
+router.post("/whatsapp/groups", teacherController.createWhatsAppGroup);
+router.get("/whatsapp/groups/:courseId", teacherController.getWhatsAppGroups);
+router.put("/whatsapp/groups/:courseId", teacherController.updateWhatsAppGroup);
+
+// Payment verification routes
+router.get("/payment-verifications/:courseId", teacherController.getPaymentVerifications);
+router.put("/payment-verifications/:verificationId", teacherController.updatePaymentVerification);
+router.get("/enrolled-students/:courseId", teacherController.loadEnrolledStudents);
+
 module.exports = router;

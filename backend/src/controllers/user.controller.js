@@ -1,6 +1,7 @@
 const userService = require("../services/user.service");
 const otpService = require("../services/otp.service");
 const emailService = require("../services/email.service");
+const crypto = require('crypto');
 
 async function authenticateUser(req, res) {
   try {
@@ -217,6 +218,101 @@ async function verifyOTP(req, res) {
   }
 }
 
+async function forgotPassword(req, res) {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email format",
+      });
+    }
+
+    // Check if user exists
+    const user = await userService.getUserByEmail(email);
+    if (!user.success) {
+      // Don't reveal if email exists or not for security
+      return res.json({
+        success: true,
+        message: "If an account with this email exists, a password reset link has been sent.",
+      });
+    }
+
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour from now
+
+    // Store reset token in database (you'll need to add this to user service)
+    await userService.storePasswordResetToken(email, resetToken, resetTokenExpiry);
+
+    // Send password reset email
+    const emailResult = await emailService.sendPasswordResetEmail(email, resetToken);
+    
+    res.json({
+      success: true,
+      message: emailResult.message,
+      // In development, return reset token for testing
+      resetToken: process.env.NODE_ENV === 'development' ? emailResult.resetToken : undefined
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
+async function resetPassword(req, res) {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Reset token and new password are required",
+      });
+    }
+
+    // Validate password length
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters long",
+      });
+    }
+
+    // Verify reset token and update password
+    const result = await userService.resetPassword(token, newPassword);
+    
+    if (result.success) {
+      res.json({
+        success: true,
+        message: "Password has been reset successfully. You can now login with your new password.",
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: result.message,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
 module.exports = {
   authenticateUser,
   createUser,
@@ -225,4 +321,6 @@ module.exports = {
   deleteUser,
   sendOTP,
   verifyOTP,
+  forgotPassword,
+  resetPassword,
 };

@@ -58,9 +58,9 @@
             type="button" 
             (click)="sendOTP()" 
             class="otp-btn"
-            [disabled]="!email() || isOtpVerified()"
+            [disabled]="!email() || isOtpVerified() || countdownTimer() > 0"
           >
-            {{ isOtpVerified() ? 'Verified ✓' : isOtpSent() ? 'Resend OTP' : 'Send OTP' }}
+            {{ isOtpVerified() ? 'Verified ✓' : countdownTimer() > 0 ? 'Resend in ' + countdownTimer() + 's' : isOtpSent() ? 'Resend OTP' : 'Send OTP' }}
           </button>
         </div>
         <small>Example: user&#64;example.com</small>
@@ -93,6 +93,7 @@
             </button>
           </div>
           <small>Check your email for the 6-digit OTP</small>
+          <small *ngIf="otpError()" class="error">{{ otpError() }}</small>
           <small *ngIf="otp() && otp().length !== 6" class="error">OTP must be 6 digits</small>
         </div>
       }
@@ -149,13 +150,13 @@
         <small *ngIf="password() && (password().length < 6 || password().length > 11)" class="error">Password must be 6-11 characters</small>
       </div>
 
-      <button
-        type="submit"
-        class="signup-btn"
-        [disabled]="isLoading || !name() || !email() || !password() || !role()"
-      >
-        {{ isLoading ? 'Creating Account...' : 'Sign Up' }}
-      </button>
+        <button
+          type="submit"
+          class="signup-btn"
+          [disabled]="isLoading || !name() || !email() || !password() || !role() || (isOtpSent() && !isOtpVerified())"
+        >
+          {{ isLoading ? 'Creating Account...' : 'Sign Up' }}
+        </button>
     </form>
 
     <p class="login-link">

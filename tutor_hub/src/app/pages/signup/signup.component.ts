@@ -25,6 +25,8 @@ export class SignupComponent implements OnInit, OnDestroy {
   isOtpSent = signal<boolean>(false);
   isOtpVerified = signal<boolean>(false);
   showOtpInput = signal<boolean>(false);
+  countdownTimer = signal<number>(0);
+  private countdownInterval: any = null;
   
   // Validation errors
   nameError = signal<string>('');
@@ -43,7 +45,10 @@ export class SignupComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // No need to remove hide-footer class anymore
+    // Clear countdown interval
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
   }
 
   signup(): void {
@@ -116,6 +121,9 @@ export class SignupComponent implements OnInit, OnDestroy {
       return;
     }
     
+    // Start countdown timer (33 seconds)
+    this.startCountdown();
+    
     // Send OTP
     this.otpService.sendOTP(this.email()).subscribe({
       next: (response) => {
@@ -128,8 +136,34 @@ export class SignupComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.otpError.set(error.error?.message || 'Failed to send OTP');
+        // Stop countdown on error
+        if (this.countdownInterval) {
+          clearInterval(this.countdownInterval);
+          this.countdownTimer.set(0);
+        }
       }
     });
+  }
+  
+  private startCountdown(): void {
+    // Clear any existing interval
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
+    
+    // Set initial countdown time
+    this.countdownTimer.set(33);
+    
+    // Start countdown
+    this.countdownInterval = setInterval(() => {
+      const currentTime = this.countdownTimer();
+      if (currentTime > 0) {
+        this.countdownTimer.set(currentTime - 1);
+      } else {
+        clearInterval(this.countdownInterval);
+        this.countdownInterval = null;
+      }
+    }, 1000);
   }
 
   verifyOTP(): void {
@@ -146,6 +180,11 @@ export class SignupComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.isOtpVerified.set(true);
         this.showOtpInput.set(false);
+        // Clear countdown timer on successful verification
+        if (this.countdownInterval) {
+          clearInterval(this.countdownInterval);
+          this.countdownTimer.set(0);
+        }
       },
       error: (error) => {
         this.otpError.set(error.error?.message || 'Invalid OTP');

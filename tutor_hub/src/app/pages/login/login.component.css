@@ -396,8 +396,22 @@ small {
   opacity: 0.8;
 }
 
+.forgot-password-link {
+  text-align: center;
+  margin-top: 15px;
+  color: var(--text-color);
+  font-size: 14px;
+  opacity: 0.8;
+}
+
 /* Dark mode signup link fixes */
 [data-theme="dark"] .signup-link {
+  color: rgba(255, 255, 255, 0.8);
+  opacity: 1;
+}
+
+/* Dark mode forgot password link fixes */
+[data-theme="dark"] .forgot-password-link {
   color: rgba(255, 255, 255, 0.8);
   opacity: 1;
 }
@@ -412,6 +426,20 @@ small {
 }
 
 .signup-link a:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+.forgot-password-link a {
+  color: var(--primary-color);
+  cursor: pointer;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.3s;
+  letter-spacing: 0.3px;
+}
+
+.forgot-password-link a:hover {
   color: var(--primary-dark);
   text-decoration: underline;
 }

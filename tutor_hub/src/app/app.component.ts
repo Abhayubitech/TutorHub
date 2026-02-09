@@ -26,7 +26,7 @@ export class AppComponent {
   
   shouldShowFooter(): boolean {
     const currentUrl = this.router.url;
-    return !currentUrl.includes('/login') && !currentUrl.includes('/signup');
+    return !currentUrl.includes('/login') && !currentUrl.includes('/signup') && !currentUrl.includes('/forgot-password') && !currentUrl.includes('/reset-password');
   }
   
   shouldShowAuthFooter(): boolean {
@@ -42,6 +42,6 @@ export class AppComponent {
   shouldShowNavbar(): boolean {
     const currentUrl = this.router.url;
     const isDashboardPage = currentUrl.includes('/teacher') || currentUrl.includes('/student') || currentUrl.includes('/admin');
-    return !currentUrl.includes('/login') && !currentUrl.includes('/signup') && !isDashboardPage;
+    return !currentUrl.includes('/login') && !currentUrl.includes('/signup') && !currentUrl.includes('/forgot-password') && !currentUrl.includes('/reset-password') && !isDashboardPage;
   }
 }

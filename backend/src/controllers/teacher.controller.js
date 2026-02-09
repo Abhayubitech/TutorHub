@@ -241,6 +241,88 @@ async function getEnrolledStudents(req, res) {
   }
 }
 
+// WhatsApp group management
+async function createWhatsAppGroup(req, res) {
+  try {
+    const teacherId = req.user.id;
+    const result = await teacherService.createWhatsAppGroup(req.body);
+    res.status(201).json(result);
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
+async function getWhatsAppGroups(req, res) {
+  try {
+    const { courseId } = req.params;
+    const result = await teacherService.getWhatsAppGroups(courseId);
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
+async function updateWhatsAppGroup(req, res) {
+  try {
+    const { courseId } = req.params;
+    const { groupType } = req.body;
+    const result = await teacherService.updateWhatsAppGroup(courseId, groupType, req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
+// Payment verification methods
+async function getPaymentVerifications(req, res) {
+  try {
+    const { courseId } = req.params;
+    const result = await teacherService.getPaymentVerifications(courseId);
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
+async function updatePaymentVerification(req, res) {
+  try {
+    const { verificationId } = req.params;
+    const { status, teacherNotes } = req.body;
+    const result = await teacherService.updatePaymentVerification(verificationId, status, teacherNotes);
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
+async function loadEnrolledStudents(req, res) {
+  try {
+    const { courseId } = req.params;
+    const result = await teacherService.loadEnrolledStudents(courseId);
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
 module.exports = {
   getProfile,
   updateProfile,
@@ -253,4 +335,10 @@ module.exports = {
   getEnrollmentRequests,
   handleEnrollmentRequest,
   getEnrolledStudents,
+  createWhatsAppGroup,
+  getWhatsAppGroups,
+  updateWhatsAppGroup,
+  getPaymentVerifications,
+  updatePaymentVerification,
+  loadEnrolledStudents,
 };

@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const whatsappService = require("./whatsapp.service");
 
 // ✅ VALIDATION FUNCTIONS
 const validateString = (value, fieldName, minLength = 1, maxLength = 255) => {
@@ -106,11 +107,13 @@ async function getTeacherCourses(teacherId) {
   try {
     const [courses] = await db.query(
       `SELECT c.*, 
+              COUNT(ce.id) as enrolled_count,
               GROUP_CONCAT(
                 CONCAT(cs.day, ' ', cs.start_time, '-', cs.end_time) 
                 SEPARATOR ', '
               ) as schedule
        FROM courses c
+       LEFT JOIN course_enrollments ce ON c.id = ce.course_id
        LEFT JOIN course_schedules cs ON c.id = cs.course_id
        WHERE c.teacher_id = ?
        GROUP BY c.id
@@ -127,7 +130,7 @@ async function getTeacherCourses(teacherId) {
 // Get single course by ID with full details for editing
 async function getCourseById(courseId, teacherId) {
   try {
-    // Get basic course info with schedule
+    // Get basic course info with schedule and duration
     const [courses] = await db.query(
       `SELECT c.*, 
               GROUP_CONCAT(
@@ -135,9 +138,11 @@ async function getCourseById(courseId, teacherId) {
                 SEPARATOR ', '
               ) as schedule,
               GROUP_CONCAT(cs.day SEPARATOR ', ') as schedule_days,
-              GROUP_CONCAT(CONCAT(cs.start_time, '-', cs.end_time) SEPARATOR ', ') as schedule_time
+              GROUP_CONCAT(CONCAT(cs.start_time, '-', cs.end_time) SEPARATOR ', ') as schedule_time,
+              cm.duration_per_class
        FROM courses c
        LEFT JOIN course_schedules cs ON c.id = cs.course_id
+       LEFT JOIN course_metadata cm ON c.id = cm.course_id
        WHERE c.id = ? AND c.teacher_id = ?
        GROUP BY c.id`,
       [courseId, teacherId]
@@ -515,6 +520,130 @@ async function getEnrolledStudents(courseId, teacherId) {
   }
 }
 
+// WhatsApp group management methods
+async function createWhatsAppGroup(groupData) {
+  try {
+    const result = await whatsappService.createGroup(groupData);
+    return {
+      success: true,
+      message: 'WhatsApp group created successfully',
+      data: result
+    };
+  } catch (error) {
+    console.error('Error creating WhatsApp group:', error);
+    throw new Error(error.message);
+  }
+}
+
+async function getWhatsAppGroups(courseId) {
+  try {
+    const groups = await whatsappService.getGroupsByCourse(courseId);
+    return {
+      success: true,
+      groups: groups
+    };
+  } catch (error) {
+    console.error('Error getting WhatsApp groups:', error);
+    throw new Error(error.message);
+  }
+}
+
+async function updateWhatsAppGroup(courseId, groupType, updateData) {
+  try {
+    // First get the group by course and type
+    const group = await whatsappService.getGroupByCourse(courseId, groupType);
+    if (!group) {
+      throw new Error('WhatsApp group not found');
+    }
+    
+    // Update the group
+    const success = await whatsappService.updateGroup(group.id, updateData);
+    if (!success) {
+      throw new Error('Failed to update WhatsApp group');
+    }
+    
+    return {
+      success: true,
+      message: 'WhatsApp group updated successfully'
+    };
+  } catch (error) {
+    console.error('Error updating WhatsApp group:', error);
+    throw new Error(error.message);
+  }
+}
+
+async function getPaymentVerifications(courseId) {
+  try {
+    const [verifications] = await db.query(
+      `SELECT pv.*, u.name as student_name, u.email, c.subject
+       FROM payment_verifications pv
+       JOIN users u ON pv.student_id = u.id
+       JOIN courses c ON pv.course_id = c.id
+       WHERE pv.course_id = ?
+       ORDER BY pv.created_at DESC`,
+      [courseId]
+    );
+
+    return {
+      success: true,
+      verifications: verifications
+    };
+  } catch (error) {
+    console.error('Error getting payment verifications:', error);
+    throw new Error(error.message);
+  }
+}
+
+async function updatePaymentVerification(verificationId, status, teacherNotes) {
+  try {
+    const [result] = await db.query(
+      `UPDATE payment_verifications 
+       SET status = ?, teacher_notes = ?, updated_at = CURRENT_TIMESTAMP 
+       WHERE id = ?`,
+      [status, teacherNotes, verificationId]
+    );
+
+    if (result.affectedRows === 0) {
+      throw new Error('Payment verification not found');
+    }
+
+    return {
+      success: true,
+      message: `Payment verification ${status} successfully`
+    };
+  } catch (error) {
+    console.error('Error updating payment verification:', error);
+    throw new Error(error.message);
+  }
+}
+
+async function loadEnrolledStudents(courseId) {
+  try {
+    const [students] = await db.query(
+      `SELECT u.id, u.name, u.email, u.phone, ce.enrolled_at,
+              CASE 
+                WHEN pv.status = 'approved' THEN 100
+                WHEN pv.status = 'pending' THEN 50
+                ELSE 0
+              END as progress
+       FROM course_enrollments ce
+       JOIN users u ON ce.student_id = u.id
+       LEFT JOIN payment_verifications pv ON ce.course_id = pv.course_id AND ce.student_id = pv.student_id
+       WHERE ce.course_id = ?
+       ORDER BY ce.enrolled_at DESC`,
+      [courseId]
+    );
+
+    return {
+      success: true,
+      students: students
+    };
+  } catch (error) {
+    console.error('Error loading enrolled students:', error);
+    throw new Error(error.message);
+  }
+}
+
 module.exports = {
   getTeacherProfile,
   updateTeacherProfile,
@@ -527,4 +656,10 @@ module.exports = {
   getEnrollmentRequests,
   handleEnrollmentRequest,
   getEnrolledStudents,
+  createWhatsAppGroup,
+  getWhatsAppGroups,
+  updateWhatsAppGroup,
+  getPaymentVerifications,
+  updatePaymentVerification,
+  loadEnrolledStudents,
 };
